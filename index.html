@@ -133,8 +133,6 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .risk-cell{display:flex;align-items:center;gap:6px}
 .risk-bar-mini{height:4px;flex:1;max-width:60px;background:var(--border);border-radius:2px;overflow:hidden}
 .risk-bar-fill{height:100%;border-radius:2px;transition:width .6s}
-
-/* ── ABUSEIPDB SIDEBAR RESULT ── */
 .abuse-result{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:10px}
 .abuse-score-wrap{display:flex;align-items:center;gap:14px;margin-bottom:12px}
 .abuse-score-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;font-family:var(--display);flex-shrink:0;border:2px solid var(--danger);box-shadow:0 0 16px rgba(255,45,74,0.3)}
@@ -145,10 +143,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .abuse-reports{font-size:11px;color:var(--text2);margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
 .abuse-report-item{padding:6px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px}
 .abuse-report-item:last-child{border-bottom:none}
-
-/* Category badges for abuse */
 .abuse-cats{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
-
 .mitre-grid{display:flex;flex-wrap:wrap;gap:8px}
 .mitre-tag{background:rgba(255,85,51,0.06);border:1px solid rgba(255,85,51,0.25);color:var(--accent3);font-family:var(--mono);font-size:11px;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px}
 .mitre-tag:hover{background:rgba(255,85,51,0.15);transform:translateY(-1px)}
@@ -187,6 +182,16 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 @keyframes spin{to{transform:rotate(360deg)}}
 .err{background:rgba(255,45,74,0.05);border:1px solid rgba(255,45,74,0.2);border-left:3px solid var(--danger);border-radius:6px;padding:10px 14px;font-size:11px;color:var(--danger);margin-top:8px}
 .empty{color:var(--text3);font-size:11px;text-align:center;padding:24px;border:1px dashed var(--border);border-radius:6px;letter-spacing:0.5px}
+/* Sandbox progress bar */
+.sb-progress{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-top:8px;display:none}
+.sb-progress-bar-bg{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-top:8px}
+.sb-progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent4),var(--accent));border-radius:2px;transition:width .8s ease}
+.sb-progress-label{font-size:10px;color:var(--text2);letter-spacing:0.5px}
+.sb-phase{font-size:9px;color:var(--text3);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+.sb-task-id{font-size:9px;color:var(--text4);margin-top:6px;word-break:break-all}
+/* Task ID manual fetch */
+.sb-manual{background:var(--bg3);border:1px dashed var(--border2);border-radius:6px;padding:10px 12px;margin-top:6px;display:none}
+.sb-manual-lbl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
@@ -299,7 +304,9 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
         </div>
       </div>
 
-      <!-- Sandbox -->
+      <!-- ══════════════════════════════════════════════════
+           FIXED: ANY.RUN Sandbox
+           ══════════════════════════════════════════════════ -->
       <div class="sidebar-section">
         <div class="ss-hdr"><div class="ss-hdr-dot" style="background:var(--accent4)"></div>ANY.RUN Sandbox</div>
         <div class="ss-body">
@@ -309,13 +316,36 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
               <span id="file-label-txt">Choose file for sandbox…</span>
               <input type="file" id="f-inp" onchange="onFileChange()"/>
             </label>
+            <div id="file-meta" style="display:none;font-size:10px;color:var(--text3);margin-top:4px;padding:4px 0"></div>
           </div>
           <button class="btn btn-purple" id="btn-sb" onclick="runSandbox()">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             Submit to Sandbox
           </button>
-          <div id="sb-loading" class="loading-row" style="display:none"><div class="spin"></div><span id="sb-txt">Submitting…</span></div>
+
+          <!-- Progress block (shown during submission + polling) -->
+          <div class="sb-progress" id="sb-progress">
+            <div class="sb-progress-label" id="sb-progress-label">Submitting file…</div>
+            <div class="sb-phase" id="sb-phase">INITIALIZING</div>
+            <div class="sb-progress-bar-bg"><div class="sb-progress-bar" id="sb-progress-bar"></div></div>
+            <div class="sb-task-id" id="sb-task-id-display"></div>
+          </div>
+
+          <!-- Manual Task ID lookup (backup) -->
+          <div class="sb-manual" id="sb-manual">
+            <div class="sb-manual-lbl">Fetch existing task by ID</div>
+            <div style="display:flex;gap:6px">
+              <input class="inp" id="sb-manual-id" placeholder="Task UUID…" style="flex:1;font-size:11px;padding:6px 8px"/>
+              <button class="btn btn-sm btn-purple" onclick="fetchManualTask()" style="width:auto;flex-shrink:0">Fetch</button>
+            </div>
+          </div>
+
           <div id="sb-error" class="err" style="display:none"></div>
+
+          <!-- Show manual ID lookup toggle -->
+          <button class="copy-btn" style="width:100%;text-align:center;margin-top:2px" onclick="toggleManual()">
+            ⌨ Fetch by Task ID
+          </button>
         </div>
       </div>
 
@@ -438,7 +468,6 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
             </table>
           </div>
         </div>
-        <!-- AbuseIPDB detail panel -->
         <div class="card" id="abuse-detail-card" style="display:none">
           <div class="card-hdr">
             <div class="card-title"><div class="card-title-accent orange"></div>AbuseIPDB Detail — <span id="abuse-detail-ip" style="color:var(--accent)"></span></div>
@@ -502,10 +531,19 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 </div>
 
 <script>
-// ── CONFIG — update your worker URL here ─────────────────────────────
+// ── CONFIG ────────────────────────────────────────────────────────────
 const WORKER = "https://soc-backend.johndominicklimpag.workers.dev";
 
-// AbuseIPDB abuse category map (official categories)
+// ANY.RUN API phases mapped from the actual response status values
+// ANY.RUN task statuses: "waiting", "running", "completed", "failed"
+const ANYRUN_PHASES = {
+  waiting:  { label:'Waiting in queue…',   pct: 10 },
+  running:  { label:'Sandbox executing…',  pct: 55 },
+  completed:{ label:'Analysis complete',   pct:100 },
+  failed:   { label:'Task failed',         pct:100 },
+};
+
+// AbuseIPDB abuse category map
 const ABUSE_CATEGORIES = {
   1:'DNS Compromise',2:'DNS Poisoning',3:'Fraud Orders',4:'DDoS Attack',5:'FTP Brute-Force',
   6:'Ping of Death',7:'Phishing',8:'Fraud VoIP',9:'Open Proxy',10:'Web Spam',
@@ -514,14 +552,15 @@ const ABUSE_CATEGORIES = {
   21:'Web App Attack',22:'SSH',23:'IoT Targeted'
 };
 
-// ── Global state ─────────────────────────────────────────────────────
+// ── Global state ──────────────────────────────────────────────────────
 const state = {
   vtData: null,
   sbData: null,
-  ipData: {},         // ip -> abuseIPDB data object
+  ipData: {},
   sessionStats: { hashes:0, ips:0, threats:0, iocs:0 },
   iocs: { ips:[], domains:[], files:[], hashes:[], mitre:[] },
-  analysisTs: null
+  analysisTs: null,
+  pollTimer: null,
 };
 
 // ── Clock ─────────────────────────────────────────────────────────────
@@ -583,7 +622,7 @@ function getScoreColor(s){
   return 'var(--success)';
 }
 
-// ── VT Hash Scan ─────────────────────────────────────────────────────
+// ── VT Hash Scan ──────────────────────────────────────────────────────
 document.getElementById('hash-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doVTScan();});
 
 async function doVTScan(){
@@ -626,7 +665,6 @@ async function doVTScan(){
 }
 
 // ── AbuseIPDB Lookup ──────────────────────────────────────────────────
-// Calls WORKER/abuseipdb/:ip  (synced with worker.js route)
 document.getElementById('ip-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doIPLookup();});
 
 async function doIPLookup(ip){
@@ -636,26 +674,20 @@ async function doIPLookup(ip){
   show('ip-loading','flex');
   document.getElementById('btn-ip').disabled=true;
   try{
-    // ✅ Route: /abuseipdb/:ip
     const r = await fetch(WORKER+'/abuseipdb/'+encodeURIComponent(addr));
     if(!r.ok) throw new Error('Worker returned '+r.status);
     const j = await r.json();
     if(j.errors) throw new Error(j.errors[0]?.detail||'AbuseIPDB error');
     const d = j?.data;
     if(!d) throw new Error('No data returned from AbuseIPDB');
-
     state.ipData[addr]=d;
     state.sessionStats.ips++;
     if((d.abuseConfidenceScore||0)>50) state.sessionStats.threats++;
-
-    // Add to IOC list if not already there
     if(!state.iocs.ips.includes(addr)) state.iocs.ips.push(addr);
     state.sessionStats.iocs=countIOCs();
     updateStats();
-
     renderIPResult('ip-result', d);
     hide('ip-loading');
-
     updateNetworkAbuseScores();
     updateIOC();
   } catch(err){
@@ -665,17 +697,13 @@ async function doIPLookup(ip){
   }
 }
 
-// ── Render AbuseIPDB result ───────────────────────────────────────────
 function renderIPResult(containerId, d){
   const score = d.abuseConfidenceScore||0;
   const col = score>=75?'var(--danger)':score>=40?'var(--warn)':score>0?'var(--accent3)':'var(--success)';
   const borderCol = score>=75?'rgba(255,45,74,0.3)':score>=40?'rgba(255,170,0,0.3)':'rgba(0,229,255,0.2)';
-
-  // Abuse categories
   const cats = (d.reports||[]).flatMap(r=>r.categories||[]);
   const uniqueCats = [...new Set(cats)];
   const catBadges = uniqueCats.slice(0,6).map(c=>`<span class="badge b-warn" style="font-size:9px">${esc(ABUSE_CATEGORIES[c]||'Cat '+c)}</span>`).join('');
-
   const html = `
     <div class="abuse-result" style="border-color:${borderCol}">
       <div class="abuse-score-wrap">
@@ -714,12 +742,11 @@ function renderIPResult(containerId, d){
           </div>`).join('')}
       </div>`:'' }
     </div>`;
-
   const el = document.getElementById(containerId);
   if(el){ el.innerHTML = html; show(containerId); }
 }
 
-// ── Bulk IP check (from sandbox network connections) ──────────────────
+// ── Bulk IP check ─────────────────────────────────────────────────────
 async function bulkIPCheck(){
   const ips = [...new Set((state.sbData?.network_connections||[]).map(n=>n.ip).filter(Boolean))];
   if(!ips.length){toast('No IPs to check');return;}
@@ -727,7 +754,6 @@ async function bulkIPCheck(){
   for(const ip of ips){
     if(state.ipData[ip]) continue;
     try{
-      // ✅ Route: /abuseipdb/:ip
       const r = await fetch(WORKER+'/abuseipdb/'+encodeURIComponent(ip));
       if(!r.ok) continue;
       const j = await r.json();
@@ -778,57 +804,286 @@ function showIPDetail(ip){
 // ── File input ────────────────────────────────────────────────────────
 function onFileChange(){
   const f=document.getElementById('f-inp').files[0];
-  document.getElementById('file-label-txt').textContent=f?f.name:'Choose file for sandbox…';
+  if(!f){ document.getElementById('file-label-txt').textContent='Choose file for sandbox…'; hide('file-meta'); return; }
+  document.getElementById('file-label-txt').textContent=f.name;
+  const meta=document.getElementById('file-meta');
+  meta.textContent=`${formatSize(f.size)} · ${f.type||'unknown type'}`;
+  show('file-meta');
 }
 
-// ── Sandbox ───────────────────────────────────────────────────────────
-async function runSandbox(){
-  const f=document.getElementById('f-inp').files[0];
-  if(!f){toast('⚠ Select a file first');return;}
-  hide('sb-error'); show('sb-loading','flex');
-  document.getElementById('sb-txt').textContent='Submitting to ANY.RUN…';
-  document.getElementById('btn-sb').disabled=true;
-  try{
-    const fd=new FormData(); fd.append('file',f);
-    const r=await fetch(WORKER+'/sandbox',{method:'POST',body:fd});
-    if(!r.ok) throw new Error('Submission failed: '+r.status);
-    const j=await r.json();
-    const taskId=j?.data?.taskid;
-    if(!taskId) throw new Error('No task ID returned');
-    pollSandbox(taskId);
-  } catch(err){
-    hide('sb-loading');
-    document.getElementById('btn-sb').disabled=false;
-    setErr('sb-error',err.message);
+// ════════════════════════════════════════════════════════════════════
+//  FIXED ANY.RUN SANDBOX INTEGRATION
+//  Key fixes:
+//  1. setSbProgress() helper manages the animated progress UI
+//  2. Submission: POST multipart/form-data to WORKER+'/sandbox'
+//     Worker should forward to ANY.RUN POST /api/v1/file
+//  3. Response: expects { data: { taskid: "..." } }
+//     Also accepts alternate shapes: { taskId }, { id }, { data.id }
+//  4. Polling: GET WORKER+'/result/:taskId' every 8s (not 10s)
+//     ANY.RUN result shape: { data: { status, processes, network,
+//       modified_files, signatures, content } }
+//     Also normalises older ANY.RUN v1 shape automatically
+//  5. Status field: checks data.status OR data.state (both covered)
+//  6. Terminal states: "completed", "failed", "reported" (not just
+//     "not running")
+//  7. Max polls raised to 60 (~8 min) — analyses can run long
+//  8. normaliseAnyRunData() maps ANY.RUN fields → internal schema
+// ════════════════════════════════════════════════════════════════════
+
+function setSbProgress(label, phase, pct, taskId){
+  const prog = document.getElementById('sb-progress');
+  prog.style.display = '';
+  document.getElementById('sb-progress-label').textContent = label;
+  document.getElementById('sb-phase').textContent = phase;
+  document.getElementById('sb-progress-bar').style.width = pct+'%';
+  if(taskId !== undefined){
+    document.getElementById('sb-task-id-display').textContent = taskId ? 'Task: '+taskId : '';
   }
 }
 
-let _polls=0;
-function pollSandbox(id){
-  _polls=0; const MAX=36;
-  const iv=setInterval(async()=>{
-    _polls++;
-    document.getElementById('sb-txt').textContent=`Sandbox running… (${_polls}/${MAX})`;
-    if(_polls>MAX){
-      clearInterval(iv); hide('sb-loading');
-      document.getElementById('btn-sb').disabled=false;
-      setErr('sb-error','Timed out. Task ID: '+id);
+function clearSbProgress(){
+  document.getElementById('sb-progress').style.display='none';
+  document.getElementById('sb-progress-bar').style.width='0%';
+  document.getElementById('sb-task-id-display').textContent='';
+}
+
+function toggleManual(){
+  const m=document.getElementById('sb-manual');
+  m.style.display = m.style.display==='none'||!m.style.display ? '' : 'none';
+}
+
+async function fetchManualTask(){
+  const id = document.getElementById('sb-manual-id').value.trim();
+  if(!id){ toast('⚠ Enter a task ID'); return; }
+  hide('sb-error');
+  setSbProgress('Fetching task result…','LOADING',30,id);
+  try{
+    await processSandboxResult(id);
+  } catch(e){
+    clearSbProgress();
+    setErr('sb-error', 'Failed to fetch task '+id+': '+e.message);
+  }
+}
+
+async function runSandbox(){
+  const f = document.getElementById('f-inp').files[0];
+  if(!f){ toast('⚠ Select a file first'); return; }
+
+  hide('sb-error');
+  clearSbProgress();
+  setSbProgress('Uploading file to sandbox…', 'SUBMITTING', 5);
+  document.getElementById('btn-sb').disabled = true;
+
+  try{
+    // Build multipart form — worker expects 'file' field
+    const fd = new FormData();
+    fd.append('file', f);
+
+    const r = await fetch(WORKER+'/sandbox', { method:'POST', body:fd });
+
+    if(!r.ok){
+      // Try to get error detail from worker response body
+      let detail = '';
+      try{ const ej = await r.json(); detail = ej?.error || ej?.message || ''; } catch{}
+      throw new Error(`Submission failed (HTTP ${r.status})${detail ? ': '+detail : ''}`);
+    }
+
+    const j = await r.json();
+
+    // ── Normalise task ID from multiple possible response shapes ──
+    // ANY.RUN v1: { data: { taskid: "..." } }
+    // Some workers wrap differently
+    const taskId = j?.data?.taskid
+                || j?.data?.taskId
+                || j?.data?.id
+                || j?.taskid
+                || j?.taskId
+                || j?.id
+                || null;
+
+    if(!taskId){
+      // If worker already returned full result inline (some proxy setups)
+      if(j?.data?.processes || j?.data?.network || j?.data?.status === 'completed'){
+        state.sbData = normaliseAnyRunData(j.data);
+        state.analysisTs = new Date().toISOString();
+        renderAll(state.sbData);
+        clearSbProgress();
+        toast('✓ Sandbox analysis complete');
+        document.getElementById('btn-sb').disabled = false;
+        return;
+      }
+      throw new Error('No task ID in response. Worker response: '+JSON.stringify(j).slice(0,200));
+    }
+
+    setSbProgress('Task queued — waiting for execution…', 'QUEUED', 15, taskId);
+    toast(`Task submitted: ${taskId}`);
+
+    // Start polling
+    startPolling(taskId);
+
+  } catch(err){
+    clearSbProgress();
+    document.getElementById('btn-sb').disabled = false;
+    setErr('sb-error', err.message);
+  }
+}
+
+// ── Polling logic ─────────────────────────────────────────────────────
+function startPolling(taskId){
+  if(state.pollTimer) clearInterval(state.pollTimer);
+
+  let polls = 0;
+  const MAX_POLLS = 60;   // 60 × 8s = 8 minutes
+  const INTERVAL  = 8000; // ANY.RUN recommends polling every 5-10s
+
+  state.pollTimer = setInterval(async()=>{
+    polls++;
+
+    // Animate progress: ramp from 15% to 90% during polling
+    const pct = Math.min(15 + Math.round((polls/MAX_POLLS)*75), 90);
+    setSbProgress(
+      `Sandbox running… (${polls}/${MAX_POLLS})`,
+      'EXECUTING',
+      pct,
+      taskId
+    );
+
+    if(polls > MAX_POLLS){
+      clearInterval(state.pollTimer);
+      clearSbProgress();
+      document.getElementById('btn-sb').disabled = false;
+      setErr('sb-error',
+        `Analysis timed out after ${MAX_POLLS} polls (~${Math.round(MAX_POLLS*INTERVAL/60000)} min). ` +
+        `Task ID: ${taskId} — use "Fetch by Task ID" to retry later.`
+      );
       return;
     }
+
     try{
-      const r=await fetch(WORKER+'/result/'+id);
-      if(!r.ok) return;
-      const sb=await r.json();
-      if(sb?.data?.state!=='running'){
-        clearInterval(iv); hide('sb-loading');
-        document.getElementById('btn-sb').disabled=false;
-        state.sbData=sb?.data||{};
-        state.analysisTs=new Date().toISOString();
+      const r = await fetch(WORKER+'/result/'+encodeURIComponent(taskId));
+      if(!r.ok){
+        // 404 / 202 "still processing" are normal early on — keep polling
+        if(r.status === 404 || r.status === 202) return;
+        // Other errors might be transient — keep polling unless it's auth
+        if(r.status === 401 || r.status === 403){
+          clearInterval(state.pollTimer);
+          document.getElementById('btn-sb').disabled = false;
+          setErr('sb-error', `Auth error fetching result (HTTP ${r.status}). Check API key.`);
+        }
+        return;
+      }
+
+      const result = await r.json();
+
+      // ── Detect terminal state ──────────────────────────────────
+      // ANY.RUN v1 result: result.data.status  OR  result.data.state
+      // Possible values: "waiting", "running", "completed", "failed", "reported"
+      const status = (
+        result?.data?.status  ||
+        result?.data?.state   ||
+        result?.status        ||
+        'unknown'
+      ).toLowerCase();
+
+      if(status === 'completed' || status === 'reported'){
+        clearInterval(state.pollTimer);
+        state.sbData = normaliseAnyRunData(result?.data || result);
+        state.analysisTs = new Date().toISOString();
+        setSbProgress('Analysis complete!', 'COMPLETE', 100, taskId);
+        setTimeout(()=>{ clearSbProgress(); document.getElementById('btn-sb').disabled = false; }, 1500);
         renderAll(state.sbData);
         toast('✓ Sandbox analysis complete');
+        return;
       }
-    } catch(e){}
-  },10000);
+
+      if(status === 'failed'){
+        clearInterval(state.pollTimer);
+        clearSbProgress();
+        document.getElementById('btn-sb').disabled = false;
+        const reason = result?.data?.reason || result?.data?.error || 'Unknown reason';
+        setErr('sb-error', `Sandbox task failed: ${reason} (Task: ${taskId})`);
+        return;
+      }
+
+      // "waiting" or "running" → keep polling, update phase label
+      if(status === 'waiting'){
+        setSbProgress('Waiting in queue…', 'QUEUED', pct, taskId);
+      }
+
+    } catch(e){
+      // Network error during poll — non-fatal, keep trying
+      console.warn('[sandbox poll error]', e.message);
+    }
+
+  }, INTERVAL);
+}
+
+// ── Normalise ANY.RUN response → internal schema ──────────────────────
+// ANY.RUN v1 analysis result shape (relevant fields):
+//   data.processes[]   → { pid, ppid, name, image, cmd, ... }
+//   data.network[]     → { ip, domain, port, protocol, ... }  (or data.connections[])
+//   data.modified_files[] (or data.dropped_files[], data.files[])
+//   data.signatures[]  → MITRE-tagged signatures
+//   data.content.screenshots[] → { url }
+//   data.verdict       → { score, threats, ... }
+//
+// Internal schema expected by renderAll():
+//   process_list[]     → { name, pid, parent }
+//   network_connections[] → { ip, host, port, protocol }
+//   files_created[]    → { name, size }
+//   attack_techniques[] → { id, name, description }
+//   screenshots[]      → [{ url }]
+function normaliseAnyRunData(d){
+  if(!d || typeof d !== 'object') return {};
+
+  // ── Process list ──
+  const rawProcs = d.processes || d.process_list || d.processList || [];
+  const process_list = rawProcs.map(p=>({
+    name:   p.name || p.image || p.fileName || 'unknown',
+    pid:    p.pid  || p.ProcessId || '',
+    parent: p.parentName || p.ppid || p.parent_name || '',
+  }));
+
+  // ── Network connections ──
+  const rawNet = d.network || d.network_connections || d.connections || d.networkConnections || [];
+  const network_connections = rawNet.map(n=>({
+    ip:       n.ip   || n.dst_ip   || n.dest_ip   || '',
+    host:     n.host || n.domain   || n.hostname  || n.dst_host || '',
+    port:     n.port || n.dst_port || n.dest_port || '',
+    protocol: n.protocol || n.proto || 'TCP',
+  })).filter(n=>n.ip||n.host);
+
+  // ── Dropped / modified files ──
+  const rawFiles = d.modified_files || d.dropped_files || d.files_created || d.files || [];
+  const files_created = rawFiles.map(f=>({
+    name: f.name || f.fileName || f.path || 'unknown',
+    size: f.size || f.fileSize || 0,
+  }));
+
+  // ── MITRE / attack techniques ──
+  // ANY.RUN signatures often contain MITRE references
+  const rawSigs = d.signatures || d.attack_techniques || d.mitre || [];
+  const attack_techniques = rawSigs.map(s=>{
+    // Try to extract ATT&CK ID from various fields
+    const id = s.mitre_attack || s.technique_id || s.id ||
+               (s.tags&&s.tags.find&&s.tags.find(t=>/^T\d{4}/.test(t))) || '';
+    return {
+      id:          id,
+      name:        s.name || s.title || s.rule_name || '',
+      description: s.description || s.info || '',
+    };
+  }).filter(t=>t.id||t.name);
+
+  // ── Screenshots ──
+  const rawScreenshots = (d.content && d.content.screenshots)
+    || d.screenshots
+    || d.screen_shots
+    || [];
+  const screenshots = rawScreenshots.map(s=>({
+    url: s.url || s.src || s.link || (typeof s==='string'?s:''),
+  })).filter(s=>s.url);
+
+  return { process_list, network_connections, files_created, attack_techniques, screenshots };
 }
 
 // ── Render all sandbox results ────────────────────────────────────────
@@ -847,6 +1102,7 @@ function renderAll(d){
   document.getElementById('ov-files').textContent=(d.files_created||[]).length;
   document.getElementById('ov-mitre').textContent=(d.attack_techniques||[]).length;
   bulkIPCheck();
+  switchTab('sandbox');
 }
 
 function renderProcessTree(d){
@@ -914,6 +1170,8 @@ function renderNetwork(d){
 function renderScreenshot(d){
   if(d.screenshots&&d.screenshots.length&&d.screenshots[0].url){
     setEl('sb-screen',`<img src="${esc(d.screenshots[0].url)}" style="width:100%;display:block" alt="Sandbox screenshot"/>`);
+  } else {
+    setEl('sb-screen','<span>⬡ No screenshot available</span>');
   }
 }
 
@@ -1007,7 +1265,7 @@ function renderContainment(d){
     </div>`).join(''));
 }
 
-// ── IOC Management ────────────────────────────────────────────────────
+// ── IOC ───────────────────────────────────────────────────────────────
 function countIOCs(){
   return state.iocs.ips.length+state.iocs.domains.length+state.iocs.files.length+state.iocs.hashes.length+state.iocs.mitre.length;
 }
@@ -1200,6 +1458,31 @@ function printReport(){
   </head><body>${body}</body></html>`);
   w.document.close();
   setTimeout(()=>w.print(),500);
+}
+
+// ── Fetch result by task ID (manual / retry) ──────────────────────────
+async function processSandboxResult(taskId){
+  const r = await fetch(WORKER+'/result/'+encodeURIComponent(taskId));
+  if(!r.ok) throw new Error(`HTTP ${r.status}`);
+  const result = await r.json();
+  const status = (result?.data?.status || result?.data?.state || result?.status || '').toLowerCase();
+  if(status === 'running' || status === 'waiting'){
+    clearSbProgress();
+    toast(`Task ${taskId} still running — starting poll…`);
+    setSbProgress('Resumed polling…', 'EXECUTING', 20, taskId);
+    document.getElementById('btn-sb').disabled = true;
+    startPolling(taskId);
+    return;
+  }
+  if(status === 'failed'){
+    clearSbProgress();
+    throw new Error('Task failed: '+(result?.data?.reason||'unknown'));
+  }
+  state.sbData = normaliseAnyRunData(result?.data || result);
+  state.analysisTs = new Date().toISOString();
+  renderAll(state.sbData);
+  clearSbProgress();
+  toast('✓ Task result loaded');
 }
 </script>
 </body>
