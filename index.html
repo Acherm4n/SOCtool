@@ -182,16 +182,20 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 @keyframes spin{to{transform:rotate(360deg)}}
 .err{background:rgba(255,45,74,0.05);border:1px solid rgba(255,45,74,0.2);border-left:3px solid var(--danger);border-radius:6px;padding:10px 14px;font-size:11px;color:var(--danger);margin-top:8px}
 .empty{color:var(--text3);font-size:11px;text-align:center;padding:24px;border:1px dashed var(--border);border-radius:6px;letter-spacing:0.5px}
-/* Sandbox progress bar */
 .sb-progress{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-top:8px;display:none}
 .sb-progress-bar-bg{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-top:8px}
 .sb-progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent4),var(--accent));border-radius:2px;transition:width .8s ease}
 .sb-progress-label{font-size:10px;color:var(--text2);letter-spacing:0.5px}
 .sb-phase{font-size:9px;color:var(--text3);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
 .sb-task-id{font-size:9px;color:var(--text4);margin-top:6px;word-break:break-all}
-/* Task ID manual fetch */
 .sb-manual{background:var(--bg3);border:1px dashed var(--border2);border-radius:6px;padding:10px 12px;margin-top:6px;display:none}
 .sb-manual-lbl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+/* Engine toggle buttons */
+.eng-btn{flex:1;padding:7px 0;border-radius:6px;font-family:var(--mono);font-size:10px;font-weight:700;cursor:pointer;letter-spacing:1px;transition:all .2s;border:1px solid var(--border2);background:transparent;color:var(--text3)}
+.eng-btn.active-anyrun{border-color:var(--accent4);background:rgba(123,97,255,0.18);color:var(--accent4)}
+.eng-btn.active-triage{border-color:var(--accent);background:rgba(0,229,255,0.1);color:var(--accent)}
+.triage-link{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--accent);border:1px solid rgba(0,229,255,0.2);border-radius:4px;padding:3px 8px;text-decoration:none;transition:all .15s;margin-top:4px}
+.triage-link:hover{background:rgba(0,229,255,0.08);border-color:var(--accent)}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
@@ -304,12 +308,23 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
         </div>
       </div>
 
-      <!-- ══════════════════════════════════════════════════
-           FIXED: ANY.RUN Sandbox
-           ══════════════════════════════════════════════════ -->
+      <!-- ══ SANDBOX — ENGINE TOGGLE ══ -->
       <div class="sidebar-section">
-        <div class="ss-hdr"><div class="ss-hdr-dot" style="background:var(--accent4)"></div>ANY.RUN Sandbox</div>
+        <div class="ss-hdr"><div class="ss-hdr-dot" style="background:var(--accent4)"></div>Sandbox Analysis</div>
         <div class="ss-body">
+
+          <!-- Engine selector -->
+          <div class="inp-group">
+            <div class="inp-label">Sandbox Engine</div>
+            <div style="display:flex;gap:6px">
+              <button id="eng-anyrun" class="eng-btn active-anyrun" onclick="selectEngine('anyrun')">ANY.RUN</button>
+              <button id="eng-triage" class="eng-btn" onclick="selectEngine('triage')">TRIAGE</button>
+            </div>
+            <div id="engine-badge" style="font-size:9px;color:var(--text3);letter-spacing:1px;text-align:center;margin-top:2px">
+              ANY.RUN · api.any.run
+            </div>
+          </div>
+
           <div class="file-inp-wrap">
             <label class="file-inp-label">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -318,12 +333,13 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
             </label>
             <div id="file-meta" style="display:none;font-size:10px;color:var(--text3);margin-top:4px;padding:4px 0"></div>
           </div>
+
           <button class="btn btn-purple" id="btn-sb" onclick="runSandbox()">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             Submit to Sandbox
           </button>
 
-          <!-- Progress block (shown during submission + polling) -->
+          <!-- Progress -->
           <div class="sb-progress" id="sb-progress">
             <div class="sb-progress-label" id="sb-progress-label">Submitting file…</div>
             <div class="sb-phase" id="sb-phase">INITIALIZING</div>
@@ -331,18 +347,19 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
             <div class="sb-task-id" id="sb-task-id-display"></div>
           </div>
 
-          <!-- Manual Task ID lookup (backup) -->
+          <!-- Triage full-report link (shown after Triage completes) -->
+          <div id="triage-report-link" style="display:none;margin-top:4px"></div>
+
+          <!-- Manual Task ID lookup -->
           <div class="sb-manual" id="sb-manual">
             <div class="sb-manual-lbl">Fetch existing task by ID</div>
             <div style="display:flex;gap:6px">
-              <input class="inp" id="sb-manual-id" placeholder="Task UUID…" style="flex:1;font-size:11px;padding:6px 8px"/>
+              <input class="inp" id="sb-manual-id" placeholder="Task/Sample ID…" style="flex:1;font-size:11px;padding:6px 8px"/>
               <button class="btn btn-sm btn-purple" onclick="fetchManualTask()" style="width:auto;flex-shrink:0">Fetch</button>
             </div>
           </div>
 
           <div id="sb-error" class="err" style="display:none"></div>
-
-          <!-- Show manual ID lookup toggle -->
           <button class="copy-btn" style="width:100%;text-align:center;margin-top:2px" onclick="toggleManual()">
             ⌨ Fetch by Task ID
           </button>
@@ -510,9 +527,9 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
         </div>
       </div>
 
-    </div><!-- /main -->
-  </div><!-- /layout -->
-</div><!-- /shell -->
+    </div>
+  </div>
+</div>
 
 <!-- REPORT MODAL -->
 <div id="report-modal" class="modal-backdrop" style="display:none" onclick="if(event.target===this)closeReport()">
@@ -534,16 +551,10 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 // ── CONFIG ────────────────────────────────────────────────────────────
 const WORKER = "https://soc-backend.johndominicklimpag.workers.dev";
 
-// ANY.RUN API phases mapped from the actual response status values
-// ANY.RUN task statuses: "waiting", "running", "completed", "failed"
-const ANYRUN_PHASES = {
-  waiting:  { label:'Waiting in queue…',   pct: 10 },
-  running:  { label:'Sandbox executing…',  pct: 55 },
-  completed:{ label:'Analysis complete',   pct:100 },
-  failed:   { label:'Task failed',         pct:100 },
-};
+// Active sandbox engine: "anyrun" | "triage"
+let sandboxEngine = "anyrun";
 
-// AbuseIPDB abuse category map
+// AbuseIPDB category map
 const ABUSE_CATEGORIES = {
   1:'DNS Compromise',2:'DNS Poisoning',3:'Fraud Orders',4:'DDoS Attack',5:'FTP Brute-Force',
   6:'Ping of Death',7:'Phishing',8:'Fraud VoIP',9:'Open Proxy',10:'Web Spam',
@@ -552,22 +563,30 @@ const ABUSE_CATEGORIES = {
   21:'Web App Attack',22:'SSH',23:'IoT Targeted'
 };
 
-// ── Global state ──────────────────────────────────────────────────────
+// Global state
 const state = {
-  vtData: null,
-  sbData: null,
-  ipData: {},
+  vtData: null, sbData: null, ipData: {}, pollTimer: null,
   sessionStats: { hashes:0, ips:0, threats:0, iocs:0 },
   iocs: { ips:[], domains:[], files:[], hashes:[], mitre:[] },
   analysisTs: null,
-  pollTimer: null,
 };
 
-// ── Clock ─────────────────────────────────────────────────────────────
-function tickClock(){
-  document.getElementById('clock').textContent = new Date().toUTCString().replace('GMT','UTC');
+// ── Engine toggle ─────────────────────────────────────────────────────
+function selectEngine(engine) {
+  sandboxEngine = engine;
+  const anyBtn  = document.getElementById('eng-anyrun');
+  const triBtn  = document.getElementById('eng-triage');
+  const badge   = document.getElementById('engine-badge');
+  anyBtn.className = 'eng-btn' + (engine === 'anyrun' ? ' active-anyrun' : '');
+  triBtn.className = 'eng-btn' + (engine === 'triage'  ? ' active-triage'  : '');
+  badge.textContent = engine === 'anyrun'
+    ? 'ANY.RUN · api.any.run'
+    : 'Triage · tria.ge  (free public API)';
 }
-setInterval(tickClock, 1000); tickClock();
+
+// ── Clock ─────────────────────────────────────────────────────────────
+function tickClock(){ document.getElementById('clock').textContent = new Date().toUTCString().replace('GMT','UTC'); }
+setInterval(tickClock,1000); tickClock();
 
 // ── Worker health ─────────────────────────────────────────────────────
 (async()=>{
@@ -578,12 +597,12 @@ setInterval(tickClock, 1000); tickClock();
       document.getElementById('hdr-status').textContent='WORKER ONLINE';
     } else {
       document.getElementById('hdr-status').textContent='DEGRADED';
-      dot.style.background='var(--warn)';dot.style.boxShadow='0 0 8px var(--warn)';
+      dot.style.background='var(--warn)'; dot.style.boxShadow='0 0 8px var(--warn)';
     }
   } catch {
     document.getElementById('hdr-status').textContent='OFFLINE';
     const dot=document.getElementById('status-dot');
-    dot.style.background='var(--danger)';dot.style.boxShadow='0 0 8px var(--danger)';dot.style.animation='none';
+    dot.style.background='var(--danger)'; dot.style.boxShadow='0 0 8px var(--danger)'; dot.style.animation='none';
   }
 })();
 
@@ -594,8 +613,7 @@ function switchTab(id){
     b.classList.toggle('active', b.textContent.trim().startsWith(map[id]||id));
   });
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  const el = document.getElementById('tab-'+id);
-  if(el) el.classList.add('active');
+  const el=document.getElementById('tab-'+id); if(el) el.classList.add('active');
 }
 
 // ── Utility ───────────────────────────────────────────────────────────
@@ -603,7 +621,7 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function show(id,v=''){const e=document.getElementById(id);if(e)e.style.display=v||'';}
 function hide(id){const e=document.getElementById(id);if(e)e.style.display='none';}
 function setEl(id,h){const e=document.getElementById(id);if(e)e.innerHTML=h;}
-function toast(msg,dur=2200){
+function toast(msg,dur=2600){
   const el=document.createElement('div');el.className='toast';el.textContent=msg;
   document.body.appendChild(el);
   setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300)},dur);
@@ -616,39 +634,34 @@ function updateStats(){
   document.getElementById('ss-iocs').textContent=state.sessionStats.iocs;
 }
 function getScoreColor(s){
-  if(s>=75) return 'var(--danger)';
-  if(s>=50) return 'var(--accent3)';
-  if(s>=25) return 'var(--warn)';
-  return 'var(--success)';
+  if(s>=75)return'var(--danger)';if(s>=50)return'var(--accent3)';if(s>=25)return'var(--warn)';return'var(--success)';
 }
 
 // ── VT Hash Scan ──────────────────────────────────────────────────────
 document.getElementById('hash-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doVTScan();});
-
 async function doVTScan(){
-  const h = document.getElementById('hash-inp').value.trim();
+  const h=document.getElementById('hash-inp').value.trim();
   if(!h){toast('⚠ Paste a hash first');return;}
-  hide('vt-mini'); hide('vt-error');
-  show('vt-loading','flex');
+  hide('vt-mini'); hide('vt-error'); show('vt-loading','flex');
   document.getElementById('btn-vt').disabled=true;
   try{
-    const r = await fetch(WORKER+'/vt/'+encodeURIComponent(h));
+    const r=await fetch(WORKER+'/vt/'+encodeURIComponent(h));
     if(!r.ok) throw new Error('Worker returned '+r.status);
-    const v = await r.json();
-    const s = v?.data?.attributes?.last_analysis_stats;
+    const v=await r.json();
+    const s=v?.data?.attributes?.last_analysis_stats;
     if(!s) throw new Error('Unexpected VT response');
-    state.vtData = v; state.analysisTs = new Date().toISOString();
-    const total = (s.malicious||0)+(s.suspicious||0)+(s.harmless||0)+(s.undetected||0);
-    const pct = total>0?Math.round((s.malicious||0)/total*100):0;
+    state.vtData=v; state.analysisTs=new Date().toISOString();
+    const total=(s.malicious||0)+(s.suspicious||0)+(s.harmless||0)+(s.undetected||0);
+    const pct=total>0?Math.round((s.malicious||0)/total*100):0;
     document.getElementById('vt-mal').textContent=s.malicious??0;
     document.getElementById('vt-sus').textContent=s.suspicious??0;
     document.getElementById('vt-cln').textContent=s.harmless??0;
     const rateEl=document.getElementById('vt-rate-pct');
     rateEl.textContent=pct+'%'; rateEl.style.color=getScoreColor(pct);
-    const verd = pct>=70?'<span class="badge b-danger">■ CRITICAL</span>':
-                 pct>=40?'<span class="badge b-danger">▲ HIGH</span>':
-                 pct>=10?'<span class="badge b-warn">◆ MEDIUM</span>':
-                 pct>0?'<span class="badge b-warn">● SUSPICIOUS</span>':'<span class="badge b-ok">✓ CLEAN</span>';
+    const verd=pct>=70?'<span class="badge b-danger">■ CRITICAL</span>':
+               pct>=40?'<span class="badge b-danger">▲ HIGH</span>':
+               pct>=10?'<span class="badge b-warn">◆ MEDIUM</span>':
+               pct>0?'<span class="badge b-warn">● SUSPICIOUS</span>':'<span class="badge b-ok">✓ CLEAN</span>';
     setEl('vt-verdict',verd);
     document.getElementById('ov-mal').textContent=s.malicious??0;
     state.sessionStats.hashes++;
@@ -657,54 +670,42 @@ async function doVTScan(){
     state.sessionStats.iocs=countIOCs();
     updateStats(); hide('vt-loading'); show('vt-mini','block');
     updateRisk(); updateIOC();
-  } catch(err){
-    hide('vt-loading'); setErr('vt-error',err.message);
-  } finally {
-    document.getElementById('btn-vt').disabled=false;
-  }
+  } catch(err){ hide('vt-loading'); setErr('vt-error',err.message); }
+  finally { document.getElementById('btn-vt').disabled=false; }
 }
 
-// ── AbuseIPDB Lookup ──────────────────────────────────────────────────
+// ── AbuseIPDB ─────────────────────────────────────────────────────────
 document.getElementById('ip-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doIPLookup();});
-
 async function doIPLookup(ip){
-  const addr = ip || document.getElementById('ip-inp').value.trim();
+  const addr=ip||document.getElementById('ip-inp').value.trim();
   if(!addr){toast('⚠ Enter an IP address');return;}
-  hide('ip-result'); hide('ip-error');
-  show('ip-loading','flex');
+  hide('ip-result'); hide('ip-error'); show('ip-loading','flex');
   document.getElementById('btn-ip').disabled=true;
   try{
-    const r = await fetch(WORKER+'/abuseipdb/'+encodeURIComponent(addr));
+    const r=await fetch(WORKER+'/abuseipdb/'+encodeURIComponent(addr));
     if(!r.ok) throw new Error('Worker returned '+r.status);
-    const j = await r.json();
+    const j=await r.json();
     if(j.errors) throw new Error(j.errors[0]?.detail||'AbuseIPDB error');
-    const d = j?.data;
-    if(!d) throw new Error('No data returned from AbuseIPDB');
+    const d=j?.data; if(!d) throw new Error('No data from AbuseIPDB');
     state.ipData[addr]=d;
     state.sessionStats.ips++;
     if((d.abuseConfidenceScore||0)>50) state.sessionStats.threats++;
     if(!state.iocs.ips.includes(addr)) state.iocs.ips.push(addr);
-    state.sessionStats.iocs=countIOCs();
-    updateStats();
-    renderIPResult('ip-result', d);
-    hide('ip-loading');
-    updateNetworkAbuseScores();
-    updateIOC();
-  } catch(err){
-    hide('ip-loading'); setErr('ip-error',err.message);
-  } finally {
-    document.getElementById('btn-ip').disabled=false;
-  }
+    state.sessionStats.iocs=countIOCs(); updateStats();
+    renderIPResult('ip-result',d); hide('ip-loading');
+    updateNetworkAbuseScores(); updateIOC();
+  } catch(err){ hide('ip-loading'); setErr('ip-error',err.message); }
+  finally { document.getElementById('btn-ip').disabled=false; }
 }
 
-function renderIPResult(containerId, d){
-  const score = d.abuseConfidenceScore||0;
-  const col = score>=75?'var(--danger)':score>=40?'var(--warn)':score>0?'var(--accent3)':'var(--success)';
-  const borderCol = score>=75?'rgba(255,45,74,0.3)':score>=40?'rgba(255,170,0,0.3)':'rgba(0,229,255,0.2)';
-  const cats = (d.reports||[]).flatMap(r=>r.categories||[]);
-  const uniqueCats = [...new Set(cats)];
-  const catBadges = uniqueCats.slice(0,6).map(c=>`<span class="badge b-warn" style="font-size:9px">${esc(ABUSE_CATEGORIES[c]||'Cat '+c)}</span>`).join('');
-  const html = `
+function renderIPResult(containerId,d){
+  const score=d.abuseConfidenceScore||0;
+  const col=score>=75?'var(--danger)':score>=40?'var(--warn)':score>0?'var(--accent3)':'var(--success)';
+  const borderCol=score>=75?'rgba(255,45,74,0.3)':score>=40?'rgba(255,170,0,0.3)':'rgba(0,229,255,0.2)';
+  const cats=(d.reports||[]).flatMap(r=>r.categories||[]);
+  const uniqueCats=[...new Set(cats)];
+  const catBadges=uniqueCats.slice(0,6).map(c=>`<span class="badge b-warn" style="font-size:9px">${esc(ABUSE_CATEGORIES[c]||'Cat '+c)}</span>`).join('');
+  const html=`
     <div class="abuse-result" style="border-color:${borderCol}">
       <div class="abuse-score-wrap">
         <div class="abuse-score-circle" style="color:${col};border-color:${col};box-shadow:0 0 16px ${col}40">${score}</div>
@@ -740,63 +741,57 @@ function renderIPResult(containerId, d){
             </div>
             <span class="badge b-warn" style="flex-shrink:0">${rep.abuseConfidenceScore}%</span>
           </div>`).join('')}
-      </div>`:'' }
+      </div>`:''}
     </div>`;
-  const el = document.getElementById(containerId);
-  if(el){ el.innerHTML = html; show(containerId); }
+  const el=document.getElementById(containerId);
+  if(el){ el.innerHTML=html; show(containerId); }
 }
 
 // ── Bulk IP check ─────────────────────────────────────────────────────
 async function bulkIPCheck(){
-  const ips = [...new Set((state.sbData?.network_connections||[]).map(n=>n.ip).filter(Boolean))];
+  const ips=[...new Set((state.sbData?.network_connections||[]).map(n=>n.ip).filter(Boolean))];
   if(!ips.length){toast('No IPs to check');return;}
-  toast('Checking '+ips.length+' IP(s) via AbuseIPDB…');
+  toast('Checking '+ips.length+' IP(s)…');
   for(const ip of ips){
     if(state.ipData[ip]) continue;
     try{
-      const r = await fetch(WORKER+'/abuseipdb/'+encodeURIComponent(ip));
+      const r=await fetch(WORKER+'/abuseipdb/'+encodeURIComponent(ip));
       if(!r.ok) continue;
-      const j = await r.json();
+      const j=await r.json();
       if(j?.data){
         state.ipData[ip]=j.data;
         state.sessionStats.ips++;
         if((j.data.abuseConfidenceScore||0)>50) state.sessionStats.threats++;
         if(!state.iocs.ips.includes(ip)) state.iocs.ips.push(ip);
       }
-    } catch(e){ console.warn('AbuseIPDB error for',ip,e); }
+    } catch(e){ console.warn('AbuseIPDB err',ip,e); }
   }
-  state.sessionStats.iocs=countIOCs();
-  updateStats();
-  updateNetworkAbuseScores();
-  updateIOC();
+  state.sessionStats.iocs=countIOCs(); updateStats();
+  updateNetworkAbuseScores(); updateIOC();
   toast('✓ IP enrichment complete');
 }
 
 function updateNetworkAbuseScores(){
   document.querySelectorAll('#net-tbody tr[data-ip]').forEach(row=>{
-    const ip = row.dataset.ip;
-    const d = state.ipData[ip];
-    if(!d) return;
-    const score = d.abuseConfidenceScore||0;
-    const col = score>=75?'var(--danger)':score>=40?'var(--warn)':score>0?'var(--accent3)':'var(--success)';
-    const abuseCell = row.querySelector('.abuse-cell');
-    if(abuseCell){
-      abuseCell.innerHTML=`<div class="risk-cell">
-        <div class="risk-bar-mini"><div class="risk-bar-fill" style="width:${score}%;background:${col}"></div></div>
-        <span style="color:${col};font-weight:700;font-size:11px">${score}%</span>
-        <span class="copy-cell" onclick="showIPDetail('${ip.replace(/'/g,"\\'")}')">🔍</span>
-      </div>`;
-    }
-    const countryCell = row.querySelector('.country-cell');
+    const ip=row.dataset.ip; const d=state.ipData[ip]; if(!d) return;
+    const score=d.abuseConfidenceScore||0;
+    const col=score>=75?'var(--danger)':score>=40?'var(--warn)':score>0?'var(--accent3)':'var(--success)';
+    const abuseCell=row.querySelector('.abuse-cell');
+    if(abuseCell) abuseCell.innerHTML=`<div class="risk-cell">
+      <div class="risk-bar-mini"><div class="risk-bar-fill" style="width:${score}%;background:${col}"></div></div>
+      <span style="color:${col};font-weight:700;font-size:11px">${score}%</span>
+      <span class="copy-cell" onclick="showIPDetail('${ip.replace(/'/g,"\\'")}')">🔍</span>
+    </div>`;
+    const countryCell=row.querySelector('.country-cell');
     if(countryCell) countryCell.textContent=(d.countryCode||'—')+(d.isTor?' 🧅':'');
   });
 }
 
 function showIPDetail(ip){
-  const d = state.ipData[ip];
-  if(!d){ doIPLookup(ip); return; }
+  const d=state.ipData[ip];
+  if(!d){doIPLookup(ip);return;}
   document.getElementById('abuse-detail-ip').textContent=ip;
-  renderIPResult('abuse-detail-body', d);
+  renderIPResult('abuse-detail-body',d);
   document.getElementById('abuse-detail-card').style.display='';
   switchTab('network');
 }
@@ -804,305 +799,200 @@ function showIPDetail(ip){
 // ── File input ────────────────────────────────────────────────────────
 function onFileChange(){
   const f=document.getElementById('f-inp').files[0];
-  if(!f){ document.getElementById('file-label-txt').textContent='Choose file for sandbox…'; hide('file-meta'); return; }
+  if(!f){document.getElementById('file-label-txt').textContent='Choose file for sandbox…';hide('file-meta');return;}
   document.getElementById('file-label-txt').textContent=f.name;
   const meta=document.getElementById('file-meta');
   meta.textContent=`${formatSize(f.size)} · ${f.type||'unknown type'}`;
   show('file-meta');
 }
 
-// ════════════════════════════════════════════════════════════════════
-//  FIXED ANY.RUN SANDBOX INTEGRATION
-//  Key fixes:
-//  1. setSbProgress() helper manages the animated progress UI
-//  2. Submission: POST multipart/form-data to WORKER+'/sandbox'
-//     Worker should forward to ANY.RUN POST /api/v1/file
-//  3. Response: expects { data: { taskid: "..." } }
-//     Also accepts alternate shapes: { taskId }, { id }, { data.id }
-//  4. Polling: GET WORKER+'/result/:taskId' every 8s (not 10s)
-//     ANY.RUN result shape: { data: { status, processes, network,
-//       modified_files, signatures, content } }
-//     Also normalises older ANY.RUN v1 shape automatically
-//  5. Status field: checks data.status OR data.state (both covered)
-//  6. Terminal states: "completed", "failed", "reported" (not just
-//     "not running")
-//  7. Max polls raised to 60 (~8 min) — analyses can run long
-//  8. normaliseAnyRunData() maps ANY.RUN fields → internal schema
-// ════════════════════════════════════════════════════════════════════
-
-function setSbProgress(label, phase, pct, taskId){
-  const prog = document.getElementById('sb-progress');
-  prog.style.display = '';
-  document.getElementById('sb-progress-label').textContent = label;
-  document.getElementById('sb-phase').textContent = phase;
-  document.getElementById('sb-progress-bar').style.width = pct+'%';
-  if(taskId !== undefined){
-    document.getElementById('sb-task-id-display').textContent = taskId ? 'Task: '+taskId : '';
-  }
+// ── Sandbox progress helpers ──────────────────────────────────────────
+function setSbProgress(label,phase,pct,taskId){
+  const prog=document.getElementById('sb-progress');
+  prog.style.display='';
+  document.getElementById('sb-progress-label').textContent=label;
+  document.getElementById('sb-phase').textContent=phase;
+  document.getElementById('sb-progress-bar').style.width=pct+'%';
+  if(taskId!==undefined) document.getElementById('sb-task-id-display').textContent=taskId?'Task: '+taskId:'';
 }
-
 function clearSbProgress(){
   document.getElementById('sb-progress').style.display='none';
   document.getElementById('sb-progress-bar').style.width='0%';
   document.getElementById('sb-task-id-display').textContent='';
 }
-
 function toggleManual(){
   const m=document.getElementById('sb-manual');
-  m.style.display = m.style.display==='none'||!m.style.display ? '' : 'none';
+  m.style.display=(m.style.display==='none'||!m.style.display)?'':'none';
 }
 
-async function fetchManualTask(){
-  const id = document.getElementById('sb-manual-id').value.trim();
-  if(!id){ toast('⚠ Enter a task ID'); return; }
-  hide('sb-error');
-  setSbProgress('Fetching task result…','LOADING',30,id);
-  try{
-    await processSandboxResult(id);
-  } catch(e){
-    clearSbProgress();
-    setErr('sb-error', 'Failed to fetch task '+id+': '+e.message);
-  }
-}
-
+// ── Submit to sandbox ─────────────────────────────────────────────────
 async function runSandbox(){
-  const f = document.getElementById('f-inp').files[0];
-  if(!f){ toast('⚠ Select a file first'); return; }
-
-  hide('sb-error');
+  const f=document.getElementById('f-inp').files[0];
+  if(!f){toast('⬡ Select a file first');return;}
+  hide('sb-error'); hide('triage-report-link');
   clearSbProgress();
-  setSbProgress('Uploading file to sandbox…', 'SUBMITTING', 5);
-  document.getElementById('btn-sb').disabled = true;
+  const engineLabel = sandboxEngine==='triage'?'Triage':'ANY.RUN';
+  setSbProgress('Uploading to '+engineLabel+'…','SUBMITTING',5);
+  document.getElementById('btn-sb').disabled=true;
 
   try{
-    // Build multipart form — worker expects 'file' field
-    const fd = new FormData();
-    fd.append('file', f);
-
-    const r = await fetch(WORKER+'/sandbox', { method:'POST', body:fd });
-
+    const fd=new FormData(); fd.append('file',f);
+    const r=await fetch(WORKER+'/sandbox/'+sandboxEngine,{method:'POST',body:fd});
     if(!r.ok){
-      // Try to get error detail from worker response body
-      let detail = '';
-      try{ const ej = await r.json(); detail = ej?.error || ej?.message || ''; } catch{}
-      throw new Error(`Submission failed (HTTP ${r.status})${detail ? ': '+detail : ''}`);
+      let detail='';
+      try{const ej=await r.json();detail=ej?.error||ej?.message||'';}catch{}
+      throw new Error(`Submission failed (HTTP ${r.status})${detail?': '+detail:''}`);
     }
-
-    const j = await r.json();
-
-    // ── Normalise task ID from multiple possible response shapes ──
-    // ANY.RUN v1: { data: { taskid: "..." } }
-    // Some workers wrap differently
-    const taskId = j?.data?.taskid
-                || j?.data?.taskId
-                || j?.data?.id
-                || j?.taskid
-                || j?.taskId
-                || j?.id
-                || null;
-
+    const j=await r.json();
+    const taskId=j?.data?.taskid||j?.data?.taskId||j?.data?.id||j?.taskid||j?.taskId||j?.id||null;
     if(!taskId){
-      // If worker already returned full result inline (some proxy setups)
-      if(j?.data?.processes || j?.data?.network || j?.data?.status === 'completed'){
-        state.sbData = normaliseAnyRunData(j.data);
-        state.analysisTs = new Date().toISOString();
-        renderAll(state.sbData);
-        clearSbProgress();
-        toast('✓ Sandbox analysis complete');
-        document.getElementById('btn-sb').disabled = false;
-        return;
+      if(j?.data?.status==='completed'){
+        state.sbData=j.data; state.analysisTs=new Date().toISOString();
+        renderAll(state.sbData); clearSbProgress();
+        toast('✓ Analysis complete');
+        document.getElementById('btn-sb').disabled=false; return;
       }
-      throw new Error('No task ID in response. Worker response: '+JSON.stringify(j).slice(0,200));
+      throw new Error('No task ID in response: '+JSON.stringify(j).slice(0,200));
     }
-
-    setSbProgress('Task queued — waiting for execution…', 'QUEUED', 15, taskId);
-    toast(`Task submitted: ${taskId}`);
-
-    // Start polling
-    startPolling(taskId);
-
+    setSbProgress('Task queued…','QUEUED',15,taskId);
+    toast(`Submitted to ${engineLabel}: ${taskId}`);
+    startPolling(taskId, sandboxEngine);
   } catch(err){
     clearSbProgress();
-    document.getElementById('btn-sb').disabled = false;
-    setErr('sb-error', err.message);
+    document.getElementById('btn-sb').disabled=false;
+    setErr('sb-error',err.message);
   }
 }
 
-// ── Polling logic ─────────────────────────────────────────────────────
-function startPolling(taskId){
+// ── Polling ───────────────────────────────────────────────────────────
+function startPolling(taskId, engine){
+  engine=engine||'anyrun';
   if(state.pollTimer) clearInterval(state.pollTimer);
+  let polls=0; const MAX_POLLS=60; const INTERVAL=8000;
+  const engineLabel=engine==='triage'?'Triage':'ANY.RUN';
 
-  let polls = 0;
-  const MAX_POLLS = 60;   // 60 × 8s = 8 minutes
-  const INTERVAL  = 8000; // ANY.RUN recommends polling every 5-10s
-
-  state.pollTimer = setInterval(async()=>{
+  state.pollTimer=setInterval(async()=>{
     polls++;
+    const pct=Math.min(15+Math.round((polls/MAX_POLLS)*75),90);
+    setSbProgress(`${engineLabel} running… (${polls}/${MAX_POLLS})`,'EXECUTING',pct,taskId);
 
-    // Animate progress: ramp from 15% to 90% during polling
-    const pct = Math.min(15 + Math.round((polls/MAX_POLLS)*75), 90);
-    setSbProgress(
-      `Sandbox running… (${polls}/${MAX_POLLS})`,
-      'EXECUTING',
-      pct,
-      taskId
-    );
-
-    if(polls > MAX_POLLS){
+    if(polls>MAX_POLLS){
       clearInterval(state.pollTimer);
       clearSbProgress();
-      document.getElementById('btn-sb').disabled = false;
-      setErr('sb-error',
-        `Analysis timed out after ${MAX_POLLS} polls (~${Math.round(MAX_POLLS*INTERVAL/60000)} min). ` +
-        `Task ID: ${taskId} — use "Fetch by Task ID" to retry later.`
-      );
+      document.getElementById('btn-sb').disabled=false;
+      setErr('sb-error',`Timed out after ${MAX_POLLS} polls. Task: ${taskId} — use "Fetch by Task ID" to retry.`);
       return;
     }
 
     try{
-      const r = await fetch(WORKER+'/result/'+encodeURIComponent(taskId));
+      const r=await fetch(WORKER+'/result/'+engine+'/'+encodeURIComponent(taskId));
       if(!r.ok){
-        // 404 / 202 "still processing" are normal early on — keep polling
-        if(r.status === 404 || r.status === 202) return;
-        // Other errors might be transient — keep polling unless it's auth
-        if(r.status === 401 || r.status === 403){
+        if(r.status===404||r.status===202) return;
+        if(r.status===401||r.status===403){
           clearInterval(state.pollTimer);
-          document.getElementById('btn-sb').disabled = false;
-          setErr('sb-error', `Auth error fetching result (HTTP ${r.status}). Check API key.`);
+          document.getElementById('btn-sb').disabled=false;
+          setErr('sb-error',`Auth error (HTTP ${r.status}). Check API key.`);
         }
         return;
       }
+      const result=await r.json();
+      const status=(result?.data?.status||result?.data?.state||result?.status||'unknown').toLowerCase();
 
-      const result = await r.json();
-
-      // ── Detect terminal state ──────────────────────────────────
-      // ANY.RUN v1 result: result.data.status  OR  result.data.state
-      // Possible values: "waiting", "running", "completed", "failed", "reported"
-      const status = (
-        result?.data?.status  ||
-        result?.data?.state   ||
-        result?.status        ||
-        'unknown'
-      ).toLowerCase();
-
-      if(status === 'completed' || status === 'reported'){
+      if(status==='completed'||status==='reported'){
         clearInterval(state.pollTimer);
-        state.sbData = normaliseAnyRunData(result?.data || result);
-        state.analysisTs = new Date().toISOString();
-        setSbProgress('Analysis complete!', 'COMPLETE', 100, taskId);
-        setTimeout(()=>{ clearSbProgress(); document.getElementById('btn-sb').disabled = false; }, 1500);
-        renderAll(state.sbData);
-        toast('✓ Sandbox analysis complete');
-        return;
+        // Triage data already normalised by worker; ANY.RUN needs normalising
+        state.sbData=engine==='triage' ? result.data : normaliseAnyRunData(result?.data||result);
+        state.analysisTs=new Date().toISOString();
+        setSbProgress('Analysis complete!','COMPLETE',100,taskId);
+        setTimeout(()=>{clearSbProgress();document.getElementById('btn-sb').disabled=false;},1500);
+        // Show Triage full-report link
+        if(engine==='triage'&&result?.data?.triage_url){
+          const linkEl=document.getElementById('triage-report-link');
+          linkEl.innerHTML=`<a href="${esc(result.data.triage_url)}" target="_blank" class="triage-link">
+            ↗ View full Triage report
+          </a>`;
+          show('triage-report-link');
+          toast('✓ Triage complete');
+        } else {
+          toast('✓ Sandbox analysis complete');
+        }
+        // Show Triage malware families if present
+        if(engine==='triage'&&result?.data?.triage_families?.length){
+          toast('🦠 Families: '+result.data.triage_families.join(', '),4000);
+        }
+        renderAll(state.sbData); return;
       }
 
-      if(status === 'failed'){
-        clearInterval(state.pollTimer);
-        clearSbProgress();
-        document.getElementById('btn-sb').disabled = false;
-        const reason = result?.data?.reason || result?.data?.error || 'Unknown reason';
-        setErr('sb-error', `Sandbox task failed: ${reason} (Task: ${taskId})`);
-        return;
+      if(status==='failed'){
+        clearInterval(state.pollTimer); clearSbProgress();
+        document.getElementById('btn-sb').disabled=false;
+        setErr('sb-error',`Sandbox task failed (Task: ${taskId})`); return;
       }
 
-      // "waiting" or "running" → keep polling, update phase label
-      if(status === 'waiting'){
-        setSbProgress('Waiting in queue…', 'QUEUED', pct, taskId);
-      }
+      // Show Triage's granular status in the phase label
+      const rawStatus=result?.data?.triage_status||result?.data?.status||status;
+      setSbProgress(`${engineLabel} running…`,rawStatus.toUpperCase(),pct,taskId);
 
-    } catch(e){
-      // Network error during poll — non-fatal, keep trying
-      console.warn('[sandbox poll error]', e.message);
-    }
-
+    } catch(e){ console.warn('[poll error]',e.message); }
   }, INTERVAL);
 }
 
+// ── Manual task fetch ─────────────────────────────────────────────────
+async function fetchManualTask(){
+  const id=document.getElementById('sb-manual-id').value.trim();
+  if(!id){toast('⬡ Enter a task ID');return;}
+  hide('sb-error');
+  setSbProgress('Fetching task result…','LOADING',30,id);
+  try{ await processSandboxResult(id,sandboxEngine); }
+  catch(e){ clearSbProgress(); setErr('sb-error','Failed: '+e.message); }
+}
+
+async function processSandboxResult(taskId, engine){
+  engine=engine||sandboxEngine||'anyrun';
+  const r=await fetch(WORKER+'/result/'+engine+'/'+encodeURIComponent(taskId));
+  if(!r.ok) throw new Error(`HTTP ${r.status}`);
+  const result=await r.json();
+  const status=(result?.data?.status||result?.data?.state||result?.status||'').toLowerCase();
+  if(status==='running'||status==='waiting'){
+    clearSbProgress(); toast(`Task ${taskId} still running — resuming poll…`);
+    setSbProgress('Resumed polling…','EXECUTING',20,taskId);
+    document.getElementById('btn-sb').disabled=true;
+    startPolling(taskId,engine); return;
+  }
+  if(status==='failed'){ clearSbProgress(); throw new Error('Task failed'); }
+  state.sbData=engine==='triage' ? result.data : normaliseAnyRunData(result?.data||result);
+  state.analysisTs=new Date().toISOString();
+  renderAll(state.sbData); clearSbProgress(); toast('✓ Task result loaded');
+}
+
 // ── Normalise ANY.RUN response → internal schema ──────────────────────
-// ANY.RUN v1 analysis result shape (relevant fields):
-//   data.processes[]   → { pid, ppid, name, image, cmd, ... }
-//   data.network[]     → { ip, domain, port, protocol, ... }  (or data.connections[])
-//   data.modified_files[] (or data.dropped_files[], data.files[])
-//   data.signatures[]  → MITRE-tagged signatures
-//   data.content.screenshots[] → { url }
-//   data.verdict       → { score, threats, ... }
-//
-// Internal schema expected by renderAll():
-//   process_list[]     → { name, pid, parent }
-//   network_connections[] → { ip, host, port, protocol }
-//   files_created[]    → { name, size }
-//   attack_techniques[] → { id, name, description }
-//   screenshots[]      → [{ url }]
 function normaliseAnyRunData(d){
-  if(!d || typeof d !== 'object') return {};
-
-  // ── Process list ──
-  const rawProcs = d.processes || d.process_list || d.processList || [];
-  const process_list = rawProcs.map(p=>({
-    name:   p.name || p.image || p.fileName || 'unknown',
-    pid:    p.pid  || p.ProcessId || '',
-    parent: p.parentName || p.ppid || p.parent_name || '',
-  }));
-
-  // ── Network connections ──
-  const rawNet = d.network || d.network_connections || d.connections || d.networkConnections || [];
-  const network_connections = rawNet.map(n=>({
-    ip:       n.ip   || n.dst_ip   || n.dest_ip   || '',
-    host:     n.host || n.domain   || n.hostname  || n.dst_host || '',
-    port:     n.port || n.dst_port || n.dest_port || '',
-    protocol: n.protocol || n.proto || 'TCP',
-  })).filter(n=>n.ip||n.host);
-
-  // ── Dropped / modified files ──
-  const rawFiles = d.modified_files || d.dropped_files || d.files_created || d.files || [];
-  const files_created = rawFiles.map(f=>({
-    name: f.name || f.fileName || f.path || 'unknown',
-    size: f.size || f.fileSize || 0,
-  }));
-
-  // ── MITRE / attack techniques ──
-  // ANY.RUN signatures often contain MITRE references
-  const rawSigs = d.signatures || d.attack_techniques || d.mitre || [];
-  const attack_techniques = rawSigs.map(s=>{
-    // Try to extract ATT&CK ID from various fields
-    const id = s.mitre_attack || s.technique_id || s.id ||
-               (s.tags&&s.tags.find&&s.tags.find(t=>/^T\d{4}/.test(t))) || '';
-    return {
-      id:          id,
-      name:        s.name || s.title || s.rule_name || '',
-      description: s.description || s.info || '',
-    };
+  if(!d||typeof d!=='object') return {};
+  const rawProcs=d.processes||d.process_list||d.processList||[];
+  const process_list=rawProcs.map(p=>({name:p.name||p.image||p.fileName||'unknown',pid:p.pid||p.ProcessId||'',parent:p.parentName||p.ppid||p.parent_name||''}));
+  const rawNet=d.network||d.network_connections||d.connections||d.networkConnections||[];
+  const network_connections=rawNet.map(n=>({ip:n.ip||n.dst_ip||n.dest_ip||'',host:n.host||n.domain||n.hostname||n.dst_host||'',port:n.port||n.dst_port||n.dest_port||'',protocol:n.protocol||n.proto||'TCP'})).filter(n=>n.ip||n.host);
+  const rawFiles=d.modified_files||d.dropped_files||d.files_created||d.files||[];
+  const files_created=rawFiles.map(f=>({name:f.name||f.fileName||f.path||'unknown',size:f.size||f.fileSize||0}));
+  const rawSigs=d.signatures||d.attack_techniques||d.mitre||[];
+  const attack_techniques=rawSigs.map(s=>{
+    const id=s.mitre_attack||s.technique_id||s.id||(s.tags&&s.tags.find&&s.tags.find(t=>/^T\d{4}/.test(t)))||'';
+    return {id,name:s.name||s.title||s.rule_name||'',description:s.description||s.info||''};
   }).filter(t=>t.id||t.name);
-
-  // ── Screenshots ──
-  const rawScreenshots = (d.content && d.content.screenshots)
-    || d.screenshots
-    || d.screen_shots
-    || [];
-  const screenshots = rawScreenshots.map(s=>({
-    url: s.url || s.src || s.link || (typeof s==='string'?s:''),
-  })).filter(s=>s.url);
-
-  return { process_list, network_connections, files_created, attack_techniques, screenshots };
+  const rawSS=(d.content&&d.content.screenshots)||d.screenshots||d.screen_shots||[];
+  const screenshots=rawSS.map(s=>({url:s.url||s.src||s.link||(typeof s==='string'?s:'')})).filter(s=>s.url);
+  return {process_list,network_connections,files_created,attack_techniques,screenshots};
 }
 
 // ── Render all sandbox results ────────────────────────────────────────
 function renderAll(d){
-  renderProcessTree(d);
-  renderDroppedFiles(d);
-  renderMITRE(d);
-  renderNetwork(d);
-  renderScreenshot(d);
-  detectAlerts(d);
-  updateRisk();
-  renderKillChain(d);
-  renderContainment(d);
-  updateIOC();
+  renderProcessTree(d); renderDroppedFiles(d); renderMITRE(d);
+  renderNetwork(d); renderScreenshot(d); detectAlerts(d);
+  updateRisk(); renderKillChain(d); renderContainment(d); updateIOC();
   document.getElementById('ov-conn').textContent=(d.network_connections||[]).length;
   document.getElementById('ov-files').textContent=(d.files_created||[]).length;
   document.getElementById('ov-mitre').textContent=(d.attack_techniques||[]).length;
-  bulkIPCheck();
-  switchTab('sandbox');
+  bulkIPCheck(); switchTab('sandbox');
 }
 
 function renderProcessTree(d){
@@ -1158,7 +1048,7 @@ function renderNetwork(d){
   state.iocs.domains=[...new Set(conns.map(n=>n.host).filter(Boolean))];
   setEl('net-tbody',conns.map(n=>`
     <tr data-ip="${esc(n.ip||'')}">
-      <td class="c-ip" style="cursor:pointer" onclick="showIPDetail('${(n.ip||'').replace(/'/g,"\\'")}')">${esc(n.ip||'—')}</td>
+      <td class="c-ip" style="cursor:pointer" onclick="showIPDetail('${(n.ip||'').replace(/'/g,"\\'")}')"> ${esc(n.ip||'—')}</td>
       <td class="c-host">${esc(n.host||'—')}</td>
       <td class="c-port">${esc(String(n.port||'—'))}</td>
       <td style="color:var(--text3);font-size:10px">${esc(n.protocol||'TCP')}</td>
@@ -1187,6 +1077,8 @@ function detectAlerts(d){
   if((d.files_created||[]).length) alerts.push({msg:`Persistence — ${d.files_created.length} file(s) dropped to disk`,sev:'HIGH'});
   if((d.network_connections||[]).length) alerts.push({msg:`C2 activity — ${d.network_connections.length} outbound connection(s)`,sev:'CRITICAL'});
   (d.attack_techniques||[]).forEach(t=>alerts.push({msg:`ATT&CK ${t.id}: ${t.name||''}`,sev:'HIGH'}));
+  // Triage-specific: malware families
+  if(d.triage_families&&d.triage_families.length) alerts.push({msg:`Triage identified: ${d.triage_families.join(', ')}`,sev:'CRITICAL'});
   state.sessionStats.threats=Math.max(state.sessionStats.threats,alerts.filter(a=>a.sev==='CRITICAL').length);
   updateStats();
   setEl('alert-list',alerts.map(a=>{
@@ -1196,14 +1088,15 @@ function detectAlerts(d){
 }
 
 function updateRisk(){
-  let score=0;
-  const d=state.sbData||{};
+  let score=0; const d=state.sbData||{};
   const vt=state.vtData?.data?.attributes?.last_analysis_stats;
   if(vt){
     const t=(vt.malicious||0)+(vt.suspicious||0)+(vt.harmless||0)+(vt.undetected||0);
     const pct=t>0?Math.round((vt.malicious||0)/t*100):0;
     score+=Math.round(pct*0.4);
   }
+  // Triage gives a 0-10 score — weight it
+  if(d.triage_score!=null) score+=Math.round(d.triage_score*8);
   if((d.files_created||[]).length) score+=20;
   if((d.network_connections||[]).length) score+=25;
   if((d.attack_techniques||[]).length) score+=Math.min(d.attack_techniques.length*5,15);
@@ -1239,21 +1132,24 @@ function renderContainment(d){
   const steps=[];
   if((d.network_connections||[]).length){
     const ips=d.network_connections.map(n=>n.ip).filter(Boolean);
-    steps.push({i:'ci-red',icon:'🔇',t:'Isolate Host Immediately',s:'Quarantine the affected system from the network to prevent lateral movement and further C2 communication.',p:'cp-critical'});
+    steps.push({i:'ci-red',icon:'🔇',t:'Isolate Host Immediately',s:'Quarantine the affected system from the network to prevent lateral movement and C2.',p:'cp-critical'});
     steps.push({i:'ci-red',icon:'⛔',t:`Block ${ips.length} C2 IP(s)`,s:ips.slice(0,4).join(', ')+(ips.length>4?` +${ips.length-4} more`:''),p:'cp-critical'});
   }
   if((d.process_list||[]).some(p=>(p.name||'').toLowerCase().includes('lsass'))){
-    steps.push({i:'ci-warn',icon:'🔑',t:'Rotate All Credentials',s:'LSASS access detected — assume credential compromise. Reset all passwords, invalidate Kerberos tickets and OAuth tokens.',p:'cp-critical'});
+    steps.push({i:'ci-warn',icon:'🔑',t:'Rotate All Credentials',s:'LSASS access detected — assume credential compromise. Reset passwords, invalidate tickets.',p:'cp-critical'});
+  }
+  if(d.triage_families&&d.triage_families.length){
+    steps.push({i:'ci-red',icon:'🦠',t:'Known Malware Family Detected',s:`Triage identified: ${d.triage_families.join(', ')}. Check threat intel feeds for TTPs and IOC sets specific to this family.`,p:'cp-critical'});
   }
   if((d.files_created||[]).length){
-    steps.push({i:'ci-warn',icon:'🗂',t:'Remove Persistence Mechanisms',s:`Delete ${d.files_created.length} dropped file(s). Audit startup entries, scheduled tasks, registry Run keys, and WMI subscriptions.`,p:'cp-high'});
+    steps.push({i:'ci-warn',icon:'🗂',t:'Remove Persistence Mechanisms',s:`Delete ${d.files_created.length} dropped file(s). Audit startup entries, scheduled tasks, and registry Run keys.`,p:'cp-high'});
   }
   if((d.attack_techniques||[]).length){
-    steps.push({i:'ci-warn',icon:'🎯',t:'Hunt for Lateral Movement',s:'ATT&CK techniques detected. Investigate adjacent hosts for similar IOCs. Check for Pass-the-Hash, token impersonation.',p:'cp-high'});
+    steps.push({i:'ci-warn',icon:'🎯',t:'Hunt for Lateral Movement',s:'ATT&CK techniques detected. Investigate adjacent hosts for similar IOCs.',p:'cp-high'});
   }
-  steps.push({i:'ci-blue',icon:'📸',t:'Forensic Disk & Memory Image',s:'Capture full disk and memory images before remediation. Preserve chain of custody for legal proceedings.',p:'cp-med'});
-  steps.push({i:'ci-blue',icon:'📡',t:'Push IOCs to Detection Stack',s:'Export IOC blocklist to SIEM, EDR, and firewall rules. Update threat intel feeds with new indicators.',p:'cp-med'});
-  steps.push({i:'ci-purple',icon:'📋',t:'File Incident Report',s:'Document timeline, affected systems, IOCs, and remediation steps. Notify stakeholders and escalate as required.',p:'cp-med'});
+  steps.push({i:'ci-blue',icon:'📸',t:'Forensic Disk & Memory Image',s:'Capture full disk and memory images before remediation.',p:'cp-med'});
+  steps.push({i:'ci-blue',icon:'📡',t:'Push IOCs to Detection Stack',s:'Export IOC blocklist to SIEM, EDR, and firewall rules.',p:'cp-med'});
+  steps.push({i:'ci-purple',icon:'📋',t:'File Incident Report',s:'Document timeline, affected systems, IOCs, and remediation steps.',p:'cp-med'});
   setEl('contain-grid',steps.map(s=>`
     <div class="contain-card">
       <div class="contain-icon ${s.i}">${s.icon}</div>
@@ -1266,9 +1162,7 @@ function renderContainment(d){
 }
 
 // ── IOC ───────────────────────────────────────────────────────────────
-function countIOCs(){
-  return state.iocs.ips.length+state.iocs.domains.length+state.iocs.files.length+state.iocs.hashes.length+state.iocs.mitre.length;
-}
+function countIOCs(){return state.iocs.ips.length+state.iocs.domains.length+state.iocs.files.length+state.iocs.hashes.length+state.iocs.mitre.length;}
 
 function updateIOC(){
   state.sessionStats.iocs=countIOCs(); updateStats();
@@ -1293,8 +1187,7 @@ function updateIOC(){
           const abuseScore=ipData?.abuseConfidenceScore;
           const ab=abuseScore!=null?`<span class="badge ${abuseScore>=75?'b-danger':abuseScore>=40?'b-warn':'b-ok'}" style="font-size:9px">${abuseScore}% abuse</span>`:'';
           return `<div class="ioc-row">
-            <span class="ioc-row-val">${esc(v)}</span>
-            ${ab}
+            <span class="ioc-row-val">${esc(v)}</span>${ab}
             <span class="badge ${c.sev}" style="font-size:9px">IOC</span>
             <span class="copy-cell" onclick="navigator.clipboard.writeText('${v.replace(/'/g,"\\'")}').then(()=>toast('Copied'))">Copy</span>
           </div>`;
@@ -1306,8 +1199,9 @@ function updateIOC(){
 
 function updateRawIOC(){
   const ts=new Date().toISOString();
-  const lines=[`; JDLThreatIntel IOC Export`,`; Generated: ${ts}`,`;`];
-  if(state.iocs.hashes.length){ lines.push('; === HASH INDICATORS ==='); state.iocs.hashes.forEach(h=>lines.push(`HASH\t${h}`)); }
+  const engine=state.sbData?.engine||'anyrun';
+  const lines=[`; JDLThreatIntel IOC Export`,`; Generated: ${ts}`,`; Sandbox: ${engine.toUpperCase()}`,`;`];
+  if(state.iocs.hashes.length){lines.push('; === HASH INDICATORS ===');state.iocs.hashes.forEach(h=>lines.push(`HASH\t${h}`));}
   if(state.iocs.ips.length){
     lines.push('; === IP BLOCKLIST ===');
     state.iocs.ips.forEach(ip=>{
@@ -1315,9 +1209,9 @@ function updateRawIOC(){
       lines.push(`BLOCK\tIP\t${ip}${d?`\t# Score:${d.abuseConfidenceScore} ${d.countryCode||''} ${d.isp||''}`:''}`)
     });
   }
-  if(state.iocs.domains.length){ lines.push('; === DOMAIN BLOCKLIST ==='); state.iocs.domains.forEach(h=>lines.push(`BLOCK\tDOMAIN\t${h}`)); }
-  if(state.iocs.files.length){ lines.push('; === DROPPED FILES ==='); state.iocs.files.forEach(f=>lines.push(`FILE\t${f}`)); }
-  if(state.iocs.mitre.length){ lines.push('; === MITRE ATT&CK ==='); state.iocs.mitre.forEach(m=>lines.push(`MITRE\t${m}`)); }
+  if(state.iocs.domains.length){lines.push('; === DOMAIN BLOCKLIST ===');state.iocs.domains.forEach(h=>lines.push(`BLOCK\tDOMAIN\t${h}`));}
+  if(state.iocs.files.length){lines.push('; === DROPPED FILES ===');state.iocs.files.forEach(f=>lines.push(`FILE\t${f}`));}
+  if(state.iocs.mitre.length){lines.push('; === MITRE ATT&CK ===');state.iocs.mitre.forEach(m=>lines.push(`MITRE\t${m}`));}
   document.getElementById('ioc-raw').textContent=lines.join('\n');
 }
 
@@ -1336,7 +1230,7 @@ function downloadIOC(fmt){
     content=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
     mime='text/csv';
   } else if(fmt==='json'){
-    content=JSON.stringify({generated:new Date().toISOString(),iocs:{
+    content=JSON.stringify({generated:new Date().toISOString(),sandbox:state.sbData?.engine||'unknown',iocs:{
       ips:state.iocs.ips.map(ip=>({ip,abuseScore:state.ipData[ip]?.abuseConfidenceScore,country:state.ipData[ip]?.countryCode,isp:state.ipData[ip]?.isp})),
       domains:state.iocs.domains,files:state.iocs.files,hashes:state.iocs.hashes,mitre:state.iocs.mitre
     }},null,2);
@@ -1358,9 +1252,9 @@ function copyContainment(){
   navigator.clipboard.writeText(items).then(()=>toast('✓ Steps copied'));
 }
 
-// ── Report Generation ─────────────────────────────────────────────────
-function openReport(){ buildReport(); document.getElementById('report-modal').style.display='flex'; }
-function closeReport(){ document.getElementById('report-modal').style.display='none'; }
+// ── Report ────────────────────────────────────────────────────────────
+function openReport(){buildReport();document.getElementById('report-modal').style.display='flex';}
+function closeReport(){document.getElementById('report-modal').style.display='none';}
 
 function buildReport(){
   const ts=state.analysisTs||new Date().toISOString();
@@ -1371,25 +1265,29 @@ function buildReport(){
   const pct=total>0?Math.round((stats.malicious||0)/total*100):0;
   const riskNum=parseInt(document.getElementById('risk-num').textContent)||0;
   const riskLbl=document.getElementById('risk-lbl').textContent||'UNKNOWN';
+  const engine=(d.engine||sandboxEngine||'anyrun').toUpperCase();
   const html=`
     <div class="rpt-title">Incident Analysis Report</div>
     <div class="rpt-meta">
-      <span>🕒 Generated: ${new Date(ts).toLocaleString()}</span>
-      <span>📦 Platform: JDLThreatIntel v2.0</span>
-      <span>👤 Analyst: SOC Investigator</span>
+      <span>🕒 ${new Date(ts).toLocaleString()}</span>
+      <span>📦 JDLThreatIntel v2.0</span>
+      <span>🧰 Sandbox: ${engine}</span>
+      ${d.triage_url?`<span><a href="${esc(d.triage_url)}" target="_blank" style="color:var(--accent)">↗ Full Triage Report</a></span>`:''}
     </div>
     <div class="rpt-section">
       <div class="rpt-sh">Executive Summary</div>
       <div class="rpt-grid2">
         <div class="rpt-kv"><div class="rpt-kv-k">Threat Score</div><div class="rpt-kv-v" style="font-size:22px;color:${getScoreColor(riskNum)}">${riskNum}/100 — ${riskLbl}</div></div>
-        <div class="rpt-kv"><div class="rpt-kv-k">Analysis Timestamp</div><div class="rpt-kv-v">${new Date(ts).toUTCString()}</div></div>
-        <div class="rpt-kv"><div class="rpt-kv-k">VT Detection Rate</div><div class="rpt-kv-v" style="color:${getScoreColor(pct)}">${pct}% (${stats?.malicious??'—'} / ${total||'—'} engines)</div></div>
+        <div class="rpt-kv"><div class="rpt-kv-k">Timestamp</div><div class="rpt-kv-v">${new Date(ts).toUTCString()}</div></div>
+        <div class="rpt-kv"><div class="rpt-kv-k">VT Detection</div><div class="rpt-kv-v" style="color:${getScoreColor(pct)}">${pct}% (${stats?.malicious??'—'} / ${total||'—'} engines)</div></div>
         <div class="rpt-kv"><div class="rpt-kv-k">Kill Chain Phase</div><div class="rpt-kv-v">${document.querySelector('.kc.kc-active')?.textContent?.trim()||'Unknown'}</div></div>
+        ${d.triage_score!=null?`<div class="rpt-kv"><div class="rpt-kv-k">Triage Score</div><div class="rpt-kv-v" style="color:${getScoreColor(d.triage_score*10)}">${d.triage_score}/10</div></div>`:''}
+        ${d.triage_families?.length?`<div class="rpt-kv"><div class="rpt-kv-k">Malware Families</div><div class="rpt-kv-v" style="color:var(--danger)">${esc(d.triage_families.join(', '))}</div></div>`:''}
       </div>
     </div>
     ${(d.attack_techniques||[]).length?`
     <div class="rpt-section">
-      <div class="rpt-sh">MITRE ATT&CK Techniques (${d.attack_techniques.length})</div>
+      <div class="rpt-sh">MITRE ATT&CK (${d.attack_techniques.length})</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px">
         ${d.attack_techniques.map(t=>`<span class="badge b-orange">${esc(t.id||'')} ${esc(t.name||'')}</span>`).join('')}
       </div>
@@ -1397,22 +1295,16 @@ function buildReport(){
     ${state.iocs.ips.length||state.iocs.domains.length?`
     <div class="rpt-section">
       <div class="rpt-sh">Indicators of Compromise</div>
-      ${state.iocs.ips.length?`
-      <div style="margin-bottom:10px">
-        <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">IP Addresses (${state.iocs.ips.length})</div>
-        ${state.iocs.ips.map(ip=>{const d=state.ipData[ip];return `<div class="rpt-kv" style="margin-bottom:4px;display:flex;align-items:center;gap:10px">
-          <span style="color:var(--accent);font-weight:700">${esc(ip)}</span>
-          ${d?`<span class="badge ${(d.abuseConfidenceScore||0)>=75?'b-danger':'b-warn'}" style="font-size:9px">${d.abuseConfidenceScore}% abuse · ${d.countryCode||'?'} · ${esc(d.isp||'?')}</span>`:''}</div>`;}).join('')}
+      ${state.iocs.ips.length?`<div style="margin-bottom:10px">
+        <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">IPs (${state.iocs.ips.length})</div>
+        ${state.iocs.ips.map(ip=>{const d=state.ipData[ip];return `<div class="rpt-kv" style="margin-bottom:4px;display:flex;align-items:center;gap:10px"><span style="color:var(--accent);font-weight:700">${esc(ip)}</span>${d?`<span class="badge ${(d.abuseConfidenceScore||0)>=75?'b-danger':'b-warn'}" style="font-size:9px">${d.abuseConfidenceScore}% · ${d.countryCode||'?'} · ${esc(d.isp||'?')}</span>`:''}</div>`;}).join('')}
       </div>`:''}
-      ${state.iocs.domains.length?`
-      <div>
-        <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Domains (${state.iocs.domains.length})</div>
-        ${state.iocs.domains.map(h=>`<div style="color:var(--accent3);font-size:11px;margin-bottom:3px">${esc(h)}</div>`).join('')}
-      </div>`:''}
+      ${state.iocs.domains.length?`<div><div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Domains (${state.iocs.domains.length})</div>
+        ${state.iocs.domains.map(h=>`<div style="color:var(--accent3);font-size:11px;margin-bottom:3px">${esc(h)}</div>`).join('')}</div>`:''}
     </div>`:''}
     ${(d.process_list||[]).length?`
     <div class="rpt-section">
-      <div class="rpt-sh">Process Activity (${d.process_list.length} processes)</div>
+      <div class="rpt-sh">Processes (${d.process_list.length})</div>
       <div style="display:flex;flex-wrap:wrap;gap:5px">
         ${d.process_list.map(p=>{const flagged=['lsass','mimikatz','powershell','cmd'].some(k=>(p.name||'').toLowerCase().includes(k));return `<span class="badge ${flagged?'b-danger':'b-info'}">${esc(p.name||'?')}</span>`;}).join('')}
       </div>
@@ -1437,52 +1329,24 @@ function copyReport(){
   const text=[...document.getElementById('report-body').querySelectorAll('*')].map(e=>e.textContent.trim()).filter(Boolean).join('\n');
   navigator.clipboard.writeText(text).then(()=>toast('✓ Report copied'));
 }
-
 function downloadReport(){
   const body=document.getElementById('report-body').innerHTML;
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Incident Report — JDLThreatIntel</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
-  <style>:root{--bg:#05080f;--bg2:#080d1a;--bg3:#0c1222;--bg4:#111a2e;--border:#1a2640;--border2:#243556;--accent:#00e5ff;--accent3:#ff5533;--accent4:#7b61ff;--success:#00e676;--danger:#ff2d4a;--warn:#ffaa00;--text:#dce8ff;--text2:#7a94cc;--text3:#3d5282;--mono:'JetBrains Mono',monospace;--display:'Syne',sans-serif;}body{font-family:var(--mono);background:var(--bg);color:var(--text);padding:40px;max-width:900px;margin:0 auto}.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600}.b-danger{background:rgba(255,45,74,0.1);color:var(--danger);border:1px solid rgba(255,45,74,0.3)}.b-warn{background:rgba(255,170,0,0.1);color:var(--warn);border:1px solid rgba(255,170,0,0.3)}.b-ok{background:rgba(0,230,118,0.08);color:var(--success);border:1px solid rgba(0,230,118,0.2)}.b-info{background:rgba(0,229,255,0.08);color:var(--accent);border:1px solid rgba(0,229,255,0.2)}.b-orange{background:rgba(255,85,51,0.1);color:var(--accent3);border:1px solid rgba(255,85,51,0.3)}.rpt-title{font-family:var(--display);font-size:22px;font-weight:800;margin-bottom:4px}.rpt-meta{font-size:11px;color:var(--text3);margin-bottom:20px}.rpt-sh{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.rpt-kv{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px;font-size:11px}.rpt-kv-k{color:var(--text3);font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}.rpt-kv-v{color:var(--text);font-weight:600}.rpt-ioc-block{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:11px;line-height:1.8;color:var(--success);white-space:pre;overflow-x:auto}.empty{color:var(--text3);text-align:center;padding:20px;border:1px dashed var(--border);border-radius:6px}</style>
+  <style>:root{--bg:#05080f;--bg2:#080d1a;--bg3:#0c1222;--bg4:#111a2e;--border:#1a2640;--border2:#243556;--accent:#00e5ff;--accent3:#ff5533;--accent4:#7b61ff;--success:#00e676;--danger:#ff2d4a;--warn:#ffaa00;--text:#dce8ff;--text2:#7a94cc;--text3:#3d5282;--mono:'JetBrains Mono',monospace;--display:'Syne',sans-serif;}body{font-family:var(--mono);background:var(--bg);color:var(--text);padding:40px;max-width:900px;margin:0 auto}.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600}.b-danger{background:rgba(255,45,74,0.1);color:var(--danger);border:1px solid rgba(255,45,74,0.3)}.b-warn{background:rgba(255,170,0,0.1);color:var(--warn);border:1px solid rgba(255,170,0,0.3)}.b-ok{background:rgba(0,230,118,0.08);color:var(--success);border:1px solid rgba(0,230,118,0.2)}.b-info{background:rgba(0,229,255,0.08);color:var(--accent);border:1px solid rgba(0,229,255,0.2)}.b-orange{background:rgba(255,85,51,0.1);color:var(--accent3);border:1px solid rgba(255,85,51,0.3)}.b-purple{background:rgba(123,97,255,0.1);color:var(--accent4);border:1px solid rgba(123,97,255,0.3)}.rpt-title{font-family:var(--display);font-size:22px;font-weight:800;margin-bottom:4px}.rpt-meta{font-size:11px;color:var(--text3);margin-bottom:20px}.rpt-sh{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}.rpt-kv{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px;margin-bottom:6px;font-size:11px}.rpt-kv-k{color:var(--text3);font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}.rpt-kv-v{color:var(--text);font-weight:600}.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rpt-ioc-block{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:11px;white-space:pre;overflow-x:auto;color:var(--success)}.empty{text-align:center;padding:20px;border:1px dashed var(--border);border-radius:6px;color:var(--text3)}</style>
   </head><body>${body}</body></html>`;
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
   a.download=`incident_report_${Date.now()}.html`; a.click();
   toast('✓ Report downloaded');
 }
-
 function printReport(){
   const w=window.open('','_blank');
   const body=document.getElementById('report-body').innerHTML;
   w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Incident Report</title>
   <style>*{box-sizing:border-box}body{font-family:'JetBrains Mono',monospace;background:#fff;color:#111;padding:30px;max-width:900px;margin:0 auto}.badge{display:inline-block;padding:2px 6px;border-radius:3px;font-size:10px;border:1px solid #ccc;margin:2px}.b-danger{background:#fee;border-color:#f66;color:#c00}.b-warn{background:#ffe;border-color:#fa0;color:#960}.b-ok{background:#efe;border-color:#6a6;color:#060}.b-info{background:#e6f7ff;border-color:#08c;color:#036}.b-orange{background:#fef0e6;border-color:#f63;color:#c31}.b-purple{background:#f0eeff;border-color:#96a;color:#639}.rpt-sh{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#666;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #ddd;margin-top:20px}.rpt-kv{background:#f9f9f9;border:1px solid #ddd;border-radius:4px;padding:8px;margin-bottom:6px}.rpt-kv-k{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#999;margin-bottom:2px}.rpt-kv-v{color:#111;font-weight:600}.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rpt-ioc-block{background:#f5f5f5;padding:12px;border-radius:4px;font-size:11px;white-space:pre;overflow-x:auto}.empty{text-align:center;padding:20px;border:1px dashed #ddd;border-radius:6px;color:#999}</style>
   </head><body>${body}</body></html>`);
-  w.document.close();
-  setTimeout(()=>w.print(),500);
-}
-
-// ── Fetch result by task ID (manual / retry) ──────────────────────────
-async function processSandboxResult(taskId){
-  const r = await fetch(WORKER+'/result/'+encodeURIComponent(taskId));
-  if(!r.ok) throw new Error(`HTTP ${r.status}`);
-  const result = await r.json();
-  const status = (result?.data?.status || result?.data?.state || result?.status || '').toLowerCase();
-  if(status === 'running' || status === 'waiting'){
-    clearSbProgress();
-    toast(`Task ${taskId} still running — starting poll…`);
-    setSbProgress('Resumed polling…', 'EXECUTING', 20, taskId);
-    document.getElementById('btn-sb').disabled = true;
-    startPolling(taskId);
-    return;
-  }
-  if(status === 'failed'){
-    clearSbProgress();
-    throw new Error('Task failed: '+(result?.data?.reason||'unknown'));
-  }
-  state.sbData = normaliseAnyRunData(result?.data || result);
-  state.analysisTs = new Date().toISOString();
-  renderAll(state.sbData);
-  clearSbProgress();
-  toast('✓ Task result loaded');
+  w.document.close(); setTimeout(()=>w.print(),500);
 }
 </script>
 </body>
