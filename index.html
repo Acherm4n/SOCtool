@@ -20,88 +20,35 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:var(--mono);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-
-/* Noise texture */
-body::before{
-  content:'';position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  background-size:256px 256px;pointer-events:none;z-index:0;opacity:0.4
-}
-/* Scanline */
-body::after{
-  content:'';position:fixed;inset:0;
-  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.04) 3px,rgba(0,0,0,0.04) 4px);
-  pointer-events:none;z-index:0
-}
-
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");background-size:256px 256px;pointer-events:none;z-index:0;opacity:0.4}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.04) 3px,rgba(0,0,0,0.04) 4px);pointer-events:none;z-index:0}
 .shell{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:0 20px 40px}
-
-/* ── TOPBAR ── */
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:16px 0 14px;border-bottom:1px solid var(--border);
-  position:sticky;top:0;z-index:100;
-  background:rgba(5,8,15,0.92);backdrop-filter:blur(12px);margin:0 -20px;padding:14px 20px
-}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 0 14px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;background:rgba(5,8,15,0.92);backdrop-filter:blur(12px);margin:0 -20px;padding:14px 20px}
 .logo{display:flex;align-items:center;gap:14px}
-.logo-hex{
-  width:38px;height:38px;position:relative;display:flex;align-items:center;justify-content:center;
-  clip-path:polygon(50% 0%,95% 25%,95% 75%,50% 100%,5% 75%,5% 25%);
-  background:linear-gradient(135deg,var(--accent),var(--accent4));
-}
+.logo-hex{width:38px;height:38px;position:relative;display:flex;align-items:center;justify-content:center;clip-path:polygon(50% 0%,95% 25%,95% 75%,50% 100%,5% 75%,5% 25%);background:linear-gradient(135deg,var(--accent),var(--accent4));}
 .logo-hex svg{width:18px;height:18px;color:#000}
-.logo-name{font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:-0.5px;
-  background:linear-gradient(90deg,var(--text),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-name{font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:-0.5px;background:linear-gradient(90deg,var(--text),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .logo-ver{font-size:9px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-top:1px}
 .topbar-right{display:flex;align-items:center;gap:16px}
 .worker-status{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text3);letter-spacing:1px}
 .status-dot{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 8px var(--success);animation:pulse 2.5s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.85)}}
 .clock{font-size:11px;color:var(--text2);letter-spacing:0.5px}
-.btn-report{
-  display:flex;align-items:center;gap:7px;
-  background:linear-gradient(135deg,rgba(123,97,255,0.15),rgba(0,229,255,0.1));
-  border:1px solid rgba(123,97,255,0.5);border-radius:6px;
-  color:var(--accent4);font-family:var(--mono);font-size:11px;font-weight:700;
-  padding:7px 14px;cursor:pointer;letter-spacing:1px;text-transform:uppercase;
-  transition:all .2s
-}
+.btn-report{display:flex;align-items:center;gap:7px;background:linear-gradient(135deg,rgba(123,97,255,0.15),rgba(0,229,255,0.1));border:1px solid rgba(123,97,255,0.5);border-radius:6px;color:var(--accent4);font-family:var(--mono);font-size:11px;font-weight:700;padding:7px 14px;cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .2s}
 .btn-report:hover{background:linear-gradient(135deg,rgba(123,97,255,0.3),rgba(0,229,255,0.15));box-shadow:0 0 16px rgba(123,97,255,0.3);border-color:var(--accent4)}
-
-/* ── MAIN LAYOUT ── */
 .layout{display:grid;grid-template-columns:280px 1fr;gap:20px;margin-top:20px}
 @media(max-width:900px){.layout{grid-template-columns:1fr}}
-
-/* ── SIDEBAR ── */
 .sidebar{display:flex;flex-direction:column;gap:14px}
 .sidebar-section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.ss-hdr{
-  padding:10px 14px;background:var(--bg3);border-bottom:1px solid var(--border);
-  font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);
-  display:flex;align-items:center;gap:8px
-}
+.ss-hdr{padding:10px 14px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:8px}
 .ss-hdr-dot{width:3px;height:12px;border-radius:2px;background:var(--accent)}
 .ss-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
-
-/* ── SEARCH INPUTS ── */
 .inp-group{display:flex;flex-direction:column;gap:5px}
 .inp-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3)}
-.inp{
-  background:var(--bg3);border:1px solid var(--border2);border-radius:6px;
-  color:var(--text);font-family:var(--mono);font-size:12px;padding:8px 11px;
-  outline:none;transition:all .2s;width:100%
-}
+.inp{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:12px;padding:8px 11px;outline:none;transition:all .2s;width:100%}
 .inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,229,255,0.08)}
 .inp::placeholder{color:var(--text4)}
-
-/* Buttons */
-.btn{
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  padding:8px 14px;border-radius:6px;border:1px solid var(--accent2);
-  background:transparent;color:var(--accent);font-family:var(--mono);font-size:11px;
-  font-weight:700;cursor:pointer;letter-spacing:1px;text-transform:uppercase;
-  transition:all .15s;white-space:nowrap;width:100%
-}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:6px;border:1px solid var(--accent2);background:transparent;color:var(--accent);font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .15s;white-space:nowrap;width:100%}
 .btn:hover{background:rgba(0,229,255,0.1);box-shadow:var(--glow-cyan)}
 .btn:disabled{opacity:0.35;cursor:not-allowed}
 .btn:active{transform:scale(0.98)}
@@ -110,36 +57,19 @@ body::after{
 .btn-danger:hover{background:rgba(255,45,74,0.1);box-shadow:var(--glow-red)}
 .btn-purple{border-color:rgba(123,97,255,0.5);color:var(--accent4)}
 .btn-purple:hover{background:rgba(123,97,255,0.1)}
-
-/* File input */
 .file-inp-wrap{position:relative}
-.file-inp-label{
-  display:flex;align-items:center;gap:8px;
-  background:var(--bg3);border:1px dashed var(--border2);border-radius:6px;
-  padding:10px 12px;cursor:pointer;transition:all .2s;font-size:11px;color:var(--text3)
-}
+.file-inp-label{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px dashed var(--border2);border-radius:6px;padding:10px 12px;cursor:pointer;transition:all .2s;font-size:11px;color:var(--text3)}
 .file-inp-label:hover{border-color:var(--accent);color:var(--accent2)}
 .file-inp-label input{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;top:0;left:0}
 .file-name{font-size:10px;color:var(--text2);margin-top:4px;word-break:break-all}
-
-/* ── MAIN CONTENT ── */
 .main{display:flex;flex-direction:column;gap:16px}
-
-/* ── TABS ── */
 .tab-bar{display:flex;gap:2px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:4px;overflow-x:auto}
-.tab-btn{
-  flex:none;padding:7px 16px;border-radius:5px;border:none;
-  background:none;color:var(--text3);font-family:var(--mono);font-size:11px;font-weight:600;
-  cursor:pointer;transition:all .2s;letter-spacing:1px;text-transform:uppercase;white-space:nowrap
-}
+.tab-btn{flex:none;padding:7px 16px;border-radius:5px;border:none;background:none;color:var(--text3);font-family:var(--mono);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
 .tab-btn.active{background:var(--bg4);color:var(--accent);box-shadow:inset 0 0 0 1px rgba(0,229,255,0.2)}
 .tab-btn:hover:not(.active){color:var(--text2);background:rgba(255,255,255,0.03)}
 .tab-panel{display:none}.tab-panel.active{display:block}
-
-/* ── CARDS ── */
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden}
-.card::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
-  background:linear-gradient(90deg,transparent,var(--border3),transparent);opacity:0.5}
+.card::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--border3),transparent);opacity:0.5}
 .card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .card-title{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:8px}
 .card-title-accent{width:3px;height:14px;border-radius:2px;background:var(--accent)}
@@ -147,8 +77,6 @@ body::after{
 .card-title-accent.purple{background:var(--accent4)}
 .card-title-accent.green{background:var(--success)}
 .card-actions{display:flex;gap:6px}
-
-/* ── STAT GRID ── */
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 @media(max-width:600px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
 .stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;position:relative;overflow:hidden;transition:all .2s}
@@ -160,57 +88,30 @@ body::after{
 .s-warn .stat-n{color:var(--warn)}.s-warn::after{background:var(--warn)}
 .s-ok .stat-n{color:var(--success)}.s-ok::after{background:var(--success)}
 .s-info .stat-n{color:var(--accent)}.s-info::after{background:var(--accent)}
-
-/* ── RISK METER ── */
 .risk-wrap{display:flex;align-items:center;gap:16px}
 .risk-score{font-size:52px;font-weight:800;font-family:var(--display);line-height:1;min-width:80px}
 .risk-right{flex:1}
 .risk-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
 .meter-bg{height:10px;background:var(--bg4);border-radius:5px;overflow:hidden;border:1px solid var(--border);position:relative}
-.meter-fill{height:100%;width:0%;border-radius:5px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1);
-  background:linear-gradient(90deg,var(--success),var(--warn),var(--danger));position:relative}
-.meter-fill::after{content:'';position:absolute;right:0;top:0;bottom:0;width:8px;filter:blur(6px)}
+.meter-fill{height:100%;width:0%;border-radius:5px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1);background:linear-gradient(90deg,var(--success),var(--warn),var(--danger));position:relative}
 .meter-ticks{display:flex;justify-content:space-between;font-size:9px;color:var(--text4);letter-spacing:1px;margin-top:5px}
-.risk-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-
-/* ── BADGES ── */
-.badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:var(--mono);
-  padding:3px 8px;border-radius:4px;font-weight:600;letter-spacing:0.5px;line-height:1.4}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:var(--mono);padding:3px 8px;border-radius:4px;font-weight:600;letter-spacing:0.5px;line-height:1.4}
 .b-danger{background:rgba(255,45,74,0.1);color:var(--danger);border:1px solid rgba(255,45,74,0.3)}
 .b-warn{background:rgba(255,170,0,0.1);color:var(--warn);border:1px solid rgba(255,170,0,0.3)}
 .b-ok{background:rgba(0,230,118,0.08);color:var(--success);border:1px solid rgba(0,230,118,0.2)}
 .b-info{background:rgba(0,229,255,0.08);color:var(--accent);border:1px solid rgba(0,229,255,0.2)}
 .b-purple{background:rgba(123,97,255,0.1);color:var(--accent4);border:1px solid rgba(123,97,255,0.3)}
 .b-orange{background:rgba(255,85,51,0.1);color:var(--accent3);border:1px solid rgba(255,85,51,0.3)}
-
-/* ── KILL CHAIN ── */
 .killchain{display:flex;align-items:center;gap:4px;overflow-x:auto;padding-bottom:6px}
-.kc{
-  flex:1;min-width:80px;text-align:center;padding:10px 8px;
-  background:var(--bg3);border:1px solid var(--border);border-radius:6px;
-  font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);
-  transition:all .3s;position:relative;cursor:default
-}
+.kc{flex:1;min-width:80px;text-align:center;padding:10px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);transition:all .3s;position:relative;cursor:default}
 .kc.kc-past{background:rgba(255,85,51,0.06);border-color:rgba(255,85,51,0.3);color:var(--accent3)}
-.kc.kc-active{
-  background:rgba(0,229,255,0.08);border-color:var(--accent);color:var(--accent);font-weight:700;
-  box-shadow:0 0 12px rgba(0,229,255,0.15)
-}
+.kc.kc-active{background:rgba(0,229,255,0.08);border-color:var(--accent);color:var(--accent);font-weight:700;box-shadow:0 0 12px rgba(0,229,255,0.15)}
 .kc-num{display:block;font-size:16px;font-weight:800;margin-bottom:3px;font-family:var(--display)}
 .kc-arrow{color:var(--border3);font-size:12px;flex-shrink:0}
-
-/* ── ALERT LIST ── */
 .alert-list{display:flex;flex-direction:column;gap:5px;margin-top:10px}
-.alert-item{
-  display:flex;align-items:flex-start;gap:10px;
-  background:rgba(255,45,74,0.05);border:1px solid rgba(255,45,74,0.2);border-left:3px solid var(--danger);
-  border-radius:6px;padding:8px 12px;font-size:11px;color:var(--text2);
-  animation:slideIn .3s ease-out
-}
+.alert-item{display:flex;align-items:flex-start;gap:10px;background:rgba(255,45,74,0.05);border:1px solid rgba(255,45,74,0.2);border-left:3px solid var(--danger);border-radius:6px;padding:8px 12px;font-size:11px;color:var(--text2);animation:slideIn .3s ease-out}
 @keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
 .alert-sev{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;margin-left:auto;white-space:nowrap}
-
-/* ── PROCESS TREE ── */
 .proc-tree{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;max-height:220px;overflow-y:auto}
 .proc-item{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
 .proc-item:last-child{border-bottom:none}
@@ -220,33 +121,23 @@ body::after{
 .proc-name.normal{color:var(--accent)}
 .proc-pid{font-size:10px;color:var(--text3)}
 .proc-parent{font-size:10px;color:var(--text4)}
-
-/* ── NETWORK TABLE ── */
 .net-scroll{overflow-x:auto}
 .tbl{width:100%;border-collapse:collapse;font-size:11px}
-.tbl th{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);
-  padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+.tbl th{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
 .tbl td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--text2);vertical-align:middle}
 .tbl tr:last-child td{border-bottom:none}
 .tbl tr:hover td{background:rgba(255,255,255,0.02)}
 .c-ip{color:var(--accent);font-weight:600}
 .c-port{color:var(--warn)}
 .c-host{color:var(--text)}
-.c-flag{font-size:16px}
 .risk-cell{display:flex;align-items:center;gap:6px}
 .risk-bar-mini{height:4px;flex:1;max-width:60px;background:var(--border);border-radius:2px;overflow:hidden}
 .risk-bar-fill{height:100%;border-radius:2px;transition:width .6s}
 
-/* ── ABUSEIPDB ── */
-.abuse-result{
-  background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:10px
-}
+/* ── ABUSEIPDB SIDEBAR RESULT ── */
+.abuse-result{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:10px}
 .abuse-score-wrap{display:flex;align-items:center;gap:14px;margin-bottom:12px}
-.abuse-score-circle{
-  width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:20px;font-weight:800;font-family:var(--display);flex-shrink:0;
-  border:2px solid var(--danger);box-shadow:0 0 16px rgba(255,45,74,0.3)
-}
+.abuse-score-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;font-family:var(--display);flex-shrink:0;border:2px solid var(--danger);box-shadow:0 0 16px rgba(255,45,74,0.3)}
 .abuse-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px}
 .abuse-row{display:flex;flex-direction:column;gap:2px;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:8px}
 .abuse-row-k{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
@@ -255,56 +146,28 @@ body::after{
 .abuse-report-item{padding:6px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px}
 .abuse-report-item:last-child{border-bottom:none}
 
-/* ── MITRE ── */
+/* Category badges for abuse */
+.abuse-cats{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+
 .mitre-grid{display:flex;flex-wrap:wrap;gap:8px}
-.mitre-tag{
-  background:rgba(255,85,51,0.06);border:1px solid rgba(255,85,51,0.25);color:var(--accent3);
-  font-family:var(--mono);font-size:11px;padding:6px 12px;border-radius:6px;cursor:pointer;
-  transition:all .15s;display:flex;align-items:center;gap:8px
-}
+.mitre-tag{background:rgba(255,85,51,0.06);border:1px solid rgba(255,85,51,0.25);color:var(--accent3);font-family:var(--mono);font-size:11px;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px}
 .mitre-tag:hover{background:rgba(255,85,51,0.15);transform:translateY(-1px)}
 .mitre-id{font-weight:700;font-size:10px;opacity:0.7}
-
-/* ── IOC EXPORT ── */
 .ioc-categories{display:flex;flex-direction:column;gap:12px}
 .ioc-cat{background:var(--bg3);border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.ioc-cat-hdr{
-  padding:8px 14px;background:var(--bg4);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;font-size:9px;letter-spacing:2px;text-transform:uppercase
-}
+.ioc-cat-hdr{padding:8px 14px;background:var(--bg4);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:9px;letter-spacing:2px;text-transform:uppercase}
 .ioc-cat-title{color:var(--text3);display:flex;align-items:center;gap:8px}
 .ioc-cat-cnt{font-size:11px;font-weight:700;color:var(--text)}
 .ioc-items{display:flex;flex-direction:column;gap:2px;padding:8px}
-.ioc-row{
-  display:flex;align-items:center;gap:10px;font-size:11px;
-  background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;
-  transition:border-color .15s;cursor:default
-}
+.ioc-row{display:flex;align-items:center;gap:10px;font-size:11px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;transition:border-color .15s;cursor:default}
 .ioc-row:hover{border-color:var(--border2)}
 .ioc-row-val{flex:1;color:var(--text);word-break:break-all;font-weight:600}
-.ioc-row-meta{font-size:10px;color:var(--text3);flex-shrink:0}
-.ioc-row-sev{flex-shrink:0}
-.copy-cell{cursor:pointer;color:var(--text3);font-size:10px;padding:2px 6px;border-radius:3px;border:1px solid var(--border);transition:all .15s}
-.copy-cell:hover{border-color:var(--accent);color:var(--accent)}
-.ioc-raw{
-  font-family:var(--mono);font-size:11px;background:var(--bg);border:1px solid var(--border2);
-  border-radius:6px;padding:14px;color:var(--success);line-height:1.8;
-  max-height:220px;overflow-y:auto;white-space:pre;word-break:break-all
-}
-
-/* ── CONTAINMENT ── */
+.ioc-raw{font-family:var(--mono);font-size:11px;background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:14px;color:var(--success);line-height:1.8;max-height:220px;overflow-y:auto;white-space:pre;word-break:break-all}
 .contain-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:600px){.contain-grid{grid-template-columns:1fr}}
-.contain-card{
-  display:flex;align-items:flex-start;gap:12px;
-  background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;
-  transition:border-color .2s
-}
+.contain-card{display:flex;align-items:flex-start;gap:12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;transition:border-color .2s}
 .contain-card:hover{border-color:var(--border2)}
-.contain-icon{
-  width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;
-  font-size:16px;flex-shrink:0
-}
+.contain-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .ci-red{background:rgba(255,45,74,0.1);border:1px solid rgba(255,45,74,0.25)}
 .ci-warn{background:rgba(255,170,0,0.1);border:1px solid rgba(255,170,0,0.25)}
 .ci-blue{background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2)}
@@ -315,104 +178,43 @@ body::after{
 .cp-critical{background:rgba(255,45,74,0.1);color:var(--danger);border:1px solid rgba(255,45,74,0.2)}
 .cp-high{background:rgba(255,170,0,0.1);color:var(--warn);border:1px solid rgba(255,170,0,0.2)}
 .cp-med{background:rgba(0,229,255,0.08);color:var(--accent);border:1px solid rgba(0,229,255,0.2)}
-
-/* ── DROPPED FILES ── */
-.drop-item{
-  display:flex;align-items:center;gap:10px;font-size:11px;
-  background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 12px;
-  transition:border-color .15s
-}
+.drop-item{display:flex;align-items:center;gap:10px;font-size:11px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 12px;transition:border-color .15s}
 .drop-item:hover{border-color:rgba(255,170,0,0.3)}
-.drop-ext{
-  font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;
-  background:rgba(255,170,0,0.1);color:var(--warn);border:1px solid rgba(255,170,0,0.2);
-  letter-spacing:1px;flex-shrink:0
-}
-
-/* ── SCREENSHOT ── */
-.screen-wrap{
-  background:var(--bg);border:1px solid var(--border);border-radius:8px;
-  overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;
-  color:var(--text3);font-size:11px
-}
-
-/* ── LOADING ── */
+.drop-ext{font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(255,170,0,0.1);color:var(--warn);border:1px solid rgba(255,170,0,0.2);letter-spacing:1px;flex-shrink:0}
+.screen-wrap{background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:11px}
 .loading-row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text2);margin-top:8px}
-.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--border2);
-  border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── ERROR ── */
-.err{
-  background:rgba(255,45,74,0.05);border:1px solid rgba(255,45,74,0.2);border-left:3px solid var(--danger);
-  border-radius:6px;padding:10px 14px;font-size:11px;color:var(--danger);margin-top:8px
-}
-
-/* ── EMPTY ── */
-.empty{
-  color:var(--text3);font-size:11px;text-align:center;padding:24px;
-  border:1px dashed var(--border);border-radius:6px;letter-spacing:0.5px
-}
-
-/* ── SCROLLBAR ── */
+.err{background:rgba(255,45,74,0.05);border:1px solid rgba(255,45,74,0.2);border-left:3px solid var(--danger);border-radius:6px;padding:10px 14px;font-size:11px;color:var(--danger);margin-top:8px}
+.empty{color:var(--text3);font-size:11px;text-align:center;padding:24px;border:1px dashed var(--border);border-radius:6px;letter-spacing:0.5px}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:var(--border3)}
-
-/* ── TOAST ── */
-.toast{
-  position:fixed;bottom:24px;right:24px;
-  background:var(--bg3);border:1px solid var(--accent);color:var(--accent);
-  font-family:var(--mono);font-size:11px;padding:10px 16px;border-radius:8px;z-index:999;
-  box-shadow:0 4px 20px rgba(0,229,255,0.15);
-  animation:toastIn .2s ease-out forwards
-}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--accent);color:var(--accent);font-family:var(--mono);font-size:11px;padding:10px 16px;border-radius:8px;z-index:999;box-shadow:0 4px 20px rgba(0,229,255,0.15);animation:toastIn .2s ease-out forwards}
 @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-
-/* ── REPORT MODAL ── */
-.modal-backdrop{
-  position:fixed;inset:0;background:rgba(5,8,15,0.92);backdrop-filter:blur(8px);
-  z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;
-  animation:fadeIn .2s ease-out
-}
+.modal-backdrop{position:fixed;inset:0;background:rgba(5,8,15,0.92);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease-out}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal{
-  background:var(--bg2);border:1px solid var(--border2);border-radius:14px;
-  width:100%;max-width:860px;max-height:85vh;overflow:hidden;
-  display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.6)
-}
-.modal-hdr{
-  padding:16px 20px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;flex-shrink:0
-}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:860px;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+.modal-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .modal-title{font-family:var(--display);font-size:16px;font-weight:700;color:var(--text)}
-.modal-close{
-  background:none;border:1px solid var(--border2);border-radius:6px;color:var(--text3);
-  font-size:14px;cursor:pointer;padding:4px 10px;transition:all .15s
-}
+.modal-close{background:none;border:1px solid var(--border2);border-radius:6px;color:var(--text3);font-size:14px;cursor:pointer;padding:4px 10px;transition:all .15s}
 .modal-close:hover{border-color:var(--danger);color:var(--danger)}
 .modal-body{overflow-y:auto;padding:20px;flex:1}
 .modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
-
-/* Report preview styles */
 .rpt-title{font-family:var(--display);font-size:22px;font-weight:800;color:var(--text);margin-bottom:4px}
 .rpt-meta{font-size:11px;color:var(--text3);margin-bottom:20px;display:flex;flex-wrap:wrap;gap:12px}
 .rpt-section{margin-bottom:20px}
-.rpt-sh{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);
-  margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.rpt-sh{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
 .rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .rpt-kv{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px;font-size:11px}
 .rpt-kv-k{color:var(--text3);margin-bottom:3px;font-size:10px;letter-spacing:1px;text-transform:uppercase}
 .rpt-kv-v{color:var(--text);font-weight:600}
 .rpt-ioc-block{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:11px;line-height:1.8;color:var(--success);white-space:pre;overflow-x:auto;max-height:200px;overflow-y:auto}
-
-/* copy btn */
-.copy-btn{
-  background:none;border:1px solid var(--border2);border-radius:4px;color:var(--text3);
-  font-family:var(--mono);font-size:9px;padding:3px 8px;cursor:pointer;transition:all .15s;letter-spacing:0.5px
-}
+.copy-btn{background:none;border:1px solid var(--border2);border-radius:4px;color:var(--text3);font-family:var(--mono);font-size:9px;padding:3px 8px;cursor:pointer;transition:all .15s;letter-spacing:0.5px}
 .copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.copy-cell{cursor:pointer;color:var(--text3);font-size:10px;padding:2px 6px;border-radius:3px;border:1px solid var(--border);transition:all .15s}
+.copy-cell:hover{border-color:var(--accent);color:var(--accent)}
 </style>
 </head>
 <body>
@@ -470,15 +272,9 @@ body::after{
               <span id="vt-rate-pct" style="font-size:13px;font-weight:700"></span>
             </div>
             <div style="display:flex;gap:6px">
-              <div class="stat-card s-danger" style="flex:1;padding:8px">
-                <div class="stat-n" id="vt-mal" style="font-size:20px">—</div><div class="stat-l">Malicious</div>
-              </div>
-              <div class="stat-card s-warn" style="flex:1;padding:8px">
-                <div class="stat-n" id="vt-sus" style="font-size:20px">—</div><div class="stat-l">Suspect</div>
-              </div>
-              <div class="stat-card s-ok" style="flex:1;padding:8px">
-                <div class="stat-n" id="vt-cln" style="font-size:20px">—</div><div class="stat-l">Clean</div>
-              </div>
+              <div class="stat-card s-danger" style="flex:1;padding:8px"><div class="stat-n" id="vt-mal" style="font-size:20px">—</div><div class="stat-l">Malicious</div></div>
+              <div class="stat-card s-warn" style="flex:1;padding:8px"><div class="stat-n" id="vt-sus" style="font-size:20px">—</div><div class="stat-l">Suspect</div></div>
+              <div class="stat-card s-ok" style="flex:1;padding:8px"><div class="stat-n" id="vt-cln" style="font-size:20px">—</div><div class="stat-l">Clean</div></div>
             </div>
             <div style="margin-top:8px" id="vt-verdict"></div>
           </div>
@@ -523,23 +319,15 @@ body::after{
         </div>
       </div>
 
-      <!-- Quick Stats -->
+      <!-- Session Stats -->
       <div class="sidebar-section">
         <div class="ss-hdr"><div class="ss-hdr-dot" style="background:var(--success)"></div>Session Stats</div>
         <div class="ss-body">
           <div style="display:flex;flex-direction:column;gap:6px;font-size:11px">
-            <div style="display:flex;justify-content:space-between;color:var(--text3)">
-              <span>Hashes Scanned</span><span id="ss-hashes" style="color:var(--text);font-weight:600">0</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;color:var(--text3)">
-              <span>IPs Checked</span><span id="ss-ips" style="color:var(--text);font-weight:600">0</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;color:var(--text3)">
-              <span>Threats Found</span><span id="ss-threats" style="color:var(--danger);font-weight:600">0</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;color:var(--text3)">
-              <span>IOCs Collected</span><span id="ss-iocs" style="color:var(--accent);font-weight:600">0</span>
-            </div>
+            <div style="display:flex;justify-content:space-between;color:var(--text3)"><span>Hashes Scanned</span><span id="ss-hashes" style="color:var(--text);font-weight:600">0</span></div>
+            <div style="display:flex;justify-content:space-between;color:var(--text3)"><span>IPs Checked</span><span id="ss-ips" style="color:var(--text);font-weight:600">0</span></div>
+            <div style="display:flex;justify-content:space-between;color:var(--text3)"><span>Threats Found</span><span id="ss-threats" style="color:var(--danger);font-weight:600">0</span></div>
+            <div style="display:flex;justify-content:space-between;color:var(--text3)"><span>IOCs Collected</span><span id="ss-iocs" style="color:var(--accent);font-weight:600">0</span></div>
           </div>
         </div>
       </div>
@@ -548,8 +336,6 @@ body::after{
 
     <!-- MAIN PANEL -->
     <div class="main">
-
-      <!-- Tab bar -->
       <div class="tab-bar">
         <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
         <button class="tab-btn" onclick="switchTab('sandbox')">Sandbox Analysis</button>
@@ -558,10 +344,8 @@ body::after{
         <button class="tab-btn" onclick="switchTab('containment')">Containment</button>
       </div>
 
-      <!-- ── TAB: OVERVIEW ── -->
+      <!-- TAB: OVERVIEW -->
       <div class="tab-panel active" id="tab-overview">
-
-        <!-- Threat Score -->
         <div class="card" style="margin-bottom:16px">
           <div class="card-hdr">
             <div class="card-title"><div class="card-title-accent"></div>Composite Threat Score</div>
@@ -577,16 +361,12 @@ body::after{
           </div>
           <div id="alert-list" class="alert-list"></div>
         </div>
-
-        <!-- Summary Stats -->
         <div class="stat-grid" style="margin-bottom:16px">
           <div class="stat-card s-danger"><div class="stat-n" id="ov-mal">—</div><div class="stat-l">Malicious Detections</div></div>
           <div class="stat-card s-warn"><div class="stat-n" id="ov-conn">—</div><div class="stat-l">Network Conns</div></div>
-          <div class="stat-card s-orange" style="--scolor:var(--accent3)"><div class="stat-n" id="ov-files" style="color:var(--accent3)">—</div><div class="stat-l">Dropped Files</div></div>
+          <div class="stat-card" style="background:var(--bg3);border:1px solid var(--border)"><div class="stat-n" id="ov-files" style="color:var(--accent3)">—</div><div class="stat-l">Dropped Files</div></div>
           <div class="stat-card s-info"><div class="stat-n" id="ov-mitre">—</div><div class="stat-l">MITRE Techniques</div></div>
         </div>
-
-        <!-- Kill Chain -->
         <div class="card" style="margin-bottom:16px">
           <div class="card-hdr">
             <div class="card-title"><div class="card-title-accent orange"></div>Cyber Kill Chain</div>
@@ -608,19 +388,16 @@ body::after{
             <div class="kc" data-p="action"><span class="kc-num">7</span>Actions</div>
           </div>
         </div>
-
-        <!-- MITRE -->
         <div class="card">
           <div class="card-hdr">
-            <div class="card-title"><div class="card-title-accent orange"></div>MITRE ATT&CK Techniques</div>
+            <div class="card-title"><div class="card-title-accent orange"></div>MITRE ATT&amp;CK Techniques</div>
             <span id="mitre-count" style="font-size:10px;color:var(--text3)"></span>
           </div>
           <div id="mitre-list"><div class="empty">No ATT&CK techniques detected — run sandbox analysis</div></div>
         </div>
-
       </div>
 
-      <!-- ── TAB: SANDBOX ── -->
+      <!-- TAB: SANDBOX -->
       <div class="tab-panel" id="tab-sandbox">
         <div class="card" style="margin-bottom:16px">
           <div class="card-hdr">
@@ -639,14 +416,12 @@ body::after{
           </div>
           <div class="card">
             <div class="card-hdr"><div class="card-title"><div class="card-title-accent"></div>Sandbox Screenshot</div></div>
-            <div class="screen-wrap" id="sb-screen">
-              <span>⬡ No screenshot available</span>
-            </div>
+            <div class="screen-wrap" id="sb-screen"><span>⬡ No screenshot available</span></div>
           </div>
         </div>
       </div>
 
-      <!-- ── TAB: NETWORK ── -->
+      <!-- TAB: NETWORK -->
       <div class="tab-panel" id="tab-network">
         <div class="card" style="margin-bottom:16px">
           <div class="card-hdr">
@@ -663,7 +438,6 @@ body::after{
             </table>
           </div>
         </div>
-
         <!-- AbuseIPDB detail panel -->
         <div class="card" id="abuse-detail-card" style="display:none">
           <div class="card-hdr">
@@ -674,7 +448,7 @@ body::after{
         </div>
       </div>
 
-      <!-- ── TAB: IOC ── -->
+      <!-- TAB: IOC -->
       <div class="tab-panel" id="tab-ioc">
         <div class="card" style="margin-bottom:16px">
           <div class="card-hdr">
@@ -690,13 +464,13 @@ body::after{
         </div>
         <div class="card">
           <div class="card-hdr">
-            <div class="card-title"><div class="card-title-accent"></div>Raw Blocklist (Copy & Paste Ready)</div>
+            <div class="card-title"><div class="card-title-accent"></div>Raw Blocklist (Copy &amp; Paste Ready)</div>
           </div>
           <div class="ioc-raw" id="ioc-raw">; Awaiting analysis…</div>
         </div>
       </div>
 
-      <!-- ── TAB: CONTAINMENT ── -->
+      <!-- TAB: CONTAINMENT -->
       <div class="tab-panel" id="tab-containment">
         <div class="card">
           <div class="card-hdr">
@@ -718,9 +492,7 @@ body::after{
       <div class="modal-title">📄 Incident Report — JDLThreatIntel</div>
       <button class="modal-close" onclick="closeReport()">✕ Close</button>
     </div>
-    <div class="modal-body" id="report-body">
-      <div class="empty">No analysis data yet. Run a scan first.</div>
-    </div>
+    <div class="modal-body" id="report-body"><div class="empty">No analysis data yet. Run a scan first.</div></div>
     <div class="modal-footer">
       <button class="copy-btn" onclick="copyReport()">Copy Report</button>
       <button class="btn btn-sm btn-purple" onclick="downloadReport()">⬇ Download HTML</button>
@@ -730,13 +502,23 @@ body::after{
 </div>
 
 <script>
+// ── CONFIG — update your worker URL here ─────────────────────────────
 const WORKER = "https://soc-backend.johndominicklimpag.workers.dev";
+
+// AbuseIPDB abuse category map (official categories)
+const ABUSE_CATEGORIES = {
+  1:'DNS Compromise',2:'DNS Poisoning',3:'Fraud Orders',4:'DDoS Attack',5:'FTP Brute-Force',
+  6:'Ping of Death',7:'Phishing',8:'Fraud VoIP',9:'Open Proxy',10:'Web Spam',
+  11:'Email Spam',12:'Blog Spam',13:'VPN IP',14:'Port Scan',15:'Hacking',
+  16:'SQL Injection',17:'Spoofing',18:'Brute-Force',19:'Bad Web Bot',20:'Exploited Host',
+  21:'Web App Attack',22:'SSH',23:'IoT Targeted'
+};
 
 // ── Global state ─────────────────────────────────────────────────────
 const state = {
   vtData: null,
   sbData: null,
-  ipData: {},       // ip -> abuseIPDB result
+  ipData: {},         // ip -> abuseIPDB data object
   sessionStats: { hashes:0, ips:0, threats:0, iocs:0 },
   iocs: { ips:[], domains:[], files:[], hashes:[], mitre:[] },
   analysisTs: null
@@ -768,27 +550,26 @@ setInterval(tickClock, 1000); tickClock();
 
 // ── Tabs ──────────────────────────────────────────────────────────────
 function switchTab(id){
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',b.textContent.trim().toLowerCase().startsWith(id.split('-')[0].toLowerCase())||(id==='sandbox'&&b.textContent.includes('Sandbox'))||(id==='network'&&b.textContent.includes('Network'))||(id==='ioc'&&b.textContent.includes('IOC'))||(id==='containment'&&b.textContent.includes('Containment'))||(id==='overview'&&b.textContent.includes('Overview'))));
+  const map={overview:'Overview',sandbox:'Sandbox',network:'Network',ioc:'IOC',containment:'Containment'};
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    b.classList.toggle('active', b.textContent.trim().startsWith(map[id]||id));
+  });
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   const el = document.getElementById('tab-'+id);
   if(el) el.classList.add('active');
-  // re-apply button active state more cleanly
-  document.querySelectorAll('.tab-btn').forEach(b=>{
-    const map={'overview':'Overview','sandbox':'Sandbox','network':'Network','ioc':'IOC','containment':'Containment'};
-    b.classList.toggle('active', b.textContent.trim().startsWith(map[id]||id));
-  });
 }
 
 // ── Utility ───────────────────────────────────────────────────────────
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function show(id,v=''){document.getElementById(id).style.display=v||'';}
-function hide(id){document.getElementById(id).style.display='none';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function show(id,v=''){const e=document.getElementById(id);if(e)e.style.display=v||'';}
+function hide(id){const e=document.getElementById(id);if(e)e.style.display='none';}
 function setEl(id,h){const e=document.getElementById(id);if(e)e.innerHTML=h;}
 function toast(msg,dur=2200){
   const el=document.createElement('div');el.className='toast';el.textContent=msg;
-  document.body.appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300)},dur);
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300)},dur);
 }
-function setErr(id,msg){const e=document.getElementById(id);e.textContent='⚠ '+msg;show(id,'block');}
+function setErr(id,msg){const e=document.getElementById(id);if(e){e.textContent='⚠ '+msg;e.style.display='block';}}
 function updateStats(){
   document.getElementById('ss-hashes').textContent=state.sessionStats.hashes;
   document.getElementById('ss-ips').textContent=state.sessionStats.ips;
@@ -803,7 +584,7 @@ function getScoreColor(s){
 }
 
 // ── VT Hash Scan ─────────────────────────────────────────────────────
-document.getElementById('hash-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doVTScan()});
+document.getElementById('hash-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doVTScan();});
 
 async function doVTScan(){
   const h = document.getElementById('hash-inp').value.trim();
@@ -813,7 +594,7 @@ async function doVTScan(){
   document.getElementById('btn-vt').disabled=true;
   try{
     const r = await fetch(WORKER+'/vt/'+encodeURIComponent(h));
-    if(!r.ok) throw new Error('Worker '+r.status);
+    if(!r.ok) throw new Error('Worker returned '+r.status);
     const v = await r.json();
     const s = v?.data?.attributes?.last_analysis_stats;
     if(!s) throw new Error('Unexpected VT response');
@@ -830,20 +611,23 @@ async function doVTScan(){
                  pct>=10?'<span class="badge b-warn">◆ MEDIUM</span>':
                  pct>0?'<span class="badge b-warn">● SUSPICIOUS</span>':'<span class="badge b-ok">✓ CLEAN</span>';
     setEl('vt-verdict',verd);
-    // update overview stats
     document.getElementById('ov-mal').textContent=s.malicious??0;
-    state.sessionStats.hashes++; if(pct>0) state.sessionStats.threats++;
-    // add hash to IOCs
-    state.iocs.hashes=[h];state.sessionStats.iocs=countIOCs();updateStats();
-    hide('vt-loading'); show('vt-mini','block');
+    state.sessionStats.hashes++;
+    if(pct>0) state.sessionStats.threats++;
+    state.iocs.hashes=[h];
+    state.sessionStats.iocs=countIOCs();
+    updateStats(); hide('vt-loading'); show('vt-mini','block');
     updateRisk(); updateIOC();
   } catch(err){
     hide('vt-loading'); setErr('vt-error',err.message);
-  } finally { document.getElementById('btn-vt').disabled=false; }
+  } finally {
+    document.getElementById('btn-vt').disabled=false;
+  }
 }
 
 // ── AbuseIPDB Lookup ──────────────────────────────────────────────────
-document.getElementById('ip-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doIPLookup()});
+// Calls WORKER/abuseipdb/:ip  (synced with worker.js route)
+document.getElementById('ip-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doIPLookup();});
 
 async function doIPLookup(ip){
   const addr = ip || document.getElementById('ip-inp').value.trim();
@@ -852,34 +636,52 @@ async function doIPLookup(ip){
   show('ip-loading','flex');
   document.getElementById('btn-ip').disabled=true;
   try{
+    // ✅ Route: /abuseipdb/:ip
     const r = await fetch(WORKER+'/abuseipdb/'+encodeURIComponent(addr));
-    if(!r.ok) throw new Error('Worker '+r.status);
+    if(!r.ok) throw new Error('Worker returned '+r.status);
     const j = await r.json();
+    if(j.errors) throw new Error(j.errors[0]?.detail||'AbuseIPDB error');
     const d = j?.data;
-    if(!d) throw new Error('No data from AbuseIPDB');
-    state.ipData[addr]=d; state.sessionStats.ips++;
+    if(!d) throw new Error('No data returned from AbuseIPDB');
+
+    state.ipData[addr]=d;
+    state.sessionStats.ips++;
     if((d.abuseConfidenceScore||0)>50) state.sessionStats.threats++;
+
+    // Add to IOC list if not already there
+    if(!state.iocs.ips.includes(addr)) state.iocs.ips.push(addr);
+    state.sessionStats.iocs=countIOCs();
     updateStats();
-    renderIPResult('ip-result', d, true);
+
+    renderIPResult('ip-result', d);
     hide('ip-loading');
-    // Also update network table if IP is there
+
     updateNetworkAbuseScores();
     updateIOC();
   } catch(err){
     hide('ip-loading'); setErr('ip-error',err.message);
-  } finally { document.getElementById('btn-ip').disabled=false; }
+  } finally {
+    document.getElementById('btn-ip').disabled=false;
+  }
 }
 
-function renderIPResult(containerId, d, showInSidebar){
+// ── Render AbuseIPDB result ───────────────────────────────────────────
+function renderIPResult(containerId, d){
   const score = d.abuseConfidenceScore||0;
   const col = score>=75?'var(--danger)':score>=40?'var(--warn)':score>0?'var(--accent3)':'var(--success)';
   const borderCol = score>=75?'rgba(255,45,74,0.3)':score>=40?'rgba(255,170,0,0.3)':'rgba(0,229,255,0.2)';
+
+  // Abuse categories
+  const cats = (d.reports||[]).flatMap(r=>r.categories||[]);
+  const uniqueCats = [...new Set(cats)];
+  const catBadges = uniqueCats.slice(0,6).map(c=>`<span class="badge b-warn" style="font-size:9px">${esc(ABUSE_CATEGORIES[c]||'Cat '+c)}</span>`).join('');
+
   const html = `
     <div class="abuse-result" style="border-color:${borderCol}">
       <div class="abuse-score-wrap">
         <div class="abuse-score-circle" style="color:${col};border-color:${col};box-shadow:0 0 16px ${col}40">${score}</div>
         <div>
-          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">${esc(d.ipAddress||'—')}</div>
+          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">${esc(d.ipAddress)}</div>
           <div style="font-size:10px;color:var(--text3);margin-bottom:6px">ABUSE CONFIDENCE SCORE</div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
             ${score>=75?'<span class="badge b-danger">■ HIGH RISK</span>':score>=40?'<span class="badge b-warn">▲ MODERATE</span>':score>0?'<span class="badge b-warn">◆ LOW RISK</span>':'<span class="badge b-ok">✓ CLEAN</span>'}
@@ -889,7 +691,7 @@ function renderIPResult(containerId, d, showInSidebar){
         </div>
       </div>
       <div class="abuse-grid">
-        <div class="abuse-row"><div class="abuse-row-k">Country</div><div class="abuse-row-v">${esc(d.countryCode||'—')} ${d.countryName?'('+esc(d.countryName)+')':''}</div></div>
+        <div class="abuse-row"><div class="abuse-row-k">Country</div><div class="abuse-row-v">${esc(d.countryCode||'—')}${d.countryName?' ('+esc(d.countryName)+')':''}</div></div>
         <div class="abuse-row"><div class="abuse-row-k">ISP</div><div class="abuse-row-v">${esc(d.isp||'—')}</div></div>
         <div class="abuse-row"><div class="abuse-row-k">Usage Type</div><div class="abuse-row-v">${esc(d.usageType||'—')}</div></div>
         <div class="abuse-row"><div class="abuse-row-k">Domain</div><div class="abuse-row-v">${esc(d.domain||'—')}</div></div>
@@ -898,67 +700,77 @@ function renderIPResult(containerId, d, showInSidebar){
         <div class="abuse-row"><div class="abuse-row-k">Distinct Users</div><div class="abuse-row-v">${d.numDistinctUsers??'—'}</div></div>
         <div class="abuse-row"><div class="abuse-row-k">Hostname</div><div class="abuse-row-v">${esc(d.hostnames?.[0]||'—')}</div></div>
       </div>
+      ${uniqueCats.length?`<div class="abuse-cats">${catBadges}${uniqueCats.length>6?`<span class="badge b-info" style="font-size:9px">+${uniqueCats.length-6} more</span>`:''}</div>`:''}
       ${(d.reports&&d.reports.length)?`
       <div class="abuse-reports">
-        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Recent Reports</div>
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Recent Reports (${d.reports.length} total)</div>
         ${d.reports.slice(0,3).map(rep=>`
           <div class="abuse-report-item">
             <div style="flex:1">
-              <div style="color:var(--text);font-size:11px;margin-bottom:2px">${esc(rep.comment||'No comment')}</div>
-              <div style="font-size:10px;color:var(--text3)">${new Date(rep.reportedAt).toLocaleDateString()} · Reporter: ${esc(rep.reporterId||'anon')}</div>
+              <div style="color:var(--text);font-size:11px;margin-bottom:2px">${esc(rep.comment||'No comment provided')}</div>
+              <div style="font-size:10px;color:var(--text3)">${new Date(rep.reportedAt).toLocaleDateString()} · Reporter #${esc(String(rep.reporterId||'anon'))}${rep.categories?.length?' · '+rep.categories.map(c=>ABUSE_CATEGORIES[c]||c).join(', '):''}</div>
             </div>
             <span class="badge b-warn" style="flex-shrink:0">${rep.abuseConfidenceScore}%</span>
-          </div>
-        `).join('')}
+          </div>`).join('')}
       </div>`:'' }
     </div>`;
+
   const el = document.getElementById(containerId);
-  el.innerHTML = html;
-  show(containerId);
+  if(el){ el.innerHTML = html; show(containerId); }
 }
 
+// ── Bulk IP check (from sandbox network connections) ──────────────────
 async function bulkIPCheck(){
-  const ips = [...new Set([...(state.sbData?.network_connections||[]).map(n=>n.ip).filter(Boolean)])];
+  const ips = [...new Set((state.sbData?.network_connections||[]).map(n=>n.ip).filter(Boolean))];
   if(!ips.length){toast('No IPs to check');return;}
-  toast('Checking '+ips.length+' IP(s)…');
+  toast('Checking '+ips.length+' IP(s) via AbuseIPDB…');
   for(const ip of ips){
     if(state.ipData[ip]) continue;
     try{
+      // ✅ Route: /abuseipdb/:ip
       const r = await fetch(WORKER+'/abuseipdb/'+encodeURIComponent(ip));
       if(!r.ok) continue;
-      const j=await r.json();
-      if(j?.data){state.ipData[ip]=j.data; state.sessionStats.ips++;}
-    }catch(e){}
+      const j = await r.json();
+      if(j?.data){
+        state.ipData[ip]=j.data;
+        state.sessionStats.ips++;
+        if((j.data.abuseConfidenceScore||0)>50) state.sessionStats.threats++;
+        if(!state.iocs.ips.includes(ip)) state.iocs.ips.push(ip);
+      }
+    } catch(e){ console.warn('AbuseIPDB error for',ip,e); }
   }
-  updateStats(); updateNetworkAbuseScores(); toast('✓ IP enrichment complete');
+  state.sessionStats.iocs=countIOCs();
+  updateStats();
+  updateNetworkAbuseScores();
+  updateIOC();
+  toast('✓ IP enrichment complete');
 }
 
 function updateNetworkAbuseScores(){
-  const rows = document.querySelectorAll('#net-tbody tr[data-ip]');
-  rows.forEach(row=>{
-    const ip=row.dataset.ip;
-    const d=state.ipData[ip];
+  document.querySelectorAll('#net-tbody tr[data-ip]').forEach(row=>{
+    const ip = row.dataset.ip;
+    const d = state.ipData[ip];
     if(!d) return;
-    const score=d.abuseConfidenceScore||0;
-    const col=score>=75?'var(--danger)':score>=40?'var(--warn)':score>0?'var(--accent3)':'var(--success)';
-    const abuseCell=row.querySelector('.abuse-cell');
+    const score = d.abuseConfidenceScore||0;
+    const col = score>=75?'var(--danger)':score>=40?'var(--warn)':score>0?'var(--accent3)':'var(--success)';
+    const abuseCell = row.querySelector('.abuse-cell');
     if(abuseCell){
       abuseCell.innerHTML=`<div class="risk-cell">
         <div class="risk-bar-mini"><div class="risk-bar-fill" style="width:${score}%;background:${col}"></div></div>
         <span style="color:${col};font-weight:700;font-size:11px">${score}%</span>
-        <span class="copy-cell" onclick="showIPDetail('${esc(ip)}')" title="View Detail">🔍</span>
+        <span class="copy-cell" onclick="showIPDetail('${ip.replace(/'/g,"\\'")}')">🔍</span>
       </div>`;
     }
-    const countryCell=row.querySelector('.country-cell');
+    const countryCell = row.querySelector('.country-cell');
     if(countryCell) countryCell.textContent=(d.countryCode||'—')+(d.isTor?' 🧅':'');
   });
 }
 
 function showIPDetail(ip){
-  const d=state.ipData[ip];
-  if(!d){doIPLookup(ip);return;}
+  const d = state.ipData[ip];
+  if(!d){ doIPLookup(ip); return; }
   document.getElementById('abuse-detail-ip').textContent=ip;
-  renderIPResult('abuse-detail-body',d,false);
+  renderIPResult('abuse-detail-body', d);
   document.getElementById('abuse-detail-card').style.display='';
   switchTab('network');
 }
@@ -985,7 +797,8 @@ async function runSandbox(){
     if(!taskId) throw new Error('No task ID returned');
     pollSandbox(taskId);
   } catch(err){
-    hide('sb-loading'); document.getElementById('btn-sb').disabled=false;
+    hide('sb-loading');
+    document.getElementById('btn-sb').disabled=false;
     setErr('sb-error',err.message);
   }
 }
@@ -996,14 +809,21 @@ function pollSandbox(id){
   const iv=setInterval(async()=>{
     _polls++;
     document.getElementById('sb-txt').textContent=`Sandbox running… (${_polls}/${MAX})`;
-    if(_polls>MAX){ clearInterval(iv); hide('sb-loading'); document.getElementById('btn-sb').disabled=false; setErr('sb-error','Timed out. Task: '+id); return; }
+    if(_polls>MAX){
+      clearInterval(iv); hide('sb-loading');
+      document.getElementById('btn-sb').disabled=false;
+      setErr('sb-error','Timed out. Task ID: '+id);
+      return;
+    }
     try{
       const r=await fetch(WORKER+'/result/'+id);
       if(!r.ok) return;
       const sb=await r.json();
       if(sb?.data?.state!=='running'){
-        clearInterval(iv); hide('sb-loading'); document.getElementById('btn-sb').disabled=false;
-        state.sbData=sb?.data||{}; state.analysisTs=new Date().toISOString();
+        clearInterval(iv); hide('sb-loading');
+        document.getElementById('btn-sb').disabled=false;
+        state.sbData=sb?.data||{};
+        state.analysisTs=new Date().toISOString();
         renderAll(state.sbData);
         toast('✓ Sandbox analysis complete');
       }
@@ -1023,11 +843,9 @@ function renderAll(d){
   renderKillChain(d);
   renderContainment(d);
   updateIOC();
-  // Update overview stats
   document.getElementById('ov-conn').textContent=(d.network_connections||[]).length;
   document.getElementById('ov-files').textContent=(d.files_created||[]).length;
   document.getElementById('ov-mitre').textContent=(d.attack_techniques||[]).length;
-  // bulk check IPs
   bulkIPCheck();
 }
 
@@ -1069,8 +887,7 @@ function renderMITRE(d){
   document.getElementById('mitre-count').textContent=techs.length+' techniques';
   setEl('mitre-list','<div class="mitre-grid">'+techs.map(m=>`
     <span class="mitre-tag" title="${esc(m.description||m.name||'')}">
-      <span class="mitre-id">${esc(m.id||'')}</span>
-      ${esc(m.name||'')}
+      <span class="mitre-id">${esc(m.id||'')}</span>${esc(m.name||'')}
     </span>`).join('')+'</div>');
   state.iocs.mitre=techs.map(t=>t.id).filter(Boolean);
 }
@@ -1078,14 +895,14 @@ function renderMITRE(d){
 function renderNetwork(d){
   const conns=d.network_connections||[];
   if(!conns.length){
-    setEl('net-tbody','<tr><td colspan="6" style="color:var(--text3);text-align:center;padding:20px;font-size:11px">No connections</td></tr>');
+    setEl('net-tbody','<tr><td colspan="6" style="color:var(--text3);text-align:center;padding:20px;font-size:11px">No connections captured</td></tr>');
     return;
   }
   state.iocs.ips=[...new Set(conns.map(n=>n.ip).filter(Boolean))];
   state.iocs.domains=[...new Set(conns.map(n=>n.host).filter(Boolean))];
   setEl('net-tbody',conns.map(n=>`
     <tr data-ip="${esc(n.ip||'')}">
-      <td class="c-ip" style="cursor:pointer" onclick="showIPDetail('${esc(n.ip||'')}')">${esc(n.ip||'—')}</td>
+      <td class="c-ip" style="cursor:pointer" onclick="showIPDetail('${(n.ip||'').replace(/'/g,"\\'")}')">${esc(n.ip||'—')}</td>
       <td class="c-host">${esc(n.host||'—')}</td>
       <td class="c-port">${esc(String(n.port||'—'))}</td>
       <td style="color:var(--text3);font-size:10px">${esc(n.protocol||'TCP')}</td>
@@ -1104,16 +921,14 @@ function detectAlerts(d){
   const alerts=[];
   (d.process_list||[]).forEach(p=>{
     const n=(p.name||'').toLowerCase();
-    if(n.includes('lsass')) alerts.push({msg:'Credential dumping — LSASS access detected',sev:'CRITICAL'});
-    if(n.includes('mimikatz')) alerts.push({msg:'Mimikatz credential harvester detected',sev:'CRITICAL'});
+    if(n.includes('lsass'))      alerts.push({msg:'Credential dumping — LSASS access detected',sev:'CRITICAL'});
+    if(n.includes('mimikatz'))   alerts.push({msg:'Mimikatz credential harvester detected',sev:'CRITICAL'});
     if(n.includes('powershell')) alerts.push({msg:'Suspicious PowerShell execution',sev:'HIGH'});
-    if(n.includes('cmd.exe')) alerts.push({msg:'Command shell (cmd.exe) spawned',sev:'MEDIUM'});
+    if(n.includes('cmd.exe'))    alerts.push({msg:'Command shell (cmd.exe) spawned',sev:'MEDIUM'});
   });
   if((d.files_created||[]).length) alerts.push({msg:`Persistence — ${d.files_created.length} file(s) dropped to disk`,sev:'HIGH'});
   if((d.network_connections||[]).length) alerts.push({msg:`C2 activity — ${d.network_connections.length} outbound connection(s)`,sev:'CRITICAL'});
-  (d.attack_techniques||[]).forEach(t=>{
-    alerts.push({msg:`ATT&CK ${t.id}: ${t.name||''}`,sev:'HIGH'});
-  });
+  (d.attack_techniques||[]).forEach(t=>alerts.push({msg:`ATT&CK ${t.id}: ${t.name||''}`,sev:'HIGH'}));
   state.sessionStats.threats=Math.max(state.sessionStats.threats,alerts.filter(a=>a.sev==='CRITICAL').length);
   updateStats();
   setEl('alert-list',alerts.map(a=>{
@@ -1126,10 +941,14 @@ function updateRisk(){
   let score=0;
   const d=state.sbData||{};
   const vt=state.vtData?.data?.attributes?.last_analysis_stats;
-  if(vt){ const t=(vt.malicious||0)+(vt.suspicious||0)+(vt.harmless||0)+(vt.undetected||0); const pct=t>0?Math.round((vt.malicious||0)/t*100):0; score+=Math.round(pct*0.4); }
+  if(vt){
+    const t=(vt.malicious||0)+(vt.suspicious||0)+(vt.harmless||0)+(vt.undetected||0);
+    const pct=t>0?Math.round((vt.malicious||0)/t*100):0;
+    score+=Math.round(pct*0.4);
+  }
   if((d.files_created||[]).length) score+=20;
   if((d.network_connections||[]).length) score+=25;
-  if((d.attack_techniques||[]).length) score+=Math.min((d.attack_techniques.length)*5,15);
+  if((d.attack_techniques||[]).length) score+=Math.min(d.attack_techniques.length*5,15);
   score=Math.min(score,100);
   const col=getScoreColor(score);
   const lbl=score>=75?'CRITICAL':score>=50?'HIGH RISK':score>=25?'MEDIUM RISK':score>0?'LOW RISK':'CLEAN';
@@ -1140,7 +959,6 @@ function updateRisk(){
   document.getElementById('risk-lbl').style.color=col;
   const bc=score>=75?'b-danger':score>=50?'b-danger':score>=25?'b-warn':'b-ok';
   setEl('score-badge',`<span class="badge ${bc}">${lbl}</span>`);
-  document.getElementById('ov-mal').textContent=vt?.malicious??document.getElementById('ov-mal').textContent;
 }
 
 function renderKillChain(d){
@@ -1167,7 +985,7 @@ function renderContainment(d){
     steps.push({i:'ci-red',icon:'⛔',t:`Block ${ips.length} C2 IP(s)`,s:ips.slice(0,4).join(', ')+(ips.length>4?` +${ips.length-4} more`:''),p:'cp-critical'});
   }
   if((d.process_list||[]).some(p=>(p.name||'').toLowerCase().includes('lsass'))){
-    steps.push({i:'ci-warn',icon:'🔑',t:'Rotate All Credentials',s:'LSASS access detected — assume credential compromise. Reset all domain and local passwords, invalidate Kerberos tickets and OAuth tokens.',p:'cp-critical'});
+    steps.push({i:'ci-warn',icon:'🔑',t:'Rotate All Credentials',s:'LSASS access detected — assume credential compromise. Reset all passwords, invalidate Kerberos tickets and OAuth tokens.',p:'cp-critical'});
   }
   if((d.files_created||[]).length){
     steps.push({i:'ci-warn',icon:'🗂',t:'Remove Persistence Mechanisms',s:`Delete ${d.files_created.length} dropped file(s). Audit startup entries, scheduled tasks, registry Run keys, and WMI subscriptions.`,p:'cp-high'});
@@ -1175,7 +993,7 @@ function renderContainment(d){
   if((d.attack_techniques||[]).length){
     steps.push({i:'ci-warn',icon:'🎯',t:'Hunt for Lateral Movement',s:'ATT&CK techniques detected. Investigate adjacent hosts for similar IOCs. Check for Pass-the-Hash, token impersonation.',p:'cp-high'});
   }
-  steps.push({i:'ci-blue',icon:'📸',t:'Forensic Disk & Memory Image',s:'Capture full disk and memory images before any remediation. Preserve chain of custody for potential legal proceedings.',p:'cp-med'});
+  steps.push({i:'ci-blue',icon:'📸',t:'Forensic Disk & Memory Image',s:'Capture full disk and memory images before remediation. Preserve chain of custody for legal proceedings.',p:'cp-med'});
   steps.push({i:'ci-blue',icon:'📡',t:'Push IOCs to Detection Stack',s:'Export IOC blocklist to SIEM, EDR, and firewall rules. Update threat intel feeds with new indicators.',p:'cp-med'});
   steps.push({i:'ci-purple',icon:'📋',t:'File Incident Report',s:'Document timeline, affected systems, IOCs, and remediation steps. Notify stakeholders and escalate as required.',p:'cp-med'});
   setEl('contain-grid',steps.map(s=>`
@@ -1196,7 +1014,6 @@ function countIOCs(){
 
 function updateIOC(){
   state.sessionStats.iocs=countIOCs(); updateStats();
-  // Structured view
   const cats=[
     {key:'ips',label:'IP Addresses',color:'var(--accent)',icon:'🌐',sev:'b-danger'},
     {key:'domains',label:'Domains / Hostnames',color:'var(--accent3)',icon:'🔗',sev:'b-warn'},
@@ -1221,7 +1038,7 @@ function updateIOC(){
             <span class="ioc-row-val">${esc(v)}</span>
             ${ab}
             <span class="badge ${c.sev}" style="font-size:9px">IOC</span>
-            <span class="copy-cell" onclick="navigator.clipboard.writeText('${esc(v)}').then(()=>toast('Copied'))">Copy</span>
+            <span class="copy-cell" onclick="navigator.clipboard.writeText('${v.replace(/'/g,"\\'")}').then(()=>toast('Copied'))">Copy</span>
           </div>`;
         }).join('')}
       </div>
@@ -1233,7 +1050,13 @@ function updateRawIOC(){
   const ts=new Date().toISOString();
   const lines=[`; JDLThreatIntel IOC Export`,`; Generated: ${ts}`,`;`];
   if(state.iocs.hashes.length){ lines.push('; === HASH INDICATORS ==='); state.iocs.hashes.forEach(h=>lines.push(`HASH\t${h}`)); }
-  if(state.iocs.ips.length){ lines.push('; === IP BLOCKLIST ==='); state.iocs.ips.forEach(ip=>{const d=state.ipData[ip];lines.push(`BLOCK\tIP\t${ip}${d?`\t# Score:${d.abuseConfidenceScore} ${d.countryCode||''} ${d.isp||''}`:''}`);}); }
+  if(state.iocs.ips.length){
+    lines.push('; === IP BLOCKLIST ===');
+    state.iocs.ips.forEach(ip=>{
+      const d=state.ipData[ip];
+      lines.push(`BLOCK\tIP\t${ip}${d?`\t# Score:${d.abuseConfidenceScore} ${d.countryCode||''} ${d.isp||''}`:''}`)
+    });
+  }
   if(state.iocs.domains.length){ lines.push('; === DOMAIN BLOCKLIST ==='); state.iocs.domains.forEach(h=>lines.push(`BLOCK\tDOMAIN\t${h}`)); }
   if(state.iocs.files.length){ lines.push('; === DROPPED FILES ==='); state.iocs.files.forEach(f=>lines.push(`FILE\t${f}`)); }
   if(state.iocs.mitre.length){ lines.push('; === MITRE ATT&CK ==='); state.iocs.mitre.forEach(m=>lines.push(`MITRE\t${m}`)); }
@@ -1241,7 +1064,8 @@ function updateRawIOC(){
 }
 
 function copyRawIOC(){navigator.clipboard.writeText(document.getElementById('ioc-raw').textContent).then(()=>toast('✓ IOC list copied'));}
-function copyIPs(){const ips=state.iocs.ips.join('\n');navigator.clipboard.writeText(ips).then(()=>toast('✓ IPs copied'));}
+function copyIPs(){navigator.clipboard.writeText(state.iocs.ips.join('\n')).then(()=>toast('✓ IPs copied'));}
+
 function downloadIOC(fmt){
   let content='',mime='text/plain',ext=fmt;
   if(fmt==='txt') content=document.getElementById('ioc-raw').textContent;
@@ -1254,8 +1078,11 @@ function downloadIOC(fmt){
     content=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
     mime='text/csv';
   } else if(fmt==='json'){
-    content=JSON.stringify({generated:new Date().toISOString(),iocs:{ips:state.iocs.ips.map(ip=>({ip,abuseScore:state.ipData[ip]?.abuseConfidenceScore,country:state.ipData[ip]?.countryCode,isp:state.ipData[ip]?.isp})),domains:state.iocs.domains,files:state.iocs.files,hashes:state.iocs.hashes,mitre:state.iocs.mitre}},null,2);
-    mime='application/json'; ext='json';
+    content=JSON.stringify({generated:new Date().toISOString(),iocs:{
+      ips:state.iocs.ips.map(ip=>({ip,abuseScore:state.ipData[ip]?.abuseConfidenceScore,country:state.ipData[ip]?.countryCode,isp:state.ipData[ip]?.isp})),
+      domains:state.iocs.domains,files:state.iocs.files,hashes:state.iocs.hashes,mitre:state.iocs.mitre
+    }},null,2);
+    mime='application/json';
   }
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([content],{type:mime}));
@@ -1274,10 +1101,7 @@ function copyContainment(){
 }
 
 // ── Report Generation ─────────────────────────────────────────────────
-function openReport(){
-  buildReport();
-  document.getElementById('report-modal').style.display='flex';
-}
+function openReport(){ buildReport(); document.getElementById('report-modal').style.display='flex'; }
 function closeReport(){ document.getElementById('report-modal').style.display='none'; }
 
 function buildReport(){
@@ -1289,7 +1113,6 @@ function buildReport(){
   const pct=total>0?Math.round((stats.malicious||0)/total*100):0;
   const riskNum=parseInt(document.getElementById('risk-num').textContent)||0;
   const riskLbl=document.getElementById('risk-lbl').textContent||'UNKNOWN';
-
   const html=`
     <div class="rpt-title">Incident Analysis Report</div>
     <div class="rpt-meta">
@@ -1297,7 +1120,6 @@ function buildReport(){
       <span>📦 Platform: JDLThreatIntel v2.0</span>
       <span>👤 Analyst: SOC Investigator</span>
     </div>
-
     <div class="rpt-section">
       <div class="rpt-sh">Executive Summary</div>
       <div class="rpt-grid2">
@@ -1307,43 +1129,40 @@ function buildReport(){
         <div class="rpt-kv"><div class="rpt-kv-k">Kill Chain Phase</div><div class="rpt-kv-v">${document.querySelector('.kc.kc-active')?.textContent?.trim()||'Unknown'}</div></div>
       </div>
     </div>
-
     ${(d.attack_techniques||[]).length?`
     <div class="rpt-section">
       <div class="rpt-sh">MITRE ATT&CK Techniques (${d.attack_techniques.length})</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px">
-        ${(d.attack_techniques||[]).map(t=>`<span class="badge b-orange">${esc(t.id||'')} ${esc(t.name||'')}</span>`).join('')}
+        ${d.attack_techniques.map(t=>`<span class="badge b-orange">${esc(t.id||'')} ${esc(t.name||'')}</span>`).join('')}
       </div>
     </div>`:''}
-
-    ${state.iocs.ips.length||state.iocs.domains.length||state.iocs.files.length?`
+    ${state.iocs.ips.length||state.iocs.domains.length?`
     <div class="rpt-section">
       <div class="rpt-sh">Indicators of Compromise</div>
       ${state.iocs.ips.length?`
       <div style="margin-bottom:10px">
         <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">IP Addresses (${state.iocs.ips.length})</div>
-        ${state.iocs.ips.map(ip=>{const d=state.ipData[ip];return `<div class="rpt-kv" style="margin-bottom:4px;display:flex;align-items:center;gap:10px"><span style="color:var(--accent);font-weight:700">${esc(ip)}</span>${d?`<span class="badge ${(d.abuseConfidenceScore||0)>=75?'b-danger':'b-warn'}" style="font-size:9px">${d.abuseConfidenceScore}% abuse · ${d.countryCode||'?'} · ${d.isp||'?'}</span>`:''}</div>`;}).join('')}
+        ${state.iocs.ips.map(ip=>{const d=state.ipData[ip];return `<div class="rpt-kv" style="margin-bottom:4px;display:flex;align-items:center;gap:10px">
+          <span style="color:var(--accent);font-weight:700">${esc(ip)}</span>
+          ${d?`<span class="badge ${(d.abuseConfidenceScore||0)>=75?'b-danger':'b-warn'}" style="font-size:9px">${d.abuseConfidenceScore}% abuse · ${d.countryCode||'?'} · ${esc(d.isp||'?')}</span>`:''}</div>`;}).join('')}
       </div>`:''}
       ${state.iocs.domains.length?`
-      <div style="margin-bottom:10px">
+      <div>
         <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Domains (${state.iocs.domains.length})</div>
         ${state.iocs.domains.map(h=>`<div style="color:var(--accent3);font-size:11px;margin-bottom:3px">${esc(h)}</div>`).join('')}
       </div>`:''}
     </div>`:''}
-
     ${(d.process_list||[]).length?`
     <div class="rpt-section">
       <div class="rpt-sh">Process Activity (${d.process_list.length} processes)</div>
       <div style="display:flex;flex-wrap:wrap;gap:5px">
-        ${(d.process_list||[]).map(p=>{const flagged=['lsass','mimikatz','powershell','cmd'].some(k=>(p.name||'').toLowerCase().includes(k));return `<span class="badge ${flagged?'b-danger':'b-info'}">${esc(p.name||'?')}</span>`;}).join('')}
+        ${d.process_list.map(p=>{const flagged=['lsass','mimikatz','powershell','cmd'].some(k=>(p.name||'').toLowerCase().includes(k));return `<span class="badge ${flagged?'b-danger':'b-info'}">${esc(p.name||'?')}</span>`;}).join('')}
       </div>
     </div>`:''}
-
     <div class="rpt-section">
       <div class="rpt-sh">Raw IOC Blocklist</div>
       <div class="rpt-ioc-block">${esc(document.getElementById('ioc-raw').textContent)}</div>
     </div>
-
     <div class="rpt-section">
       <div class="rpt-sh">Containment Recommendations</div>
       ${[...document.querySelectorAll('.contain-card')].map(el=>{
@@ -1352,8 +1171,7 @@ function buildReport(){
         const p=el.querySelector('.contain-priority')?.textContent||'';
         return `<div class="rpt-kv" style="margin-bottom:6px"><div class="rpt-kv-k">${esc(p)} · ${esc(t)}</div><div class="rpt-kv-v" style="font-weight:400;color:var(--text2)">${esc(s)}</div></div>`;
       }).join('')||'<div class="empty">No containment data</div>'}
-    </div>
-  `;
+    </div>`;
   setEl('report-body',html);
 }
 
@@ -1364,22 +1182,25 @@ function copyReport(){
 
 function downloadReport(){
   const body=document.getElementById('report-body').innerHTML;
-  const style=document.querySelector('style').textContent;
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Incident Report</title><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"><style>:root{--bg:#05080f;--bg2:#080d1a;--bg3:#0c1222;--bg4:#111a2e;--border:#1a2640;--border2:#243556;--border3:#2e4270;--accent:#00e5ff;--accent2:#00b4cc;--accent3:#ff5533;--accent4:#7b61ff;--success:#00e676;--danger:#ff2d4a;--warn:#ffaa00;--text:#dce8ff;--text2:#7a94cc;--text3:#3d5282;--mono:'JetBrains Mono',monospace;--display:'Syne',sans-serif;}body{font-family:var(--mono);background:var(--bg);color:var(--text);padding:40px;max-width:900px;margin:0 auto}${style.split('/*')[0]}</style></head><body>${body}</body></html>`;
-  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
-  a.download=`incident_report_${Date.now()}.html`; a.click(); toast('✓ Report downloaded');
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Incident Report — JDLThreatIntel</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>:root{--bg:#05080f;--bg2:#080d1a;--bg3:#0c1222;--bg4:#111a2e;--border:#1a2640;--border2:#243556;--accent:#00e5ff;--accent3:#ff5533;--accent4:#7b61ff;--success:#00e676;--danger:#ff2d4a;--warn:#ffaa00;--text:#dce8ff;--text2:#7a94cc;--text3:#3d5282;--mono:'JetBrains Mono',monospace;--display:'Syne',sans-serif;}body{font-family:var(--mono);background:var(--bg);color:var(--text);padding:40px;max-width:900px;margin:0 auto}.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600}.b-danger{background:rgba(255,45,74,0.1);color:var(--danger);border:1px solid rgba(255,45,74,0.3)}.b-warn{background:rgba(255,170,0,0.1);color:var(--warn);border:1px solid rgba(255,170,0,0.3)}.b-ok{background:rgba(0,230,118,0.08);color:var(--success);border:1px solid rgba(0,230,118,0.2)}.b-info{background:rgba(0,229,255,0.08);color:var(--accent);border:1px solid rgba(0,229,255,0.2)}.b-orange{background:rgba(255,85,51,0.1);color:var(--accent3);border:1px solid rgba(255,85,51,0.3)}.rpt-title{font-family:var(--display);font-size:22px;font-weight:800;margin-bottom:4px}.rpt-meta{font-size:11px;color:var(--text3);margin-bottom:20px}.rpt-sh{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.rpt-kv{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px;font-size:11px}.rpt-kv-k{color:var(--text3);font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}.rpt-kv-v{color:var(--text);font-weight:600}.rpt-ioc-block{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:11px;line-height:1.8;color:var(--success);white-space:pre;overflow-x:auto}.empty{color:var(--text3);text-align:center;padding:20px;border:1px dashed var(--border);border-radius:6px}</style>
+  </head><body>${body}</body></html>`;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+  a.download=`incident_report_${Date.now()}.html`; a.click();
+  toast('✓ Report downloaded');
 }
 
 function printReport(){
   const w=window.open('','_blank');
   const body=document.getElementById('report-body').innerHTML;
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Incident Report</title><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"><style>*{box-sizing:border-box}body{font-family:'JetBrains Mono',monospace;background:#fff;color:#111;padding:30px;max-width:900px;margin:0 auto}h1{font-family:'Syne',sans-serif}.badge{display:inline-block;padding:2px 6px;border-radius:3px;font-size:10px;border:1px solid #ccc;margin:2px}.b-danger{background:#fee;border-color:#f66;color:#c00}.b-warn{background:#ffe;border-color:#fa0;color:#960}.b-ok{background:#efe;border-color:#6a6;color:#060}.b-info{background:#e6f7ff;border-color:#08c;color:#036}.b-orange{background:#fef0e6;border-color:#f63;color:#c31}.b-purple{background:#f0eeff;border-color:#96a;color:#639}.rpt-sh{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#666;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #ddd;margin-top:20px}.rpt-kv{background:#f9f9f9;border:1px solid #ddd;border-radius:4px;padding:8px;margin-bottom:6px}.rpt-kv-k{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#999;margin-bottom:2px}.rpt-kv-v{color:#111;font-weight:600}.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rpt-ioc-block{background:#f5f5f5;padding:12px;border-radius:4px;font-size:11px;white-space:pre;overflow-x:auto}</style></head><body>${body}</body></html>`);
-  w.document.close(); setTimeout(()=>{w.print();},500);
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Incident Report</title>
+  <style>*{box-sizing:border-box}body{font-family:'JetBrains Mono',monospace;background:#fff;color:#111;padding:30px;max-width:900px;margin:0 auto}.badge{display:inline-block;padding:2px 6px;border-radius:3px;font-size:10px;border:1px solid #ccc;margin:2px}.b-danger{background:#fee;border-color:#f66;color:#c00}.b-warn{background:#ffe;border-color:#fa0;color:#960}.b-ok{background:#efe;border-color:#6a6;color:#060}.b-info{background:#e6f7ff;border-color:#08c;color:#036}.b-orange{background:#fef0e6;border-color:#f63;color:#c31}.b-purple{background:#f0eeff;border-color:#96a;color:#639}.rpt-sh{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#666;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #ddd;margin-top:20px}.rpt-kv{background:#f9f9f9;border:1px solid #ddd;border-radius:4px;padding:8px;margin-bottom:6px}.rpt-kv-k{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#999;margin-bottom:2px}.rpt-kv-v{color:#111;font-weight:600}.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rpt-ioc-block{background:#f5f5f5;padding:12px;border-radius:4px;font-size:11px;white-space:pre;overflow-x:auto}.empty{text-align:center;padding:20px;border:1px dashed #ddd;border-radius:6px;color:#999}</style>
+  </head><body>${body}</body></html>`);
+  w.document.close();
+  setTimeout(()=>w.print(),500);
 }
-
-// Enter key handlers
-document.getElementById('hash-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doVTScan();});
-document.getElementById('ip-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doIPLookup();});
 </script>
 </body>
 </html>
