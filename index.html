@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>JDLThreatIntel – SOC Investigation Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0e1a;--bg2:#0f1629;--bg3:#131d35;--bg4:#1a2444;
+  --border:#1e2d50;--border2:#2a3f6f;
+  --accent:#00d4ff;--accent2:#0099cc;--accent3:#ff6b35;
+  --success:#00e676;--danger:#ff3d57;--warn:#ffab00;
+  --text:#e8f0fe;--text2:#8899cc;--text3:#5566aa;
+  --red-glow:rgba(255,61,87,0.15);--blue-glow:rgba(0,212,255,0.08);
+  --mono:'JetBrains Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* Scanline overlay */
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:0}
+
+.shell{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:24px 20px}
+
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{width:36px;height:36px;border:2px solid var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.logo-icon::before{content:'';position:absolute;inset:0;background:var(--blue-glow)}
+.logo-icon svg{width:18px;height:18px}
+.logo-title{font-family:var(--mono);font-size:18px;font-weight:700;letter-spacing:-0.5px;color:var(--text)}
+.logo-sub{font-size:11px;color:var(--text3);font-family:var(--mono);letter-spacing:1px;text-transform:uppercase}
+.header-status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);font-family:var(--mono)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* Grid layout */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-full{grid-column:1/-1}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.grid-full{grid-column:1}}
+
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);opacity:0.6}
+.card-title{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title span{display:inline-block;width:4px;height:14px;background:var(--accent);border-radius:2px}
+
+/* Inputs */
+.input-row{display:flex;gap:8px;align-items:center}
+input[type=text],input[type=file]{
+  background:var(--bg3);border:1px solid var(--border2);border-radius:6px;
+  color:var(--text);font-family:var(--mono);font-size:13px;padding:9px 12px;
+  outline:none;transition:border-color .2s,box-shadow .2s;width:100%
+}
+input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,212,255,0.1)}
+input[type=file]{cursor:pointer;padding:7px 10px}
+input[type=file]::file-selector-button{
+  background:var(--bg4);border:1px solid var(--border2);border-radius:4px;
+  color:var(--text2);font-size:11px;padding:4px 10px;cursor:pointer;margin-right:10px;font-family:var(--mono)
+}
+
+/* Buttons */
+.btn{padding:9px 18px;border-radius:6px;border:1px solid var(--accent2);
+  background:transparent;color:var(--accent);font-family:var(--mono);font-size:12px;
+  font-weight:600;cursor:pointer;letter-spacing:0.5px;transition:all .15s;white-space:nowrap}
+.btn:hover{background:var(--accent);color:var(--bg);box-shadow:0 0 14px rgba(0,212,255,0.3)}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+.btn-danger{border-color:var(--danger);color:var(--danger)}
+.btn-danger:hover{background:var(--danger);color:#fff;box-shadow:0 0 14px rgba(255,61,87,0.3)}
+
+/* Status badges */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:var(--mono);
+  padding:3px 9px;border-radius:4px;font-weight:600;letter-spacing:0.3px}
+.badge-danger{background:rgba(255,61,87,0.12);color:var(--danger);border:1px solid rgba(255,61,87,0.3)}
+.badge-warn{background:rgba(255,171,0,0.1);color:var(--warn);border:1px solid rgba(255,171,0,0.25)}
+.badge-ok{background:rgba(0,230,118,0.08);color:var(--success);border:1px solid rgba(0,230,118,0.2)}
+.badge-info{background:rgba(0,212,255,0.08);color:var(--accent);border:1px solid rgba(0,212,255,0.2)}
+
+/* Threat score meter */
+.meter-wrap{margin:8px 0 4px}
+.meter-bg{height:8px;background:var(--bg4);border-radius:4px;overflow:hidden;position:relative}
+.meter-fill{height:100%;width:0%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1);position:relative}
+.meter-fill::after{content:'';position:absolute;right:0;top:0;bottom:0;width:4px;filter:blur(4px)}
+.meter-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:4px}
+.score-display{display:flex;align-items:baseline;gap:6px;margin-top:10px}
+.score-num{font-family:var(--mono);font-size:36px;font-weight:700;line-height:1}
+.score-denom{font-family:var(--mono);font-size:16px;color:var(--text3)}
+.score-label{font-family:var(--mono);font-size:12px;font-weight:600;margin-left:6px}
+
+/* Stat row */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.stat-box{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px 12px;text-align:center}
+.stat-val{font-family:var(--mono);font-size:20px;font-weight:700;line-height:1.2}
+.stat-lbl{font-size:10px;font-family:var(--mono);color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.stat-danger .stat-val{color:var(--danger)}
+.stat-warn .stat-val{color:var(--warn)}
+.stat-ok .stat-val{color:var(--success)}
+
+/* Process tree */
+.proc-tree{font-family:var(--mono);font-size:12px;color:var(--text2);
+  background:var(--bg);border:1px solid var(--border);border-radius:6px;
+  padding:12px;max-height:200px;overflow-y:auto;line-height:2}
+.proc-item{display:flex;align-items:center;gap:8px;padding:2px 0;border-bottom:1px solid var(--border);padding-bottom:4px;margin-bottom:4px}
+.proc-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.proc-name{color:var(--accent);flex:1}
+.proc-pid{color:var(--text3);font-size:10px}
+.proc-flag{font-size:10px}
+
+/* MITRE */
+.mitre-list{display:flex;flex-wrap:wrap;gap:6px}
+.mitre-tag{background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.3);color:var(--accent3);
+  font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:4px;cursor:pointer;transition:all .15s}
+.mitre-tag:hover{background:rgba(255,107,53,0.2)}
+
+/* Network table */
+.net-table{width:100%;border-collapse:collapse;font-size:12px}
+.net-table th{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text3);padding:6px 8px;border-bottom:1px solid var(--border);text-align:left}
+.net-table td{padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);color:var(--text2)}
+.net-table tr:last-child td{border-bottom:none}
+.net-table tr:hover td{background:var(--bg3);color:var(--text)}
+.net-ip{color:var(--accent)}
+.net-port{color:var(--warn)}
+.net-host{color:var(--text)}
+
+/* IOC export */
+.ioc-box{font-family:var(--mono);font-size:12px;background:var(--bg);
+  border:1px solid var(--border2);border-radius:6px;padding:12px;
+  color:var(--success);line-height:1.8;min-height:100px;max-height:200px;overflow-y:auto;
+  white-space:pre;word-break:break-all}
+
+/* Containment */
+.containment-list{display:flex;flex-direction:column;gap:8px}
+.contain-item{display:flex;align-items:center;gap:10px;background:var(--bg3);
+  border:1px solid var(--border);border-radius:6px;padding:10px 14px}
+.contain-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.contain-icon.red{background:rgba(255,61,87,0.12);border:1px solid rgba(255,61,87,0.3)}
+.contain-icon.warn{background:rgba(255,171,0,0.1);border:1px solid rgba(255,171,0,0.25)}
+.contain-icon.blue{background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2)}
+.contain-text{font-size:13px;font-weight:500}
+.contain-sub{font-size:11px;color:var(--text3);margin-top:2px;font-family:var(--mono)}
+
+/* Kill chain */
+.killchain{display:flex;align-items:center;gap:0;overflow-x:auto;padding-bottom:4px}
+.kc-phase{background:var(--bg3);border:1px solid var(--border);padding:8px 14px;
+  font-family:var(--mono);font-size:11px;color:var(--text3);position:relative;white-space:nowrap;
+  transition:all .3s}
+.kc-phase:not(:last-child)::after{content:'›';position:absolute;right:-10px;top:50%;transform:translateY(-50%);
+  color:var(--border2);font-size:14px;z-index:1}
+.kc-phase.active{background:rgba(0,212,255,0.08);border-color:var(--accent);color:var(--accent);font-weight:600}
+.kc-phase.past{background:rgba(255,107,53,0.08);border-color:var(--accent3);color:var(--accent3)}
+.kc-phase:first-child{border-radius:6px 0 0 6px}
+.kc-phase:last-child{border-radius:0 6px 6px 0}
+
+/* Screenshot */
+.screen-wrap{background:var(--bg);border:1px solid var(--border);border-radius:6px;overflow:hidden;min-height:80px;
+  display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:12px;font-family:var(--mono)}
+
+/* Dropped files */
+.drop-list{display:flex;flex-direction:column;gap:4px}
+.drop-item{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:6px 10px;color:var(--text2)}
+.drop-icon{color:var(--warn);font-size:14px}
+
+/* Alerts */
+.alert-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.alert-item{display:flex;align-items:center;gap:8px;background:var(--red-glow);
+  border:1px solid rgba(255,61,87,0.3);border-radius:5px;padding:8px 12px;
+  font-size:12px;font-family:var(--mono);color:var(--danger)}
+.alert-dot{width:6px;height:6px;border-radius:50%;background:var(--danger);flex-shrink:0;box-shadow:0 0 6px var(--danger)}
+
+/* Loading spinner */
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--border2);
+  border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Loading state text */
+.loading-msg{font-family:var(--mono);font-size:12px;color:var(--text2);margin-top:8px;display:flex;align-items:center}
+
+/* Error */
+.err-box{background:rgba(255,61,87,0.06);border:1px solid rgba(255,61,87,0.25);border-radius:6px;
+  padding:10px 14px;font-family:var(--mono);font-size:12px;color:var(--danger);margin-top:8px}
+
+/* Tabs */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tab{background:none;border:none;color:var(--text3);font-family:var(--mono);font-size:12px;
+  padding:8px 16px;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;letter-spacing:0.5px}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* Copy button */
+.copy-btn{background:none;border:1px solid var(--border2);border-radius:4px;color:var(--text3);
+  font-family:var(--mono);font-size:10px;padding:3px 8px;cursor:pointer;transition:all .15s}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Section header row */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+
+/* Empty state */
+.empty{color:var(--text3);font-family:var(--mono);font-size:12px;text-align:center;padding:20px;border:1px dashed var(--border);border-radius:6px}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-title">JDLThreatIntel</div>
+        <div class="logo-sub">SOC Investigation Platform</div>
+      </div>
+    </div>
+    <div class="header-status">
+      <div class="dot"></div>
+      <span id="hdr-status">WORKER ONLINE</span>
+      <span style="color:var(--border2)">|</span>
+      <span id="hdr-time"></span>
+    </div>
+  </div>
+
+  <!-- Main grid -->
+  <div class="grid">
+
+    <!-- VT Hash Scan -->
+    <div class="card grid-full">
+      <div class="card-title"><span></span>Hash Analysis — VirusTotal</div>
+      <div class="input-row">
+        <input type="text" id="hash-inp" placeholder="Paste MD5 / SHA1 / SHA256 hash…" style="font-size:13px"/>
+        <button class="btn" id="btn-vt" onclick="doScan()">▶ Analyze</button>
+      </div>
+      <div id="vt-loading" class="loading-msg" style="display:none"><span class="spin"></span>Querying VirusTotal…</div>
+      <div id="vt-error" class="err-box" style="display:none"></div>
+      <div id="vt-result" style="display:none;margin-top:14px">
+        <div class="stat-row">
+          <div class="stat-box stat-danger"><div class="stat-val" id="s-mal">—</div><div class="stat-lbl">Malicious</div></div>
+          <div class="stat-box stat-warn"><div class="stat-val" id="s-sus">—</div><div class="stat-lbl">Suspicious</div></div>
+          <div class="stat-box stat-ok"><div class="stat-val" id="s-cln">—</div><div class="stat-lbl">Clean</div></div>
+        </div>
+        <div style="margin-top:10px;display:flex;align-items:center;gap:10px">
+          <span style="font-family:var(--mono);font-size:12px;color:var(--text3)">Detection Rate:</span>
+          <span id="s-rate" style="font-family:var(--mono);font-size:14px;font-weight:700"></span>
+          <span id="s-verdict"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sandbox Upload -->
+    <div class="card grid-full">
+      <div class="card-title"><span></span>Dynamic Analysis — ANY.RUN Sandbox</div>
+      <div class="input-row">
+        <input type="file" id="f-inp"/>
+        <button class="btn" id="btn-sb" onclick="runSbUpload()">▶ Submit</button>
+      </div>
+      <div id="sb-loading" class="loading-msg" style="display:none"><span class="spin"></span><span id="sb-status-txt">Submitting file…</span></div>
+      <div id="sb-error" class="err-box" style="display:none"></div>
+    </div>
+
+    <!-- Threat Score -->
+    <div class="card">
+      <div class="card-title"><span></span>Threat Score</div>
+      <div class="score-display">
+        <span class="score-num" id="score-num" style="color:var(--text3)">—</span>
+        <span class="score-denom">/100</span>
+        <span class="score-label" id="score-verdict"></span>
+      </div>
+      <div class="meter-wrap">
+        <div class="meter-bg"><div class="meter-fill" id="riskbar"></div></div>
+        <div class="meter-labels"><span>LOW</span><span>MEDIUM</span><span>HIGH</span><span>CRITICAL</span></div>
+      </div>
+      <div id="alert-list" class="alert-list"></div>
+    </div>
+
+    <!-- Kill Chain -->
+    <div class="card">
+      <div class="card-title"><span></span>Kill Chain Phase</div>
+      <div class="killchain" id="killchain">
+        <div class="kc-phase" data-phase="recon">Recon</div>
+        <div class="kc-phase" data-phase="weaponize">Weaponize</div>
+        <div class="kc-phase" data-phase="deliver">Deliver</div>
+        <div class="kc-phase" data-phase="exploit">Exploit</div>
+        <div class="kc-phase" data-phase="install">Install</div>
+        <div class="kc-phase" data-phase="c2">C2</div>
+        <div class="kc-phase" data-phase="action">Actions</div>
+      </div>
+      <div style="margin-top:10px">
+        <span id="kill-badge"></span>
+      </div>
+    </div>
+
+    <!-- MITRE ATT&CK -->
+    <div class="card grid-full">
+      <div class="card-title"><span></span>MITRE ATT&CK Techniques</div>
+      <div id="mitre-list"><div class="empty">No techniques detected yet</div></div>
+    </div>
+
+    <!-- Process Tree -->
+    <div class="card">
+      <div class="card-title"><span></span>Process Tree</div>
+      <div id="proc-tree"><div class="empty">No process data</div></div>
+    </div>
+
+    <!-- Network Connections -->
+    <div class="card">
+      <div class="section-hdr">
+        <div class="card-title" style="margin:0"><span></span>Network Connections</div>
+        <button class="copy-btn" onclick="copyIPs()">Copy IPs</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="net-table">
+          <thead><tr><th>IP Address</th><th>Hostname</th><th>Port</th><th>Proto</th></tr></thead>
+          <tbody id="sb-net"><tr><td colspan="4" style="color:var(--text3);text-align:center;padding:16px;font-family:var(--mono);font-size:11px">Awaiting sandbox result…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Dropped Files -->
+    <div class="card">
+      <div class="card-title"><span></span>Dropped Files</div>
+      <div id="drop-list"><div class="empty">No dropped files detected</div></div>
+    </div>
+
+    <!-- Screenshot -->
+    <div class="card">
+      <div class="card-title"><span></span>Sandbox Screenshot</div>
+      <div class="screen-wrap" id="sbp-screen">⬡ No screenshot available</div>
+    </div>
+
+    <!-- IOC Export -->
+    <div class="card grid-full">
+      <div class="section-hdr">
+        <div class="card-title" style="margin:0"><span></span>IOC Export &amp; Blocklist</div>
+        <div style="display:flex;gap:8px">
+          <button class="copy-btn" onclick="copyIOC()">Copy All</button>
+          <button class="copy-btn" onclick="downloadIOC()">⬇ Download .txt</button>
+        </div>
+      </div>
+      <div class="ioc-box" id="ioc-box">; Awaiting analysis results…</div>
+    </div>
+
+    <!-- Containment -->
+    <div class="card grid-full">
+      <div class="card-title"><span></span>Containment Recommendations</div>
+      <div id="containment-list" class="containment-list">
+        <div class="empty">Run analysis to generate containment plan</div>
+      </div>
+    </div>
+
+  </div><!-- /grid -->
+</div><!-- /shell -->
+
+<script>
+const WORKER = "https://soc-backend.johndominicklimpag.workers.dev";
+
+// Live clock
+function tickClock(){
+  const t = new Date();
+  document.getElementById('hdr-time').textContent =
+    t.toUTCString().replace('GMT','UTC');
+}
+setInterval(tickClock, 1000); tickClock();
+
+// ── Utility ──────────────────────────────────────────────────────────
+function setEl(id, html){ const e = document.getElementById(id); if(e) e.innerHTML = html; }
+function show(id){ document.getElementById(id).style.display = ''; }
+function hide(id){ document.getElementById(id).style.display = 'none'; }
+function showBlock(id){ document.getElementById(id).style.display = 'block'; }
+function setDisabled(id, v){ document.getElementById(id).disabled = v; }
+
+function setError(wrapId, msg){
+  const e = document.getElementById(wrapId);
+  e.textContent = '⚠ ' + msg;
+  showBlock(wrapId);
+}
+
+function rateBadge(pct){
+  if(pct >= 70) return '<span class="badge badge-danger">■ CRITICAL</span>';
+  if(pct >= 40) return '<span class="badge badge-warn">▲ HIGH</span>';
+  if(pct >= 10) return '<span class="badge badge-warn">◆ MEDIUM</span>';
+  if(pct > 0)   return '<span class="badge badge-info">● SUSPICIOUS</span>';
+  return '<span class="badge badge-ok">✓ CLEAN</span>';
+}
+
+// ── VT Hash Scan ──────────────────────────────────────────────────────
+async function doScan(){
+  const h = document.getElementById('hash-inp').value.trim();
+  if(!h){ return alert('Paste a hash first.'); }
+
+  hide('vt-result');
+  hide('vt-error');
+  show('vt-loading');
+  setDisabled('btn-vt', true);
+
+  try {
+    const r = await fetch(WORKER + '/vt/' + encodeURIComponent(h));
+    if(!r.ok) throw new Error('Worker returned ' + r.status);
+    const v = await r.json();
+    const s = v?.data?.attributes?.last_analysis_stats;
+    if(!s) throw new Error('Unexpected response structure from VirusTotal');
+
+    const total = (s.malicious||0) + (s.suspicious||0) + (s.harmless||0) + (s.undetected||0);
+    const pct = total > 0 ? Math.round(((s.malicious||0) / total) * 100) : 0;
+
+    document.getElementById('s-mal').textContent = s.malicious ?? 0;
+    document.getElementById('s-sus').textContent = s.suspicious ?? 0;
+    document.getElementById('s-cln').textContent = s.harmless ?? 0;
+    document.getElementById('s-rate').textContent = pct + '%';
+    document.getElementById('s-rate').style.color = pct >= 40 ? 'var(--danger)' : pct > 0 ? 'var(--warn)' : 'var(--success)';
+    setEl('s-verdict', rateBadge(pct));
+
+    hide('vt-loading');
+    show('vt-result');
+  } catch(err){
+    hide('vt-loading');
+    setError('vt-error', err.message);
+  } finally {
+    setDisabled('btn-vt', false);
+  }
+}
+
+// ── Sandbox ───────────────────────────────────────────────────────────
+async function runSbUpload(){
+  const f = document.getElementById('f-inp').files[0];
+  if(!f){ return alert('Select a file first.'); }
+
+  hide('sb-error');
+  show('sb-loading');
+  document.getElementById('sb-status-txt').textContent = 'Submitting file to ANY.RUN…';
+  setDisabled('btn-sb', true);
+
+  try {
+    const fd = new FormData();
+    fd.append('file', f);
+    const r = await fetch(WORKER + '/sandbox', { method:'POST', body:fd });
+    if(!r.ok) throw new Error('Submission failed: worker returned ' + r.status);
+    const j = await r.json();
+    const taskId = j?.data?.taskid;
+    if(!taskId) throw new Error('No task ID returned from sandbox');
+    pollSandbox(taskId);
+  } catch(err){
+    hide('sb-loading');
+    setDisabled('btn-sb', false);
+    setError('sb-error', err.message);
+  }
+}
+
+let pollAttempts = 0;
+async function pollSandbox(id){
+  pollAttempts = 0;
+  const MAX_POLLS = 36; // 6 min timeout
+  document.getElementById('sb-status-txt').textContent = 'Sandbox running… (0/' + MAX_POLLS + ' checks)';
+
+  const interval = setInterval(async () => {
+    pollAttempts++;
+    document.getElementById('sb-status-txt').textContent =
+      'Sandbox running… (' + pollAttempts + '/' + MAX_POLLS + ' checks)';
+
+    if(pollAttempts > MAX_POLLS){
+      clearInterval(interval);
+      hide('sb-loading');
+      setDisabled('btn-sb', false);
+      setError('sb-error', 'Sandbox timed out after ' + MAX_POLLS + ' polls. Task ID: ' + id);
+      return;
+    }
+
+    try {
+      const r = await fetch(WORKER + '/result/' + id);
+      if(!r.ok) return;
+      const sb = await r.json();
+      if(sb?.data?.state !== 'running'){
+        clearInterval(interval);
+        hide('sb-loading');
+        setDisabled('btn-sb', false);
+        const d = sb?.data || {};
+        renderResults(d);
+      }
+    } catch(e){ /* keep polling */ }
+  }, 10000);
+}
+
+// ── Render all results ────────────────────────────────────────────────
+function renderResults(d){
+  renderProcessTree(d);
+  renderMITRE(d);
+  renderNetwork(d);
+  renderDroppedFiles(d);
+  renderScreenshot(d);
+  detectThreats(d);
+  calcRisk(d);
+  renderKillChain(d);
+  renderContainment(d);
+  renderIOC(d);
+}
+
+function renderProcessTree(d){
+  const procs = d.process_list || [];
+  if(!procs.length){ setEl('proc-tree','<div class="empty">No processes captured</div>'); return; }
+  const html = '<div class="proc-tree">' +
+    procs.map((p,i) => {
+      const flagged = (p.name||'').toLowerCase().includes('lsass') ||
+                      (p.name||'').toLowerCase().includes('powershell') ||
+                      (p.name||'').toLowerCase().includes('cmd');
+      const indent = i > 0 ? 'padding-left:' + Math.min(i * 16, 48) + 'px' : '';
+      return `<div class="proc-item" style="${indent}">
+        <span class="proc-name">${i > 0 ? '└ ' : ''}${escHtml(p.name||'unknown')}</span>
+        ${p.pid ? `<span class="proc-pid">PID:${p.pid}</span>` : ''}
+        ${flagged ? '<span class="proc-flag badge badge-danger">⚠ FLAGGED</span>' : ''}
+      </div>`;
+    }).join('') + '</div>';
+  setEl('proc-tree', html);
+}
+
+function renderMITRE(d){
+  const techs = d.attack_techniques || [];
+  if(!techs.length){ setEl('mitre-list','<div class="empty">No ATT&CK techniques detected</div>'); return; }
+  const html = '<div class="mitre-list">' +
+    techs.map(m =>
+      `<span class="mitre-tag" title="${escHtml(m.name||'')}">
+        <strong>${escHtml(m.id||'')}</strong> ${escHtml(m.name||'')}
+      </span>`
+    ).join('') + '</div>';
+  setEl('mitre-list', html);
+}
+
+function renderNetwork(d){
+  const conns = d.network_connections || [];
+  if(!conns.length){
+    setEl('sb-net','<tr><td colspan="4" style="color:var(--text3);text-align:center;padding:16px;font-family:var(--mono);font-size:11px">No network connections</td></tr>');
+    return;
+  }
+  setEl('sb-net', conns.map(n =>
+    `<tr>
+      <td class="net-ip">${escHtml(n.ip||'—')}</td>
+      <td class="net-host">${escHtml(n.host||'—')}</td>
+      <td class="net-port">${escHtml(String(n.port||'—'))}</td>
+      <td style="color:var(--text3);font-size:11px">${escHtml(n.protocol||'TCP')}</td>
+    </tr>`
+  ).join(''));
+}
+
+function renderDroppedFiles(d){
+  const files = d.files_created || [];
+  if(!files.length){ setEl('drop-list','<div class="empty">No dropped files</div>'); return; }
+  setEl('drop-list', '<div class="drop-list">' +
+    files.map(f => `<div class="drop-item"><span class="drop-icon">⚠</span>${escHtml(f.name||'unknown')}</div>`).join('') +
+    '</div>');
+}
+
+function renderScreenshot(d){
+  if(d.screenshots && d.screenshots.length && d.screenshots[0].url){
+    setEl('sbp-screen', `<img src="${escHtml(d.screenshots[0].url)}" style="width:100%;display:block;border-radius:4px" alt="Sandbox screenshot"/>`);
+  }
+}
+
+function detectThreats(d){
+  const alerts = [];
+  (d.process_list||[]).forEach(p => {
+    const n = (p.name||'').toLowerCase();
+    if(n.includes('lsass')) alerts.push('Credential dumping via LSASS access');
+    if(n.includes('mimikatz')) alerts.push('Mimikatz process detected');
+    if(n.includes('powershell') || n.includes('cmd.exe')) alerts.push('Shell execution detected');
+  });
+  if((d.files_created||[]).length) alerts.push('Persistence mechanism — ' + d.files_created.length + ' file(s) dropped');
+  if((d.network_connections||[]).length) alerts.push('C2 communication — ' + d.network_connections.length + ' connection(s) established');
+  (d.attack_techniques||[]).forEach(t => {
+    if((t.id||'').startsWith('T1')) alerts.push('ATT&CK ' + t.id + ': ' + (t.name||''));
+  });
+
+  const alertEl = document.getElementById('alert-list');
+  if(!alerts.length){ alertEl.innerHTML = ''; return; }
+  alertEl.innerHTML = alerts.map(a =>
+    `<div class="alert-item"><div class="alert-dot"></div>${escHtml(a)}</div>`
+  ).join('');
+}
+
+function calcRisk(d){
+  let score = 0;
+  if((d.files_created||[]).length)       score += 30;
+  if((d.network_connections||[]).length) score += 40;
+  if((d.attack_techniques||[]).length)   score += 30;
+
+  const bar = document.getElementById('riskbar');
+  bar.style.width = score + '%';
+
+  let color = 'var(--success)';
+  let label = 'LOW RISK';
+  if(score >= 70){ color = 'var(--danger)'; label = 'CRITICAL'; }
+  else if(score >= 50){ color = 'var(--danger)'; label = 'HIGH RISK'; }
+  else if(score >= 30){ color = 'var(--warn)'; label = 'MEDIUM RISK'; }
+
+  bar.style.background = color;
+
+  document.getElementById('score-num').textContent = score;
+  document.getElementById('score-num').style.color = color;
+  document.getElementById('score-verdict').innerHTML = `<span class="badge" style="background:${color}20;color:${color};border:1px solid ${color}60">${label}</span>`;
+}
+
+function renderKillChain(d){
+  const phases = document.querySelectorAll('.kc-phase');
+  phases.forEach(p => p.classList.remove('active','past'));
+
+  let currentPhase = 'exploit'; // baseline: code executed
+  if((d.files_created||[]).length) currentPhase = 'install';
+  if((d.network_connections||[]).length) currentPhase = 'c2';
+  if((d.attack_techniques||[]).some(t => (t.id||'').startsWith('T1485') || (t.id||'').startsWith('T1490'))) currentPhase = 'action';
+
+  const order = ['recon','weaponize','deliver','exploit','install','c2','action'];
+  const currentIdx = order.indexOf(currentPhase);
+
+  phases.forEach(p => {
+    const idx = order.indexOf(p.dataset.phase);
+    if(idx < currentIdx) p.classList.add('past');
+    if(idx === currentIdx) p.classList.add('active');
+  });
+
+  document.getElementById('kill-badge').innerHTML =
+    `<span class="badge badge-danger">Current: ${currentPhase.toUpperCase()}</span>`;
+}
+
+function renderContainment(d){
+  const steps = [];
+  if((d.network_connections||[]).length){
+    const ips = d.network_connections.map(n => n.ip).filter(Boolean);
+    steps.push({ icon:'red', sym:'⬛', title:'Isolate Host', sub:'Quarantine system from network immediately' });
+    steps.push({ icon:'red', sym:'⛔', title:'Block ' + ips.length + ' IP(s)', sub: ips.slice(0,3).join(', ') + (ips.length > 3 ? ' +more' : '') });
+  }
+  if((d.process_list||[]).some(p => (p.name||'').toLowerCase().includes('lsass'))){
+    steps.push({ icon:'warn', sym:'🔑', title:'Reset All Credentials', sub:'Credential dump likely — rotate passwords & invalidate tokens' });
+  }
+  if((d.files_created||[]).length){
+    steps.push({ icon:'warn', sym:'🗂', title:'Remove Persistence', sub:'Delete ' + d.files_created.length + ' dropped file(s) and audit startup entries' });
+  }
+  steps.push({ icon:'blue', sym:'📋', title:'Forensic Imaging', sub:'Capture disk/memory image before remediation' });
+  steps.push({ icon:'blue', sym:'📡', title:'Update SIEM Rules', sub:'Push IOCs to detection stack and threat intel feeds' });
+
+  setEl('containment-list', steps.map(s =>
+    `<div class="contain-item">
+      <div class="contain-icon ${s.icon}">${s.sym}</div>
+      <div>
+        <div class="contain-text">${escHtml(s.title)}</div>
+        <div class="contain-sub">${escHtml(s.sub)}</div>
+      </div>
+    </div>`
+  ).join(''));
+}
+
+function renderIOC(d){
+  const lines = [];
+  const ts = new Date().toISOString();
+  lines.push('; JDLThreatIntel IOC Export');
+  lines.push('; Generated: ' + ts);
+  lines.push(';');
+
+  const ips = (d.network_connections||[]).map(n => n.ip).filter(Boolean);
+  const hosts = (d.network_connections||[]).map(n => n.host).filter(Boolean);
+  const files = (d.files_created||[]).map(f => f.name).filter(Boolean);
+
+  if(ips.length){
+    lines.push('; === IP BLOCKLIST ===');
+    ips.forEach(ip => lines.push('BLOCK\tIP\t' + ip));
+  }
+  if(hosts.length){
+    lines.push('; === DOMAIN BLOCKLIST ===');
+    hosts.forEach(h => lines.push('BLOCK\tDOMAIN\t' + h));
+  }
+  if(files.length){
+    lines.push('; === DROPPED FILES ===');
+    files.forEach(f => lines.push('FILE\t' + f));
+  }
+  const techs = (d.attack_techniques||[]).map(t => t.id).filter(Boolean);
+  if(techs.length){
+    lines.push('; === MITRE TECHNIQUES ===');
+    techs.forEach(t => lines.push('MITRE\t' + t));
+  }
+
+  document.getElementById('ioc-box').textContent = lines.join('\n');
+}
+
+// ── Actions ───────────────────────────────────────────────────────────
+function copyIPs(){
+  const rows = document.querySelectorAll('#sb-net tr td:first-child');
+  const ips = [...rows].map(r => r.textContent.trim()).filter(t => t !== '—').join('\n');
+  navigator.clipboard.writeText(ips).then(() => flashMsg('IPs copied!'));
+}
+function copyIOC(){
+  const t = document.getElementById('ioc-box').textContent;
+  navigator.clipboard.writeText(t).then(() => flashMsg('IOC copied!'));
+}
+function downloadIOC(){
+  const t = document.getElementById('ioc-box').textContent;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([t], {type:'text/plain'}));
+  a.download = 'ioc_export_' + Date.now() + '.txt';
+  a.click();
+}
+function flashMsg(msg){
+  const el = document.createElement('div');
+  el.textContent = msg;
+  el.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--bg3);border:1px solid var(--accent);color:var(--accent);font-family:var(--mono);font-size:12px;padding:8px 14px;border-radius:6px;z-index:999;animation:fadeout 2s forwards';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2000);
+}
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// Enter key on hash input
+document.getElementById('hash-inp').addEventListener('keydown', e => { if(e.key==='Enter') doScan(); });
+
+// CSS for flash fadeout
+const s = document.createElement('style');
+s.textContent = '@keyframes fadeout{0%{opacity:1}80%{opacity:1}100%{opacity:0}}';
+document.head.appendChild(s);
+
+// Check worker status on load
+(async()=>{
+  try{
+    const r = await fetch(WORKER + '/health', {signal:AbortSignal.timeout(4000)});
+    document.getElementById('hdr-status').textContent = r.ok ? 'WORKER ONLINE' : 'WORKER DEGRADED';
+  } catch {
+    document.getElementById('hdr-status').textContent = 'WORKER OFFLINE';
+    document.querySelector('.dot').style.background = 'var(--danger)';
+    document.querySelector('.dot').style.boxShadow = '0 0 6px var(--danger)';
+    document.querySelector('.dot').style.animation = 'none';
+  }
+})();
+</script>
+</body>
+</html>
