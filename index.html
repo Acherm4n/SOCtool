@@ -18,8 +18,6 @@
   --glow-orange:0 0 20px rgba(255,85,51,0.2);
   --topbar-bg:rgba(5,8,15,0.92);
 }
-
-/* ── LIGHT THEME OVERRIDES ─────────────────────────────────────────── */
 body.light-theme{
   --bg:#f0f4f8;--bg2:#ffffff;--bg3:#e8edf5;--bg4:#dce4ef;--bg5:#cdd7e6;
   --border:#c5d0e0;--border2:#a8b8cf;--border3:#8a9dbf;
@@ -38,18 +36,102 @@ body.light-theme .modal{background:var(--bg2);border-color:var(--border2)}
 body.light-theme .abuse-result{background:var(--bg3)}
 body.light-theme .rpt-ioc-block{background:var(--bg3);color:#0a7a3c}
 body.light-theme .card::before{background:linear-gradient(90deg,transparent,var(--border2),transparent)}
+body.light-theme .vt-av-row:hover{background:rgba(0,0,0,0.04)}
+body.light-theme .vt-malware-block{background:var(--bg3)}
+body.light-theme .vt-av-panel{background:var(--bg3)}
 
-/* ── THEME TOGGLE BUTTON ────────────────────────────────────────────── */
-.theme-toggle{
-  display:flex;align-items:center;gap:6px;
-  background:var(--bg3);border:1px solid var(--border2);border-radius:6px;
-  color:var(--text2);font-family:var(--mono);font-size:11px;font-weight:700;
-  padding:6px 12px;cursor:pointer;letter-spacing:1px;text-transform:uppercase;
-  transition:background .2s,border-color .2s,color .2s;
-}
+.theme-toggle{display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-family:var(--mono);font-size:11px;font-weight:700;padding:6px 12px;cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:background .2s,border-color .2s,color .2s;}
 .theme-toggle:hover{background:var(--bg4);border-color:var(--accent);color:var(--accent)}
 .theme-toggle svg{width:13px;height:13px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 
+/* ── UPGRADED VT STYLES ─────────────────────────────────────── */
+.vt-malware-block{
+  background:var(--bg);border:1px solid var(--border2);border-radius:8px;
+  padding:12px 14px;margin-top:10px;
+  border-left:3px solid var(--danger);
+  animation:slideIn .3s ease-out;
+}
+.vt-threat-name{
+  font-size:15px;font-weight:800;font-family:var(--display);
+  color:var(--danger);letter-spacing:-0.3px;margin-bottom:6px;
+  word-break:break-all;line-height:1.3;
+}
+.vt-threat-name.clean{color:var(--success)}
+.vt-family-badges{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.vt-categories{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.vt-meta-row{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);padding:4px 0;border-bottom:1px solid var(--border)}
+.vt-meta-row:last-child{border-bottom:none}
+.vt-meta-val{color:var(--text2);font-weight:600;text-align:right;max-width:60%}
+.vt-av-panel{
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  margin-top:10px;overflow:hidden;
+}
+.vt-av-panel-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;background:var(--bg4);border-bottom:1px solid var(--border);
+  cursor:pointer;user-select:none;transition:background .15s;
+}
+.vt-av-panel-hdr:hover{background:var(--bg5)}
+.vt-av-panel-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:7px}
+.vt-av-panel-toggle{font-size:10px;color:var(--text3);transition:transform .2s}
+.vt-av-panel-toggle.open{transform:rotate(180deg)}
+.vt-av-body{display:none;max-height:280px;overflow-y:auto;padding:6px}
+.vt-av-body.open{display:block}
+.vt-av-filter-bar{display:flex;gap:4px;padding:6px 8px 4px;flex-wrap:wrap}
+.vt-av-filter-btn{
+  font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1px;
+  padding:3px 8px;border-radius:4px;border:1px solid var(--border2);
+  background:transparent;color:var(--text3);cursor:pointer;text-transform:uppercase;
+  transition:all .15s;
+}
+.vt-av-filter-btn.f-all.active{background:rgba(0,229,255,0.1);border-color:var(--accent);color:var(--accent)}
+.vt-av-filter-btn.f-mal.active{background:rgba(255,45,74,0.1);border-color:var(--danger);color:var(--danger)}
+.vt-av-filter-btn.f-sus.active{background:rgba(255,170,0,0.1);border-color:var(--warn);color:var(--warn)}
+.vt-av-filter-btn.f-cln.active{background:rgba(0,230,118,0.08);border-color:var(--success);color:var(--success)}
+.vt-av-search{
+  font-family:var(--mono);font-size:10px;padding:4px 8px;
+  background:var(--bg);border:1px solid var(--border2);border-radius:4px;
+  color:var(--text);outline:none;flex:1;min-width:80px;
+}
+.vt-av-search:focus{border-color:var(--accent)}
+.vt-av-search::placeholder{color:var(--text4)}
+.vt-av-row{
+  display:grid;grid-template-columns:32px 1fr 1fr 90px;
+  align-items:center;gap:6px;padding:5px 8px;border-radius:5px;
+  font-size:10px;transition:background .1s;border:1px solid transparent;
+  margin-bottom:2px;
+}
+.vt-av-row:hover{background:rgba(255,255,255,0.03);border-color:var(--border)}
+.vt-av-icon{width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.vt-av-engine{color:var(--text);font-weight:600;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vt-av-result{color:var(--text2);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vt-av-result.is-mal{color:var(--danger);font-weight:700}
+.vt-av-result.is-sus{color:var(--warn);font-weight:600}
+.vt-av-result.is-cln{color:var(--success)}
+.vt-av-result.is-und{color:var(--text4)}
+.vt-av-badge{font-size:9px;font-family:var(--mono);font-weight:700;padding:2px 6px;border-radius:3px;text-align:center;text-transform:uppercase;letter-spacing:0.5px}
+.avb-mal{background:rgba(255,45,74,0.12);color:var(--danger);border:1px solid rgba(255,45,74,0.3)}
+.avb-sus{background:rgba(255,170,0,0.1);color:var(--warn);border:1px solid rgba(255,170,0,0.25)}
+.avb-cln{background:rgba(0,230,118,0.07);color:var(--success);border:1px solid rgba(0,230,118,0.2)}
+.avb-und{background:rgba(255,255,255,0.03);color:var(--text4);border:1px solid var(--border)}
+.vt-av-row[data-cat="malicious"]{background:rgba(255,45,74,0.02)}
+.vt-av-row[data-cat="suspicious"]{background:rgba(255,170,0,0.02)}
+.vt-top-detectors{margin-top:8px}
+.vt-top-det-hdr{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+.vt-top-det-list{display:flex;flex-direction:column;gap:3px}
+.vt-top-det-item{display:flex;align-items:center;gap:8px;padding:4px 6px;background:rgba(255,45,74,0.04);border:1px solid rgba(255,45,74,0.15);border-radius:5px;font-size:10px}
+.vt-top-det-engine{font-weight:700;color:var(--text);flex:1}
+.vt-top-det-verdict{color:var(--danger);flex:2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vt-av-count-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.vt-av-count-pill{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700}
+.pill-mal{background:rgba(255,45,74,0.1);color:var(--danger);border:1px solid rgba(255,45,74,0.25)}
+.pill-sus{background:rgba(255,170,0,0.1);color:var(--warn);border:1px solid rgba(255,170,0,0.25)}
+.pill-cln{background:rgba(0,230,118,0.07);color:var(--success);border:1px solid rgba(0,230,118,0.2)}
+.pill-und{background:rgba(255,255,255,0.03);color:var(--text3);border:1px solid var(--border)}
+.vt-hash-type{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+.vt-first-seen{font-size:10px;color:var(--text3);margin-top:4px}
+
+/* ── EXISTING STYLES (unchanged) ─────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:var(--mono);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
@@ -187,7 +269,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .ioc-cat-title{color:var(--text3);display:flex;align-items:center;gap:8px}
 .ioc-cat-cnt{font-size:11px;font-weight:700;color:var(--text)}
 .ioc-items{display:flex;flex-direction:column;gap:2px;padding:8px}
-.ioc-row{display:flex;align-items:center;gap:10px;font-size:11px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;transition:border-color .15s;cursor:default}
+.ioc-row{display:flex;align-items:center;gap:10px;font-size:11px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;transition:border-color .15px;cursor:default}
 .ioc-row:hover{border-color:var(--border2)}
 .ioc-row-val{flex:1;color:var(--text);word-break:break-all;font-weight:600}
 .ioc-raw{font-family:var(--mono);font-size:11px;background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:14px;color:var(--success);line-height:1.8;max-height:220px;overflow-y:auto;white-space:pre;word-break:break-all;transition:background .3s,border-color .3s}
@@ -256,6 +338,25 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .copy-btn:hover{border-color:var(--accent);color:var(--accent)}
 .copy-cell{cursor:pointer;color:var(--text3);font-size:10px;padding:2px 6px;border-radius:3px;border:1px solid var(--border);transition:all .15s}
 .copy-cell:hover{border-color:var(--accent);color:var(--accent)}
+
+/* AV Modal */
+.av-modal{max-width:960px}
+.av-modal-search{width:100%;font-family:var(--mono);font-size:12px;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);outline:none;margin-bottom:12px}
+.av-modal-search:focus{border-color:var(--accent)}
+.av-modal-search::placeholder{color:var(--text4)}
+.av-modal-filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.av-modal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px;max-height:55vh;overflow-y:auto;padding-right:4px}
+.av-modal-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;font-size:11px;transition:border-color .15s}
+.av-modal-row:hover{border-color:var(--border2)}
+.av-modal-row[data-cat="malicious"]{background:rgba(255,45,74,0.04);border-color:rgba(255,45,74,0.15)}
+.av-modal-row[data-cat="suspicious"]{background:rgba(255,170,0,0.03);border-color:rgba(255,170,0,0.15)}
+.av-modal-engine{font-weight:700;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.av-modal-verdict{flex:2;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px}
+.av-modal-verdict.mal{color:var(--danger);font-weight:600}
+.av-modal-verdict.sus{color:var(--warn)}
+.av-modal-verdict.cln{color:var(--success)}
+.av-modal-verdict.und{color:var(--text4)}
+.av-modal-cat-pill{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;flex-shrink:0;text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -280,28 +381,11 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
         <span id="hdr-status">CHECKING…</span>
       </div>
       <div class="clock" id="clock"></div>
-
-      <!-- ── THEME TOGGLE ── -->
       <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
-        <!-- Sun icon (visible in dark mode — click to go light) -->
-        <svg id="icon-sun" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="5"/>
-          <line x1="12" y1="1" x2="12" y2="3"/>
-          <line x1="12" y1="21" x2="12" y2="23"/>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="1" y1="12" x2="3" y2="12"/>
-          <line x1="21" y1="12" x2="23" y2="12"/>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-        </svg>
-        <!-- Moon icon (visible in light mode — click to go dark) -->
-        <svg id="icon-moon" viewBox="0 0 24 24" style="display:none">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
+        <svg id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="icon-moon" viewBox="0 0 24 24" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         <span id="theme-label">LIGHT</span>
       </button>
-
       <button class="btn-report" onclick="openReport()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         Generate Report
@@ -311,11 +395,12 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 
   <!-- LAYOUT -->
   <div class="layout">
-
     <!-- SIDEBAR -->
     <div class="sidebar">
 
-      <!-- Hash scan -->
+      <!-- ═══════════════════════════════════════════════════════
+           UPGRADED VIRUSTOTAL HASH SCAN SECTION
+           ═══════════════════════════════════════════════════════ -->
       <div class="sidebar-section">
         <div class="ss-hdr"><div class="ss-hdr-dot"></div>VirusTotal Hash Scan</div>
         <div class="ss-body">
@@ -329,17 +414,70 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
           </button>
           <div id="vt-loading" class="loading-row" style="display:none"><div class="spin"></div>Querying VirusTotal…</div>
           <div id="vt-error" class="err" style="display:none"></div>
+
+          <!-- UPGRADED VT RESULTS -->
           <div id="vt-mini" style="display:none;margin-top:6px">
+
+            <!-- Detection rate header -->
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
               <span style="font-size:11px;color:var(--text2)">Detection Rate</span>
               <span id="vt-rate-pct" style="font-size:13px;font-weight:700"></span>
             </div>
-            <div style="display:flex;gap:6px">
-              <div class="stat-card s-danger" style="flex:1;padding:8px"><div class="stat-n" id="vt-mal" style="font-size:20px">—</div><div class="stat-l">Malicious</div></div>
-              <div class="stat-card s-warn" style="flex:1;padding:8px"><div class="stat-n" id="vt-sus" style="font-size:20px">—</div><div class="stat-l">Suspect</div></div>
-              <div class="stat-card s-ok" style="flex:1;padding:8px"><div class="stat-n" id="vt-cln" style="font-size:20px">—</div><div class="stat-l">Clean</div></div>
+
+            <!-- Stat pills row -->
+            <div class="vt-av-count-row" id="vt-count-row">
+              <div class="vt-av-count-pill pill-mal"><span id="vt-mal">—</span> Malicious</div>
+              <div class="vt-av-count-pill pill-sus"><span id="vt-sus">—</span> Suspect</div>
+              <div class="vt-av-count-pill pill-cln"><span id="vt-cln">—</span> Clean</div>
+              <div class="vt-av-count-pill pill-und"><span id="vt-und">—</span> Undetected</div>
             </div>
+
+            <!-- Verdict badge -->
             <div style="margin-top:8px" id="vt-verdict"></div>
+
+            <!-- ── MALWARE NAME BLOCK ── -->
+            <div id="vt-malware-block" class="vt-malware-block" style="display:none">
+              <div id="vt-hash-type-label" class="vt-hash-type"></div>
+              <div id="vt-threat-name" class="vt-threat-name"></div>
+              <div id="vt-family-badges" class="vt-family-badges"></div>
+              <div id="vt-categories" class="vt-categories"></div>
+              <div id="vt-meta-info" style="font-size:10px;margin-top:4px"></div>
+            </div>
+
+            <!-- ── TOP DETECTORS ── -->
+            <div id="vt-top-detectors" class="vt-top-detectors" style="display:none">
+              <div class="vt-top-det-hdr">Top Detections</div>
+              <div class="vt-top-det-list" id="vt-top-det-list"></div>
+            </div>
+
+            <!-- ── AV BREAKDOWN PANEL ── -->
+            <div class="vt-av-panel" id="vt-av-panel" style="display:none">
+              <div class="vt-av-panel-hdr" onclick="toggleAVPanel()">
+                <div class="vt-av-panel-title">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  AV Engine Breakdown
+                  <span id="vt-av-panel-count" style="color:var(--text2)"></span>
+                </div>
+                <span class="vt-av-panel-toggle" id="vt-av-toggle">▾</span>
+              </div>
+              <!-- Filter bar inside panel -->
+              <div id="vt-av-panel-body" class="vt-av-body">
+                <div class="vt-av-filter-bar">
+                  <button class="vt-av-filter-btn f-all active" onclick="filterAV('all',this)">All</button>
+                  <button class="vt-av-filter-btn f-mal" onclick="filterAV('malicious',this)">Malicious</button>
+                  <button class="vt-av-filter-btn f-sus" onclick="filterAV('suspicious',this)">Suspect</button>
+                  <button class="vt-av-filter-btn f-cln" onclick="filterAV('clean',this)">Clean</button>
+                  <input class="vt-av-search" id="vt-av-search" placeholder="Search engine…" oninput="searchAV(this.value)"/>
+                </div>
+                <div id="vt-av-rows"></div>
+              </div>
+            </div>
+
+            <!-- Full breakdown button -->
+            <button class="copy-btn" style="width:100%;text-align:center;margin-top:6px" onclick="openAVModal()">
+              🛡 View Full AV Breakdown
+            </button>
+
           </div>
         </div>
       </div>
@@ -372,9 +510,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
               <button id="eng-anyrun" class="eng-btn active-anyrun" onclick="selectEngine('anyrun')">ANY.RUN</button>
               <button id="eng-triage" class="eng-btn" onclick="selectEngine('triage')">TRIAGE</button>
             </div>
-            <div id="engine-badge" style="font-size:9px;color:var(--text3);letter-spacing:1px;text-align:center;margin-top:2px">
-              ANY.RUN · api.any.run
-            </div>
+            <div id="engine-badge" style="font-size:9px;color:var(--text3);letter-spacing:1px;text-align:center;margin-top:2px">ANY.RUN · api.any.run</div>
           </div>
           <div class="file-inp-wrap">
             <label class="file-inp-label">
@@ -403,9 +539,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
             </div>
           </div>
           <div id="sb-error" class="err" style="display:none"></div>
-          <button class="copy-btn" style="width:100%;text-align:center;margin-top:2px" onclick="toggleManual()">
-            ⌨ Fetch by Task ID
-          </button>
+          <button class="copy-btn" style="width:100%;text-align:center;margin-top:2px" onclick="toggleManual()">⌨ Fetch by Task ID</button>
         </div>
       </div>
 
@@ -421,7 +555,6 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
           </div>
         </div>
       </div>
-
     </div>
 
     <!-- MAIN PANEL -->
@@ -552,9 +685,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
           <div id="ioc-structured"><div class="empty">Run analysis to populate IOCs</div></div>
         </div>
         <div class="card">
-          <div class="card-hdr">
-            <div class="card-title"><div class="card-title-accent"></div>Raw Blocklist (Copy &amp; Paste Ready)</div>
-          </div>
+          <div class="card-hdr"><div class="card-title"><div class="card-title-accent"></div>Raw Blocklist (Copy &amp; Paste Ready)</div></div>
           <div class="ioc-raw" id="ioc-raw">; Awaiting analysis…</div>
         </div>
       </div>
@@ -569,7 +700,32 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
           <div id="contain-grid" class="contain-grid"><div class="empty">Run analysis to generate containment recommendations</div></div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
+<!-- FULL AV BREAKDOWN MODAL -->
+<div id="av-modal" class="modal-backdrop" style="display:none" onclick="if(event.target===this)closeAVModal()">
+  <div class="modal av-modal">
+    <div class="modal-hdr">
+      <div class="modal-title">🛡 Full AV Engine Breakdown</div>
+      <button class="modal-close" onclick="closeAVModal()">✕ Close</button>
+    </div>
+    <div class="modal-body">
+      <div id="av-modal-summary" style="margin-bottom:14px"></div>
+      <input class="av-modal-search" id="av-modal-search-inp" placeholder="Search engine name or verdict…" oninput="filterAVModal(this.value)"/>
+      <div class="av-modal-filters" id="av-modal-filters">
+        <button class="vt-av-filter-btn f-all active" onclick="setAVModalCat('all',this)">All</button>
+        <button class="vt-av-filter-btn f-mal" onclick="setAVModalCat('malicious',this)">Malicious</button>
+        <button class="vt-av-filter-btn f-sus" onclick="setAVModalCat('suspicious',this)">Suspicious</button>
+        <button class="vt-av-filter-btn f-cln" onclick="setAVModalCat('clean',this)">Clean</button>
+        <button class="vt-av-filter-btn" style="border-color:rgba(255,255,255,0.1);color:var(--text4)" onclick="setAVModalCat('undetected',this)">Undetected</button>
+      </div>
+      <div class="av-modal-grid" id="av-modal-grid"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="copy-btn" onclick="copyAVResults()">Copy Detections</button>
+      <button class="btn btn-sm" onclick="closeAVModal()">Close</button>
     </div>
   </div>
 </div>
@@ -591,7 +747,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 </div>
 
 <script>
-// ── THEME TOGGLE ──────────────────────────────────────────────────────
+// ── THEME ─────────────────────────────────────────────────────────────
 function toggleTheme(){
   var isLight=document.body.classList.toggle('light-theme');
   document.getElementById('icon-sun').style.display=isLight?'none':'block';
@@ -599,7 +755,6 @@ function toggleTheme(){
   document.getElementById('theme-label').textContent=isLight?'DARK':'LIGHT';
   try{localStorage.setItem('jdl-theme',isLight?'light':'dark');}catch(e){}
 }
-// Restore saved preference before first paint
 (function(){
   try{
     if(localStorage.getItem('jdl-theme')==='light'){
@@ -613,7 +768,6 @@ function toggleTheme(){
 
 // ── CONFIG ────────────────────────────────────────────────────────────
 const WORKER = "https://soc-backend.johndominicklimpag.workers.dev";
-
 let sandboxEngine = "anyrun";
 
 const ABUSE_CATEGORIES = {
@@ -624,45 +778,56 @@ const ABUSE_CATEGORIES = {
   21:'Web App Attack',22:'SSH',23:'IoT Targeted'
 };
 
+// Known AV vendor icons (emoji fallback)
+const AV_ICONS = {
+  'Kaspersky':'🔴','Microsoft':'🪟','Symantec':'🟡','Malwarebytes':'🟦','ESET':'🛡',
+  'Avast':'🔵','AVG':'🔵','Bitdefender':'🟣','Trend Micro':'🟠','McAfee':'🔶',
+  'Sophos':'🟢','CrowdStrike':'🦅','SentinelOne':'⚡','Carbon Black':'⚫','Cylance':'🤖',
+  'Palo Alto':'🟧','Check Point':'✅','FireEye':'🔥','Fortinet':'🏰','F-Secure':'🔐',
+  'G Data':'📊','Emsisoft':'🟩','Dr.Web':'🕸','Comodo':'🔒','Webroot':'☁',
+  'Trellix':'🌊','Elastic':'🔍','Ikarus':'🐛','Yandex':'🇷🇺','Alibaba':'🇨🇳',
+  'Antiy-AVL':'🏮','Jiangmin':'🏮','Rising':'🌅','Zillya':'🌻',
+};
+
+function getAVIcon(name){
+  for(const [k,v] of Object.entries(AV_ICONS)){
+    if(name.toLowerCase().includes(k.toLowerCase())) return v;
+  }
+  return '🔬';
+}
+
 const state = {
   vtData: null, sbData: null, ipData: {}, pollTimer: null,
   sessionStats: { hashes:0, ips:0, threats:0, iocs:0 },
   iocs: { ips:[], domains:[], files:[], hashes:[], mitre:[] },
   analysisTs: null,
+  vtAllEngines: [],   // full AV results array
+  avModalCat: 'all',
 };
 
 // ── Engine toggle ─────────────────────────────────────────────────────
-function selectEngine(engine) {
-  sandboxEngine = engine;
-  const anyBtn  = document.getElementById('eng-anyrun');
-  const triBtn  = document.getElementById('eng-triage');
-  const badge   = document.getElementById('engine-badge');
-  anyBtn.className = 'eng-btn' + (engine === 'anyrun' ? ' active-anyrun' : '');
-  triBtn.className = 'eng-btn' + (engine === 'triage'  ? ' active-triage'  : '');
-  badge.textContent = engine === 'anyrun'
-    ? 'ANY.RUN · api.any.run'
-    : 'Triage · tria.ge  (free public API)';
+function selectEngine(engine){
+  sandboxEngine=engine;
+  document.getElementById('eng-anyrun').className='eng-btn'+(engine==='anyrun'?' active-anyrun':'');
+  document.getElementById('eng-triage').className='eng-btn'+(engine==='triage'?' active-triage':'');
+  document.getElementById('engine-badge').textContent=engine==='anyrun'?'ANY.RUN · api.any.run':'Triage · tria.ge  (free public API)';
 }
 
 // ── Clock ─────────────────────────────────────────────────────────────
-function tickClock(){ document.getElementById('clock').textContent = new Date().toUTCString().replace('GMT','UTC'); }
+function tickClock(){document.getElementById('clock').textContent=new Date().toUTCString().replace('GMT','UTC');}
 setInterval(tickClock,1000); tickClock();
 
 // ── Worker health ─────────────────────────────────────────────────────
 (async()=>{
   try{
-    const r = await fetch(WORKER+'/health',{signal:AbortSignal.timeout(4000)});
-    const dot = document.getElementById('status-dot');
-    if(r.ok){
-      document.getElementById('hdr-status').textContent='WORKER ONLINE';
-    } else {
-      document.getElementById('hdr-status').textContent='DEGRADED';
-      dot.style.background='var(--warn)'; dot.style.boxShadow='0 0 8px var(--warn)';
-    }
-  } catch {
+    const r=await fetch(WORKER+'/health',{signal:AbortSignal.timeout(4000)});
+    const dot=document.getElementById('status-dot');
+    if(r.ok){document.getElementById('hdr-status').textContent='WORKER ONLINE';}
+    else{document.getElementById('hdr-status').textContent='DEGRADED';dot.style.background='var(--warn)';dot.style.boxShadow='0 0 8px var(--warn)';}
+  }catch{
     document.getElementById('hdr-status').textContent='OFFLINE';
     const dot=document.getElementById('status-dot');
-    dot.style.background='var(--danger)'; dot.style.boxShadow='0 0 8px var(--danger)'; dot.style.animation='none';
+    dot.style.background='var(--danger)';dot.style.boxShadow='0 0 8px var(--danger)';dot.style.animation='none';
   }
 })();
 
@@ -670,10 +835,10 @@ setInterval(tickClock,1000); tickClock();
 function switchTab(id){
   const map={overview:'Overview',sandbox:'Sandbox',network:'Network',ioc:'IOC',containment:'Containment'};
   document.querySelectorAll('.tab-btn').forEach(b=>{
-    b.classList.toggle('active', b.textContent.trim().startsWith(map[id]||id));
+    b.classList.toggle('active',b.textContent.trim().startsWith(map[id]||id));
   });
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  const el=document.getElementById('tab-'+id); if(el) el.classList.add('active');
+  const el=document.getElementById('tab-'+id);if(el)el.classList.add('active');
 }
 
 // ── Utility ───────────────────────────────────────────────────────────
@@ -697,8 +862,11 @@ function getScoreColor(s){
   if(s>=75)return'var(--danger)';if(s>=50)return'var(--accent3)';if(s>=25)return'var(--warn)';return'var(--success)';
 }
 
-// ── VT Hash Scan ──────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// UPGRADED VT HASH SCAN
+// ═══════════════════════════════════════════════════════════════════
 document.getElementById('hash-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doVTScan();});
+
 async function doVTScan(){
   const h=document.getElementById('hash-inp').value.trim();
   if(!h){toast('⚠ Paste a hash first');return;}
@@ -708,30 +876,291 @@ async function doVTScan(){
     const r=await fetch(WORKER+'/vt/'+encodeURIComponent(h));
     if(!r.ok) throw new Error('Worker returned '+r.status);
     const v=await r.json();
-    const s=v?.data?.attributes?.last_analysis_stats;
+    const attr=v?.data?.attributes;
+    const s=attr?.last_analysis_stats;
     if(!s) throw new Error('Unexpected VT response');
     state.vtData=v; state.analysisTs=new Date().toISOString();
-    const total=(s.malicious||0)+(s.suspicious||0)+(s.harmless||0)+(s.undetected||0);
-    const pct=total>0?Math.round((s.malicious||0)/total*100):0;
-    document.getElementById('vt-mal').textContent=s.malicious??0;
-    document.getElementById('vt-sus').textContent=s.suspicious??0;
-    document.getElementById('vt-cln').textContent=s.harmless??0;
-    const rateEl=document.getElementById('vt-rate-pct');
-    rateEl.textContent=pct+'%'; rateEl.style.color=getScoreColor(pct);
+
+    const mal=s.malicious||0, sus=s.suspicious||0, cln=s.harmless||0, und=s.undetected||0;
+    const total=mal+sus+cln+und;
+    const pct=total>0?Math.round(mal/total*100):0;
+
+    // Detection rate
+    document.getElementById('vt-rate-pct').textContent=`${mal}/${total} (${pct}%)`;
+    document.getElementById('vt-rate-pct').style.color=getScoreColor(pct);
+    document.getElementById('vt-mal').textContent=mal;
+    document.getElementById('vt-sus').textContent=sus;
+    document.getElementById('vt-cln').textContent=cln;
+    document.getElementById('vt-und').textContent=und;
+
+    // Verdict badge
     const verd=pct>=70?'<span class="badge b-danger">■ CRITICAL</span>':
                pct>=40?'<span class="badge b-danger">▲ HIGH</span>':
                pct>=10?'<span class="badge b-warn">◆ MEDIUM</span>':
                pct>0?'<span class="badge b-warn">● SUSPICIOUS</span>':'<span class="badge b-ok">✓ CLEAN</span>';
     setEl('vt-verdict',verd);
-    document.getElementById('ov-mal').textContent=s.malicious??0;
+
+    // Update overview stat
+    document.getElementById('ov-mal').textContent=mal;
+
+    // ── MALWARE NAME / FAMILY DETECTION ──────────────────────────
+    renderVTMalwareName(attr, h);
+
+    // ── BUILD FULL AV ENGINE LIST ─────────────────────────────────
+    const results=attr?.last_analysis_results||{};
+    state.vtAllEngines=Object.entries(results).map(([engine,res])=>({
+      engine,
+      category: res.category||'undetected',
+      result:   res.result||null,
+      method:   res.method||'',
+      version:  res.engine_version||'',
+      update:   res.engine_update||'',
+    })).sort((a,b)=>{
+      const order={malicious:0,suspicious:1,harmless:2,undetected:3};
+      return (order[a.category]??4)-(order[b.category]??4);
+    });
+
+    // Render compact AV panel (top 12)
+    renderCompactAVPanel(state.vtAllEngines);
+
+    // Top detectors
+    renderTopDetectors(state.vtAllEngines);
+
+    // Stats
     state.sessionStats.hashes++;
     if(pct>0) state.sessionStats.threats++;
     state.iocs.hashes=[h];
     state.sessionStats.iocs=countIOCs();
-    updateStats(); hide('vt-loading'); show('vt-mini','block');
+    updateStats();
+
+    hide('vt-loading'); show('vt-mini','block');
     updateRisk(); updateIOC();
   } catch(err){ hide('vt-loading'); setErr('vt-error',err.message); }
   finally { document.getElementById('btn-vt').disabled=false; }
+}
+
+// ── Render malware name / family info ─────────────────────────────────
+function renderVTMalwareName(attr, hash){
+  const block=document.getElementById('vt-malware-block');
+
+  // Detect hash type
+  const hashLen=hash.length;
+  const hashType=hashLen===32?'MD5':hashLen===40?'SHA-1':hashLen===64?'SHA-256':'HASH';
+  document.getElementById('vt-hash-type-label').textContent=hashType+' · '+hash.substring(0,16)+'…';
+
+  // Extract meaningful name from multiple VT fields
+  const label=
+    attr?.suggested_threat_label ||
+    attr?.popular_threat_classification?.suggested_threat_label ||
+    attr?.meaningful_name ||
+    null;
+
+  const families=(attr?.popular_threat_classification?.popular_threat_name||[])
+    .map(f=>f.value).filter(Boolean);
+
+  const categories=(attr?.popular_threat_classification?.popular_threat_category||[])
+    .map(c=>c.value).filter(Boolean);
+
+  const firstSeen=attr?.first_submission_date
+    ? new Date(attr.first_submission_date*1000).toLocaleDateString()
+    : null;
+  const lastSeen=attr?.last_analysis_date
+    ? new Date(attr.last_analysis_date*1000).toLocaleDateString()
+    : null;
+  const fileType=attr?.type_description||attr?.magic||null;
+  const fileSize=attr?.size||null;
+  const fileName=attr?.meaningful_name||attr?.names?.[0]||null;
+  const tags=(attr?.tags||[]).slice(0,6);
+
+  const hasAnyData = label||families.length||categories.length||fileName;
+
+  if(!hasAnyData){
+    block.style.display='none';
+    return;
+  }
+
+  // Threat name
+  const nameEl=document.getElementById('vt-threat-name');
+  if(label){
+    nameEl.textContent=label;
+    nameEl.className='vt-threat-name';
+  } else if(fileName){
+    nameEl.textContent=fileName;
+    nameEl.className='vt-threat-name';
+    nameEl.style.fontSize='12px';
+  } else {
+    nameEl.textContent='';
+  }
+
+  // Family badges
+  const famEl=document.getElementById('vt-family-badges');
+  famEl.innerHTML=families.map(f=>`<span class="badge b-danger" style="font-size:9px">🦠 ${esc(f)}</span>`).join('');
+
+  // Category badges
+  const catEl=document.getElementById('vt-categories');
+  const catHtml=[
+    ...categories.map(c=>`<span class="badge b-orange" style="font-size:9px">🏷 ${esc(c)}</span>`),
+    ...tags.map(t=>`<span class="badge b-purple" style="font-size:9px">${esc(t)}</span>`),
+  ].join('');
+  catEl.innerHTML=catHtml;
+
+  // Meta info
+  const metaLines=[];
+  if(fileName) metaLines.push({k:'Filename',v:fileName});
+  if(fileType) metaLines.push({k:'Type',v:fileType});
+  if(fileSize) metaLines.push({k:'Size',v:formatSize(fileSize)});
+  if(firstSeen) metaLines.push({k:'First seen',v:firstSeen});
+  if(lastSeen) metaLines.push({k:'Last scan',v:lastSeen});
+
+  const metaEl=document.getElementById('vt-meta-info');
+  metaEl.innerHTML=metaLines.map(m=>`
+    <div class="vt-meta-row">
+      <span>${esc(m.k)}</span>
+      <span class="vt-meta-val">${esc(m.v)}</span>
+    </div>`).join('');
+
+  block.style.display='';
+}
+
+// ── Render top detectors (first 5 malicious engines) ──────────────────
+function renderTopDetectors(engines){
+  const mal=engines.filter(e=>e.category==='malicious'&&e.result);
+  const wrap=document.getElementById('vt-top-detectors');
+  if(!mal.length){wrap.style.display='none';return;}
+  wrap.style.display='';
+  const top=mal.slice(0,5);
+  setEl('vt-top-det-list',top.map(e=>`
+    <div class="vt-top-det-item">
+      <span style="font-size:14px">${getAVIcon(e.engine)}</span>
+      <span class="vt-top-det-engine">${esc(e.engine)}</span>
+      <span class="vt-top-det-verdict">${esc(e.result)}</span>
+    </div>`).join(''));
+}
+
+// ── Render compact AV panel (collapsible, top 20) ─────────────────────
+function renderCompactAVPanel(engines){
+  const panel=document.getElementById('vt-av-panel');
+  panel.style.display='';
+  document.getElementById('vt-av-panel-count').textContent=
+    `— ${engines.filter(e=>e.category==='malicious').length} detections / ${engines.length} engines`;
+  renderAVRows(engines.slice(0,30));
+}
+
+function renderAVRows(engines){
+  setEl('vt-av-rows',engines.map(e=>{
+    const cat=e.category;
+    const isM=cat==='malicious', isS=cat==='suspicious', isC=cat==='harmless'||cat==='clean';
+    const resultCls=isM?'is-mal':isS?'is-sus':isC?'is-cln':'is-und';
+    const badgeCls=isM?'avb-mal':isS?'avb-sus':isC?'avb-cln':'avb-und';
+    const badgeTxt=isM?'MAL':isS?'SUS':isC?'CLN':'—';
+    const resultTxt=e.result||'No result';
+    return `<div class="vt-av-row" data-cat="${esc(cat)}" data-engine="${esc(e.engine.toLowerCase())}" data-result="${esc((e.result||'').toLowerCase())}">
+      <span style="font-size:14px">${getAVIcon(e.engine)}</span>
+      <span class="vt-av-engine">${esc(e.engine)}</span>
+      <span class="vt-av-result ${resultCls}" title="${esc(resultTxt)}">${esc(isM||isS?resultTxt:'—')}</span>
+      <span class="vt-av-badge ${badgeCls}">${badgeTxt}</span>
+    </div>`;
+  }).join(''));
+}
+
+// ── AV panel toggle ───────────────────────────────────────────────────
+function toggleAVPanel(){
+  const body=document.getElementById('vt-av-panel-body');
+  const tog=document.getElementById('vt-av-toggle');
+  const open=body.classList.toggle('open');
+  tog.classList.toggle('open',open);
+}
+
+// ── AV filter (compact panel) ─────────────────────────────────────────
+let avPanelFilter='all', avPanelSearch='';
+function filterAV(cat,btn){
+  avPanelFilter=cat;
+  document.querySelectorAll('#vt-av-panel .vt-av-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyAVPanelFilter();
+}
+function searchAV(q){avPanelSearch=q.toLowerCase();applyAVPanelFilter();}
+function applyAVPanelFilter(){
+  let eng=state.vtAllEngines;
+  if(avPanelFilter!=='all') eng=eng.filter(e=>e.category===avPanelFilter||(avPanelFilter==='clean'&&(e.category==='harmless'||e.category==='clean')));
+  if(avPanelSearch) eng=eng.filter(e=>e.engine.toLowerCase().includes(avPanelSearch)||(e.result||'').toLowerCase().includes(avPanelSearch));
+  renderAVRows(eng.slice(0,30));
+}
+
+// ── Full AV Modal ─────────────────────────────────────────────────────
+function openAVModal(){
+  if(!state.vtAllEngines.length){toast('⚠ Run a VT scan first');return;}
+  state.avModalCat='all';
+  document.getElementById('av-modal-search-inp').value='';
+  buildAVModalSummary();
+  renderAVModalGrid(state.vtAllEngines);
+  document.getElementById('av-modal').style.display='flex';
+}
+function closeAVModal(){document.getElementById('av-modal').style.display='none';}
+
+function buildAVModalSummary(){
+  const engines=state.vtAllEngines;
+  const mal=engines.filter(e=>e.category==='malicious').length;
+  const sus=engines.filter(e=>e.category==='suspicious').length;
+  const cln=engines.filter(e=>e.category==='harmless'||e.category==='clean').length;
+  const und=engines.filter(e=>e.category==='undetected').length;
+  const total=engines.length;
+  const attr=state.vtData?.data?.attributes;
+  const label=attr?.suggested_threat_label||attr?.popular_threat_classification?.suggested_threat_label||attr?.meaningful_name||null;
+
+  setEl('av-modal-summary',`
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px">
+      ${label?`<div>
+        <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Threat Identified As</div>
+        <div style="font-size:16px;font-weight:800;color:var(--danger);font-family:var(--display)">${esc(label)}</div>
+      </div>`:''}
+      <div style="margin-left:auto">
+        <div class="vt-av-count-row">
+          <div class="vt-av-count-pill pill-mal">${mal} Malicious</div>
+          <div class="vt-av-count-pill pill-sus">${sus} Suspicious</div>
+          <div class="vt-av-count-pill pill-cln">${cln} Clean</div>
+          <div class="vt-av-count-pill pill-und">${und} Undetected</div>
+          <div class="vt-av-count-pill" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--text3)">${total} Total Engines</div>
+        </div>
+      </div>
+    </div>`);
+}
+
+function renderAVModalGrid(engines){
+  setEl('av-modal-grid',engines.map(e=>{
+    const cat=e.category;
+    const isM=cat==='malicious', isS=cat==='suspicious', isC=cat==='harmless'||cat==='clean';
+    const vc=isM?'mal':isS?'sus':isC?'cln':'und';
+    const bc=isM?'avb-mal':isS?'avb-sus':isC?'avb-cln':'avb-und';
+    const bt=isM?'MALICIOUS':isS?'SUSPICIOUS':isC?'CLEAN':'UNDETECTED';
+    return `<div class="av-modal-row" data-cat="${esc(cat)}" data-engine="${esc(e.engine.toLowerCase())}" data-result="${esc((e.result||'').toLowerCase())}">
+      <span style="font-size:15px">${getAVIcon(e.engine)}</span>
+      <span class="av-modal-engine">${esc(e.engine)}</span>
+      <span class="av-modal-verdict ${vc}" title="${esc(e.result||'')}">${esc(e.result||'—')}</span>
+      <span class="av-modal-cat-pill ${bc}">${bt}</span>
+    </div>`;
+  }).join('')||'<div class="empty">No results match filter</div>');
+}
+
+function filterAVModal(q){
+  q=q.toLowerCase();
+  let eng=state.vtAllEngines;
+  if(state.avModalCat!=='all') eng=eng.filter(e=>e.category===state.avModalCat||(state.avModalCat==='clean'&&(e.category==='harmless'||e.category==='clean')));
+  if(q) eng=eng.filter(e=>e.engine.toLowerCase().includes(q)||(e.result||'').toLowerCase().includes(q));
+  renderAVModalGrid(eng);
+}
+
+function setAVModalCat(cat,btn){
+  state.avModalCat=cat;
+  document.querySelectorAll('#av-modal-filters .vt-av-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  filterAVModal(document.getElementById('av-modal-search-inp').value);
+}
+
+function copyAVResults(){
+  const detections=state.vtAllEngines.filter(e=>e.category==='malicious'||e.category==='suspicious');
+  const txt=detections.map(e=>`${e.engine}\t${e.category.toUpperCase()}\t${e.result||'—'}`).join('\n');
+  navigator.clipboard.writeText(txt).then(()=>toast(`✓ Copied ${detections.length} detections`));
 }
 
 // ── AbuseIPDB ─────────────────────────────────────────────────────────
@@ -861,15 +1290,13 @@ function onFileChange(){
   const f=document.getElementById('f-inp').files[0];
   if(!f){document.getElementById('file-label-txt').textContent='Choose file for sandbox…';hide('file-meta');return;}
   document.getElementById('file-label-txt').textContent=f.name;
-  const meta=document.getElementById('file-meta');
-  meta.textContent=`${formatSize(f.size)} · ${f.type||'unknown type'}`;
+  document.getElementById('file-meta').textContent=`${formatSize(f.size)} · ${f.type||'unknown type'}`;
   show('file-meta');
 }
 
 // ── Sandbox progress ──────────────────────────────────────────────────
 function setSbProgress(label,phase,pct,taskId){
-  const prog=document.getElementById('sb-progress');
-  prog.style.display='';
+  document.getElementById('sb-progress').style.display='';
   document.getElementById('sb-progress-label').textContent=label;
   document.getElementById('sb-phase').textContent=phase;
   document.getElementById('sb-progress-bar').style.width=pct+'%';
@@ -891,7 +1318,7 @@ async function runSandbox(){
   if(!f){toast('⬡ Select a file first');return;}
   hide('sb-error'); hide('triage-report-link');
   clearSbProgress();
-  const engineLabel = sandboxEngine==='triage'?'Triage':'ANY.RUN';
+  const engineLabel=sandboxEngine==='triage'?'Triage':'ANY.RUN';
   setSbProgress('Uploading to '+engineLabel+'…','SUBMITTING',5);
   document.getElementById('btn-sb').disabled=true;
   try{
@@ -915,7 +1342,7 @@ async function runSandbox(){
     }
     setSbProgress('Task queued…','QUEUED',15,taskId);
     toast(`Submitted to ${engineLabel}: ${taskId}`);
-    startPolling(taskId, sandboxEngine);
+    startPolling(taskId,sandboxEngine);
   } catch(err){
     clearSbProgress();
     document.getElementById('btn-sb').disabled=false;
@@ -924,7 +1351,7 @@ async function runSandbox(){
 }
 
 // ── Polling ───────────────────────────────────────────────────────────
-function startPolling(taskId, engine){
+function startPolling(taskId,engine){
   engine=engine||'anyrun';
   if(state.pollTimer) clearInterval(state.pollTimer);
   let polls=0; const MAX_POLLS=60; const INTERVAL=8000;
@@ -941,20 +1368,12 @@ function startPolling(taskId, engine){
     }
     try{
       const r=await fetch(WORKER+'/result/'+engine+'/'+encodeURIComponent(taskId));
-      if(!r.ok){
-        if(r.status===404||r.status===202) return;
-        if(r.status===401||r.status===403){
-          clearInterval(state.pollTimer);
-          document.getElementById('btn-sb').disabled=false;
-          setErr('sb-error',`Auth error (HTTP ${r.status}). Check API key.`);
-        }
-        return;
-      }
+      if(!r.ok){if(r.status===404||r.status===202)return;if(r.status===401||r.status===403){clearInterval(state.pollTimer);document.getElementById('btn-sb').disabled=false;setErr('sb-error',`Auth error (HTTP ${r.status}). Check API key.`);}return;}
       const result=await r.json();
       const status=(result?.data?.status||result?.data?.state||result?.status||'unknown').toLowerCase();
       if(status==='completed'||status==='reported'){
         clearInterval(state.pollTimer);
-        state.sbData=engine==='triage' ? result.data : normaliseAnyRunData(result?.data||result);
+        state.sbData=engine==='triage'?result.data:normaliseAnyRunData(result?.data||result);
         state.analysisTs=new Date().toISOString();
         setSbProgress('Analysis complete!','COMPLETE',100,taskId);
         setTimeout(()=>{clearSbProgress();document.getElementById('btn-sb').disabled=false;},1500);
@@ -966,9 +1385,7 @@ function startPolling(taskId, engine){
         } else {
           toast('✓ Sandbox analysis complete');
         }
-        if(engine==='triage'&&result?.data?.triage_families?.length){
-          toast('🦠 Families: '+result.data.triage_families.join(', '),4000);
-        }
+        if(engine==='triage'&&result?.data?.triage_families?.length) toast('🦠 Families: '+result.data.triage_families.join(', '),4000);
         renderAll(state.sbData); return;
       }
       if(status==='failed'){
@@ -979,7 +1396,7 @@ function startPolling(taskId, engine){
       const rawStatus=result?.data?.triage_status||result?.data?.status||status;
       setSbProgress(`${engineLabel} running…`,rawStatus.toUpperCase(),pct,taskId);
     } catch(e){ console.warn('[poll error]',e.message); }
-  }, INTERVAL);
+  },INTERVAL);
 }
 
 // ── Manual task fetch ─────────────────────────────────────────────────
@@ -988,11 +1405,11 @@ async function fetchManualTask(){
   if(!id){toast('⬡ Enter a task ID');return;}
   hide('sb-error');
   setSbProgress('Fetching task result…','LOADING',30,id);
-  try{ await processSandboxResult(id,sandboxEngine); }
-  catch(e){ clearSbProgress(); setErr('sb-error','Failed: '+e.message); }
+  try{await processSandboxResult(id,sandboxEngine);}
+  catch(e){clearSbProgress();setErr('sb-error','Failed: '+e.message);}
 }
 
-async function processSandboxResult(taskId, engine){
+async function processSandboxResult(taskId,engine){
   engine=engine||sandboxEngine||'anyrun';
   const r=await fetch(WORKER+'/result/'+engine+'/'+encodeURIComponent(taskId));
   if(!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -1004,8 +1421,8 @@ async function processSandboxResult(taskId, engine){
     document.getElementById('btn-sb').disabled=true;
     startPolling(taskId,engine); return;
   }
-  if(status==='failed'){ clearSbProgress(); throw new Error('Task failed'); }
-  state.sbData=engine==='triage' ? result.data : normaliseAnyRunData(result?.data||result);
+  if(status==='failed'){clearSbProgress();throw new Error('Task failed');}
+  state.sbData=engine==='triage'?result.data:normaliseAnyRunData(result?.data||result);
   state.analysisTs=new Date().toISOString();
   renderAll(state.sbData); clearSbProgress(); toast('✓ Task result loaded');
 }
@@ -1045,7 +1462,7 @@ function renderProcessTree(d){
   if(!procs.length){setEl('proc-tree','<div class="empty">No processes captured</div>');return;}
   document.getElementById('proc-count').textContent=procs.length+' processes';
   const html='<div class="proc-tree">'+procs.map((p,i)=>{
-    const name=(p.name||'unknown').toLowerCase();
+    const name=(p.name||'').toLowerCase();
     const flagged=['lsass','mimikatz','powershell','cmd.exe','wscript','cscript','regsvr32','rundll32'].some(k=>name.includes(k));
     const indent=i>0?'padding-left:'+Math.min(i*18,54)+'px':'';
     return `<div class="proc-item" style="${indent}">
@@ -1243,8 +1660,13 @@ function updateIOC(){
 function updateRawIOC(){
   const ts=new Date().toISOString();
   const engine=state.sbData?.engine||'anyrun';
-  const lines=[`; JDLThreatIntel IOC Export`,`; Generated: ${ts}`,`; Sandbox: ${engine.toUpperCase()}`,`;`];
-  if(state.iocs.hashes.length){lines.push('; === HASH INDICATORS ===');state.iocs.hashes.forEach(h=>lines.push(`HASH\t${h}`));}
+  // Add malware name to IOC header if available
+  const attr=state.vtData?.data?.attributes;
+  const malwareName=attr?.suggested_threat_label||attr?.popular_threat_classification?.suggested_threat_label||attr?.meaningful_name||null;
+  const lines=[`; JDLThreatIntel IOC Export`,`; Generated: ${ts}`,`; Sandbox: ${engine.toUpperCase()}`,];
+  if(malwareName) lines.push(`; Threat: ${malwareName}`);
+  lines.push(';');
+  if(state.iocs.hashes.length){lines.push('; === HASH INDICATORS ===');state.iocs.hashes.forEach(h=>lines.push(`HASH\t${h}${malwareName?' # '+malwareName:''}`))}
   if(state.iocs.ips.length){
     lines.push('; === IP BLOCKLIST ===');
     state.iocs.ips.forEach(ip=>{
@@ -1265,18 +1687,26 @@ function downloadIOC(fmt){
   let content='',mime='text/plain',ext=fmt;
   if(fmt==='txt') content=document.getElementById('ioc-raw').textContent;
   else if(fmt==='csv'){
-    const rows=[['type','indicator','abuse_score','country','isp']];
-    state.iocs.ips.forEach(ip=>{const d=state.ipData[ip];rows.push(['ip',ip,d?.abuseConfidenceScore??'',d?.countryCode??'',d?.isp??'']);});
-    state.iocs.domains.forEach(d=>rows.push(['domain',d,'','','']));
-    state.iocs.files.forEach(f=>rows.push(['file',f,'','','']));
-    state.iocs.hashes.forEach(h=>rows.push(['hash',h,'','','']));
+    const rows=[['type','indicator','abuse_score','country','isp','malware_name']];
+    const malwareName=state.vtData?.data?.attributes?.suggested_threat_label||'';
+    state.iocs.ips.forEach(ip=>{const d=state.ipData[ip];rows.push(['ip',ip,d?.abuseConfidenceScore??'',d?.countryCode??'',d?.isp??'','']);});
+    state.iocs.domains.forEach(d=>rows.push(['domain',d,'','','','']));
+    state.iocs.files.forEach(f=>rows.push(['file',f,'','','','']));
+    state.iocs.hashes.forEach(h=>rows.push(['hash',h,'','','',malwareName]));
     content=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
     mime='text/csv';
   } else if(fmt==='json'){
-    content=JSON.stringify({generated:new Date().toISOString(),sandbox:state.sbData?.engine||'unknown',iocs:{
-      ips:state.iocs.ips.map(ip=>({ip,abuseScore:state.ipData[ip]?.abuseConfidenceScore,country:state.ipData[ip]?.countryCode,isp:state.ipData[ip]?.isp})),
-      domains:state.iocs.domains,files:state.iocs.files,hashes:state.iocs.hashes,mitre:state.iocs.mitre
-    }},null,2);
+    const attr=state.vtData?.data?.attributes;
+    content=JSON.stringify({generated:new Date().toISOString(),sandbox:state.sbData?.engine||'unknown',
+      threat:{
+        name:attr?.suggested_threat_label||attr?.meaningful_name||null,
+        families:(attr?.popular_threat_classification?.popular_threat_name||[]).map(f=>f.value),
+        categories:(attr?.popular_threat_classification?.popular_threat_category||[]).map(c=>c.value),
+      },
+      iocs:{
+        ips:state.iocs.ips.map(ip=>({ip,abuseScore:state.ipData[ip]?.abuseConfidenceScore,country:state.ipData[ip]?.countryCode,isp:state.ipData[ip]?.isp})),
+        domains:state.iocs.domains,files:state.iocs.files,hashes:state.iocs.hashes,mitre:state.iocs.mitre
+      }},null,2);
     mime='application/json';
   }
   const a=document.createElement('a');
@@ -1309,6 +1739,11 @@ function buildReport(){
   const riskNum=parseInt(document.getElementById('risk-num').textContent)||0;
   const riskLbl=document.getElementById('risk-lbl').textContent||'UNKNOWN';
   const engine=(d.engine||sandboxEngine||'anyrun').toUpperCase();
+  const malwareName=vt?.suggested_threat_label||vt?.popular_threat_classification?.suggested_threat_label||vt?.meaningful_name||null;
+  const families=(vt?.popular_threat_classification?.popular_threat_name||[]).map(f=>f.value);
+  const categories=(vt?.popular_threat_classification?.popular_threat_category||[]).map(c=>c.value);
+  const topDetections=state.vtAllEngines.filter(e=>e.category==='malicious').slice(0,10);
+
   const html=`
     <div class="rpt-title">Incident Analysis Report</div>
     <div class="rpt-meta">
@@ -1328,6 +1763,25 @@ function buildReport(){
         ${d.triage_families?.length?`<div class="rpt-kv"><div class="rpt-kv-k">Malware Families</div><div class="rpt-kv-v" style="color:var(--danger)">${esc(d.triage_families.join(', '))}</div></div>`:''}
       </div>
     </div>
+    ${malwareName||families.length||categories.length?`
+    <div class="rpt-section">
+      <div class="rpt-sh">Malware Identification</div>
+      ${malwareName?`<div class="rpt-kv" style="margin-bottom:8px">
+        <div class="rpt-kv-k">Threat Name</div>
+        <div class="rpt-kv-v" style="font-size:16px;color:var(--danger)">${esc(malwareName)}</div>
+      </div>`:''}
+      <div class="rpt-grid2">
+        ${families.length?`<div class="rpt-kv"><div class="rpt-kv-k">Malware Families</div><div class="rpt-kv-v">${families.map(f=>`<span class="badge b-danger" style="font-size:9px;margin:2px">${esc(f)}</span>`).join('')}</div></div>`:''}
+        ${categories.length?`<div class="rpt-kv"><div class="rpt-kv-k">Categories</div><div class="rpt-kv-v">${categories.map(c=>`<span class="badge b-orange" style="font-size:9px;margin:2px">${esc(c)}</span>`).join('')}</div></div>`:''}
+      </div>
+    </div>`:''}
+    ${topDetections.length?`
+    <div class="rpt-section">
+      <div class="rpt-sh">Top AV Detections (${topDetections.length} of ${stats?.malicious||0})</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px">
+        ${topDetections.map(e=>`<div class="rpt-kv" style="flex:1;min-width:200px"><div class="rpt-kv-k">${esc(e.engine)}</div><div class="rpt-kv-v" style="color:var(--danger)">${esc(e.result||'—')}</div></div>`).join('')}
+      </div>
+    </div>`:''}
     ${(d.attack_techniques||[]).length?`
     <div class="rpt-section">
       <div class="rpt-sh">MITRE ATT&CK (${d.attack_techniques.length})</div>
@@ -1376,7 +1830,7 @@ function downloadReport(){
   const body=document.getElementById('report-body').innerHTML;
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Incident Report — JDLThreatIntel</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
-  <style>:root{--bg:#05080f;--bg2:#080d1a;--bg3:#0c1222;--bg4:#111a2e;--border:#1a2640;--border2:#243556;--accent:#00e5ff;--accent3:#ff5533;--accent4:#7b61ff;--success:#00e676;--danger:#ff2d4a;--warn:#ffaa00;--text:#dce8ff;--text2:#7a94cc;--text3:#3d5282;--mono:'JetBrains Mono',monospace;--display:'Syne',sans-serif;}body{font-family:var(--mono);background:var(--bg);color:var(--text);padding:40px;max-width:900px;margin:0 auto}.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600}.b-danger{background:rgba(255,45,74,0.1);color:var(--danger);border:1px solid rgba(255,45,74,0.3)}.b-warn{background:rgba(255,170,0,0.1);color:var(--warn);border:1px solid rgba(255,170,0,0.3)}.b-ok{background:rgba(0,230,118,0.08);color:var(--success);border:1px solid rgba(0,230,118,0.2)}.b-info{background:rgba(0,229,255,0.08);color:var(--accent);border:1px solid rgba(0,229,255,0.2)}.b-orange{background:rgba(255,85,51,0.1);color:var(--accent3);border:1px solid rgba(255,85,51,0.3)}.b-purple{background:rgba(123,97,255,0.1);color:var(--accent4);border:1px solid rgba(123,97,255,0.3)}.rpt-title{font-family:var(--display);font-size:22px;font-weight:800;margin-bottom:4px}.rpt-meta{font-size:11px;color:var(--text3);margin-bottom:20px}.rpt-sh{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}.rpt-kv{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px;margin-bottom:6px;font-size:11px}.rpt-kv-k{color:var(--text3);font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}.rpt-kv-v{color:var(--text);font-weight:600}.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rpt-ioc-block{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:11px;white-space:pre;overflow-x:auto;color:var(--success)}.empty{text-align:center;padding:20px;border:1px dashed var(--border);border-radius:6px;color:var(--text3)}</style>
+  <style>:root{--bg:#05080f;--bg2:#080d1a;--bg3:#0c1222;--bg4:#111a2e;--border:#1a2640;--border2:#243556;--accent:#00e5ff;--accent3:#ff5533;--accent4:#7b61ff;--success:#00e676;--danger:#ff2d4a;--warn:#ffaa00;--text:#dce8ff;--text2:#7a94cc;--text3:#3d5282;--mono:'JetBrains Mono',monospace;--display:'Syne',sans-serif;}body{font-family:var(--mono);background:var(--bg);color:var(--text);padding:40px;max-width:900px;margin:0 auto}.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600}.b-danger{background:rgba(255,45,74,0.1);color:var(--danger);border:1px solid rgba(255,45,74,0.3)}.b-warn{background:rgba(255,170,0,0.1);color:var(--warn);border:1px solid rgba(255,170,0,0.3)}.b-ok{background:rgba(0,230,118,0.08);color:var(--success);border:1px solid rgba(0,230,118,0.2)}.b-info{background:rgba(0,229,255,0.08);color:var(--accent);border:1px solid rgba(0,229,255,0.2)}.b-orange{background:rgba(255,85,51,0.1);color:var(--accent3);border:1px solid rgba(255,85,51,0.3)}.b-purple{background:rgba(123,97,255,0.1);color:var(--accent4);border:1px solid rgba(123,97,255,0.3)}.rpt-title{font-family:var(--display);font-size:22px;font-weight:800;margin-bottom:4px}.rpt-meta{font-size:11px;color:var(--text3);margin-bottom:20px}.rpt-sh{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}.rpt-kv{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px;margin-bottom:6px}.rpt-kv-k{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:2px}.rpt-kv-v{color:var(--text);font-weight:600}.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rpt-ioc-block{background:var(--bg);padding:12px;border-radius:4px;font-size:11px;white-space:pre;overflow-x:auto;color:var(--success);border:1px solid var(--border)}.empty{text-align:center;padding:20px;border:1px dashed var(--border);border-radius:6px;color:var(--text3)}</style>
   </head><body>${body}</body></html>`;
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
