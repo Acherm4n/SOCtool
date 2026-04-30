@@ -1,58 +1,57 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>JDLThreatIntel v3 — SOC Investigation Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Roboto+Mono:wght@300;400;500;600;700&family=Roboto+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  /* SOCRadar-inspired palette */
-  --bg-void:      #070a10;
-  --bg-base:      #0b0f1a;
-  --bg-card:      #0f1520;
-  --bg-panel:     #131927;
-  --bg-hover:     #1a2235;
-  --bg-active:    #1e2840;
+  /* VirusTotal-inspired palette */
+  --bg-void:      #0d0e14;
+  --bg-base:      #13141c;
+  --bg-card:      #1a1b27;
+  --bg-panel:     #1e1f2e;
+  --bg-hover:     #252639;
+  --bg-active:    #2b2d42;
 
   --border-dim:   rgba(255,255,255,0.04);
   --border-soft:  rgba(255,255,255,0.08);
-  --border-mid:   rgba(255,255,255,0.12);
-  --border-strong:rgba(255,255,255,0.18);
+  --border-mid:   rgba(255,255,255,0.13);
+  --border-strong:rgba(255,255,255,0.2);
 
-  /* Primary: electric blue */
-  --blue:         #00a8ff;
-  --blue-dim:     rgba(0,168,255,0.12);
-  --blue-glow:    0 0 20px rgba(0,168,255,0.25);
-  --blue-border:  rgba(0,168,255,0.35);
+  /* Primary: VirusTotal blue */
+  --blue:         #394EFF;
+  --blue-dim:     rgba(57,78,255,0.14);
+  --blue-glow:    0 0 20px rgba(57,78,255,0.3);
+  --blue-border:  rgba(57,78,255,0.4);
 
-  /* Accent: cyan */
-  --cyan:         #00d4e8;
-  --cyan-dim:     rgba(0,212,232,0.1);
+  /* Accent: VT teal */
+  --cyan:         #00b4d8;
+  --cyan-dim:     rgba(0,180,216,0.1);
 
-  /* Threat colors */
-  --red:          #ff3358;
-  --red-dim:      rgba(255,51,88,0.12);
-  --red-glow:     0 0 16px rgba(255,51,88,0.3);
-  --orange:       #ff7c2a;
-  --orange-dim:   rgba(255,124,42,0.1);
-  --yellow:       #ffbe00;
-  --yellow-dim:   rgba(255,190,0,0.1);
-  --green:        #00e676;
-  --green-dim:    rgba(0,230,118,0.08);
+  /* Threat colors — VT standard */
+  --red:          #ff5252;
+  --red-dim:      rgba(255,82,82,0.12);
+  --red-glow:     0 0 16px rgba(255,82,82,0.3);
+  --orange:       #ff9800;
+  --orange-dim:   rgba(255,152,0,0.1);
+  --yellow:       #ffc107;
+  --yellow-dim:   rgba(255,193,7,0.1);
+  --green:        #4caf50;
+  --green-dim:    rgba(76,175,80,0.1);
 
-  /* Text */
-  --text-bright:  #e8ecf4;
-  --text-primary: #a8b4cc;
-  --text-secondary:#6b7a96;
-  --text-dim:     #3d4d6a;
-  --text-placeholder: #2a3a52;
+  /* Text — VT style */
+  --text-bright:  #f0f6fc;
+  --text-primary: #c9d1d9;
+  --text-secondary:#8b949e;
+  --text-dim:     #484f58;
+  --text-placeholder: #2d333b;
 
-  /* Fonts */
-  --font-mono:    'IBM Plex Mono', monospace;
-  --font-sans:    'IBM Plex Sans', sans-serif;
-  --font-display: 'Barlow Condensed', sans-serif;
+  /* Fonts — VirusTotal uses Roboto family */
+  --font-mono:    'Roboto Mono', monospace;
+  --font-sans:    'Roboto', sans-serif;
+  --font-display: 'Roboto Condensed', sans-serif;
 
   /* Sidebar */
   --sidebar-w:    64px;
@@ -2467,8 +2466,8 @@ function copyReport(){
 function downloadReport(){
   const body=document.getElementById('report-body').innerHTML;
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Incident Report</title>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
-  <style>:root{--bg-void:#070a10;--bg-card:#0f1520;--bg-panel:#131927;--border-soft:rgba(255,255,255,0.08);--blue:#00a8ff;--red:#ff3358;--orange:#ff7c2a;--yellow:#ffbe00;--green:#00e676;--text-bright:#e8ecf4;--text-primary:#a8b4cc;--text-secondary:#6b7a96;--text-dim:#3d4d6a;--font-mono:'IBM Plex Mono',monospace;--font-sans:'IBM Plex Sans',sans-serif;--font-display:'Barlow Condensed',sans-serif}body{font-family:var(--font-sans);background:var(--bg-void);color:var(--text-primary);padding:40px;max-width:900px;margin:0 auto}.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:2px;font-family:var(--font-mono);font-size:9px;font-weight:600;margin:2px}.b-red{background:rgba(255,51,88,0.12);color:var(--red);border:1px solid rgba(255,51,88,0.25)}.b-yellow{background:rgba(255,190,0,0.1);color:var(--yellow);border:1px solid rgba(255,190,0,0.2)}.b-green{background:rgba(0,230,118,0.08);color:var(--green);border:1px solid rgba(0,230,118,0.15)}.b-blue{background:rgba(0,168,255,0.12);color:var(--blue);border:1px solid rgba(0,168,255,0.25)}.b-orange{background:rgba(255,124,42,0.1);color:var(--orange);border:1px solid rgba(255,124,42,0.2)}.b-cyan{background:rgba(0,212,232,0.1);color:#00d4e8;border:1px solid rgba(0,212,232,0.2)}.b-dim{background:rgba(255,255,255,0.04);color:var(--text-dim);border:1px solid rgba(255,255,255,0.08)}.rpt-title{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--text-bright);margin-bottom:4px}.rpt-meta{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-bottom:20px;display:flex;flex-wrap:wrap;gap:12px}.rpt-sh{font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border-soft)}.rpt-kv{background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:3px;padding:10px;margin-bottom:5px}.rpt-kv-k{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:2px}.rpt-kv-v{color:var(--text-bright);font-weight:600}.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rpt-ioc-block{background:#070a10;padding:12px;border-radius:3px;font-family:var(--font-mono);font-size:10px;line-height:1.8;white-space:pre;overflow-x:auto;color:var(--green);border:1px solid var(--border-soft)}.empty-state{text-align:center;padding:20px;border:1px dashed rgba(255,255,255,0.08);border-radius:3px;color:var(--text-dim)}</style>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600&family=Roboto+Mono:wght@400;600&family=Roboto+Condensed:wght@700;800&display=swap" rel="stylesheet">
+  <style>:root{--bg-void:#0d0e14;--bg-card:#1a1b27;--bg-panel:#1e1f2e;--border-soft:rgba(255,255,255,0.08);--blue:#394EFF;--red:#ff5252;--orange:#ff9800;--yellow:#ffc107;--green:#4caf50;--text-bright:#f0f6fc;--text-primary:#c9d1d9;--text-secondary:#8b949e;--text-dim:#484f58;--font-mono:'Roboto Mono',monospace;--font-sans:'Roboto',sans-serif;--font-display:'Roboto Condensed',sans-serif}body{font-family:var(--font-sans);background:var(--bg-void);color:var(--text-primary);padding:40px;max-width:900px;margin:0 auto}.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:2px;font-family:var(--font-mono);font-size:9px;font-weight:600;margin:2px}.b-red{background:rgba(255,82,82,0.12);color:var(--red);border:1px solid rgba(255,82,82,0.25)}.b-yellow{background:rgba(255,193,7,0.1);color:var(--yellow);border:1px solid rgba(255,193,7,0.2)}.b-green{background:rgba(76,175,80,0.1);color:var(--green);border:1px solid rgba(76,175,80,0.2)}.b-blue{background:rgba(57,78,255,0.12);color:var(--blue);border:1px solid rgba(57,78,255,0.3)}.b-orange{background:rgba(255,152,0,0.1);color:var(--orange);border:1px solid rgba(255,152,0,0.2)}.b-cyan{background:rgba(0,212,232,0.1);color:#00d4e8;border:1px solid rgba(0,212,232,0.2)}.b-dim{background:rgba(255,255,255,0.04);color:var(--text-dim);border:1px solid rgba(255,255,255,0.08)}.rpt-title{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--text-bright);margin-bottom:4px}.rpt-meta{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-bottom:20px;display:flex;flex-wrap:wrap;gap:12px}.rpt-sh{font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border-soft)}.rpt-kv{background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:3px;padding:10px;margin-bottom:5px}.rpt-kv-k{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:2px}.rpt-kv-v{color:var(--text-bright);font-weight:600}.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rpt-ioc-block{background:#0d0e14;padding:12px;border-radius:3px;font-family:var(--font-mono);font-size:10px;line-height:1.8;white-space:pre;overflow-x:auto;color:var(--green);border:1px solid var(--border-soft)}.empty-state{text-align:center;padding:20px;border:1px dashed rgba(255,255,255,0.08);border-radius:3px;color:var(--text-dim)}</style>
   </head><body>${body}</body></html>`;
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
