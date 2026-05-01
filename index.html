@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1296,6 +1297,38 @@ body::after {
 }
 .top-det-engine { font-weight: 700; color: var(--text-bright); flex: 1; font-family: var(--font-sans); }
 .top-det-verdict { color: var(--red); flex: 2; font-family: var(--font-mono); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── SAMPLE DOWNLOAD ─────────────────────────────────────────── */
+.btn-dl-sample {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 9px 14px; margin-top: 8px;
+  background: rgba(255,51,88,0.07);
+  border: 1px solid rgba(255,51,88,0.25);
+  border-radius: var(--radius-sm);
+  color: var(--red); font-family: var(--font-sans);
+  font-size: 12px; font-weight: 600; letter-spacing: 0.2px;
+  cursor: pointer; transition: all 0.15s;
+}
+.btn-dl-sample:hover:not(:disabled) {
+  background: rgba(255,51,88,0.14);
+  border-color: rgba(255,51,88,0.5);
+  box-shadow: 0 0 16px rgba(255,51,88,0.12);
+}
+.btn-dl-sample:disabled { opacity: 0.45; cursor: not-allowed; }
+.dl-zip-tag {
+  margin-left: auto;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  background: rgba(255,51,88,0.14); color: var(--red);
+  border: 1px solid rgba(255,51,88,0.3);
+  border-radius: 3px; padding: 2px 7px; letter-spacing: 1.5px;
+}
+.dl-warn-strip {
+  display: flex; align-items: center; gap: 7px;
+  font-family: var(--font-mono); font-size: 11px; color: var(--yellow);
+  background: rgba(255,190,0,0.05); border: 1px solid rgba(255,190,0,0.18);
+  border-radius: var(--radius-sm); padding: 7px 10px; margin-top: 5px;
+  line-height: 1.4;
+}
 </style>
 </head>
 <body>
@@ -1441,6 +1474,15 @@ body::after {
             </div>
             <div class="count-chips" id="vt-chips"></div>
             <div id="vt-verdict-badge" style="margin-top:6px"></div>
+            <!-- SHA-256 sample download row -->
+            <div id="vt-download-row" style="display:none">
+              <button class="btn-dl-sample" id="btn-dl-sample" onclick="downloadSample()">
+                <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download Sample
+                <span class="dl-zip-tag">ZIP</span>
+              </button>
+              <div id="dl-status"></div>
+            </div>
             <div id="vt-mal-block" class="mal-block" style="display:none">
               <div id="vt-hash-type" style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px"></div>
               <div id="vt-threat-name" class="mal-name"></div>
@@ -2148,11 +2190,57 @@ async function doVTScan(){
   finally { document.getElementById('btn-vt').disabled=false; }
 }
 
+function downloadSample(){
+  const h=document.getElementById('hash-inp').value.trim();
+  if(!h||h.length!==64||!/^[a-fA-F0-9]+$/.test(h)){toast('⚠ SHA-256 hash required for sample download');return;}
+  const btn=document.getElementById('btn-dl-sample');
+  const statusEl=document.getElementById('dl-status');
+  const svgIcon=`<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+  btn.disabled=true;
+  btn.innerHTML=`<span class="spin"></span> Fetching from VirusTotal… <span class="dl-zip-tag">ZIP</span>`;
+  statusEl.innerHTML='';
+  fetch(`${WORKER}/download-sample?hash=${encodeURIComponent(h)}`)
+    .then(async r=>{
+      if(!r.ok){const e=await r.json().catch(()=>({error:r.statusText}));throw new Error(e.error||`HTTP ${r.status}`);}
+      const source=r.headers.get('X-Sample-Source')||'Unknown';
+      const blob=await r.blob();
+      return {blob,source};
+    })
+    .then(({blob,source})=>{
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url; a.download=`${h.toLowerCase()}.zip`; a.click();
+      URL.revokeObjectURL(url);
+      toast(`✓ Sample downloaded from ${source} — password: infected`);
+      const srcBadge=source==='MalwareBazaar'
+        ?`<span style="color:var(--cyan);font-weight:700">MalwareBazaar</span>`
+        :`<span style="color:var(--blue-light);font-weight:700">VirusTotal</span>`;
+      statusEl.innerHTML=`<div class="dl-warn-strip">⚠ Source: ${srcBadge} · Handle in isolated VM · ZIP password: <strong style="color:var(--red);margin-left:4px">infected</strong></div>`;
+    })
+    .catch(err=>{
+      const notFound=err.message.toLowerCase().includes('not found');
+      const isPremium=err.message.toLowerCase().includes('premium');
+      statusEl.innerHTML=notFound
+        ?`<div class="err-box" style="margin-top:4px">⚠ Sample not found in MalwareBazaar. Try submitting it via <a href="https://bazaar.abuse.ch/upload/" target="_blank" style="color:var(--blue)">MalwareBazaar upload</a> first.</div>`
+        :isPremium
+          ?`<div class="err-box" style="margin-top:4px">⛔ Not in MalwareBazaar. VirusTotal download requires a Premium API key.</div>`
+          :`<div class="err-box" style="margin-top:4px">✗ ${esc(err.message)}</div>`;
+      toast('✗ '+err.message);
+    })
+    .finally(()=>{
+      btn.disabled=false;
+      btn.innerHTML=`${svgIcon} Download Sample <span class="dl-zip-tag">ZIP</span>`;
+    });
+}
+
 function renderVTMalBlock(attr, hash){
   const block=document.getElementById('vt-mal-block');
   const hlen=hash.length;
   const htype=hlen===32?'MD5':hlen===40?'SHA-1':hlen===64?'SHA-256':'HASH';
   document.getElementById('vt-hash-type').textContent=htype+' · '+hash.substring(0,16)+'…';
+  // Show download button only for SHA-256
+  const dlRow=document.getElementById('vt-download-row');
+  if(dlRow) dlRow.style.display=hlen===64?'':'none';
   const label=attr?.suggested_threat_label||attr?.popular_threat_classification?.suggested_threat_label||attr?.meaningful_name||null;
   const families=(attr?.popular_threat_classification?.popular_threat_name||[]).map(f=>f.value).filter(Boolean);
   const cats=(attr?.popular_threat_classification?.popular_threat_category||[]).map(c=>c.value).filter(Boolean);
