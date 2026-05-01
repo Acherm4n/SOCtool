@@ -1,68 +1,179 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>JDLThreatIntel v3 — SOC Investigation Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
+/* ── DARK MODE (default) ──────────────────────────────────────── */
 :root {
-  /* VirusTotal authentic palette */
-  --bg-void:      #0a0f1e;
-  --bg-base:      #0f1729;
-  --bg-card:      #162035;
-  --bg-panel:     #1a263d;
-  --bg-hover:     #1f2e47;
-  --bg-active:    #263552;
+  --bg-void:      #070a10;
+  --bg-base:      #0b0f1a;
+  --bg-card:      #0f1520;
+  --bg-panel:     #131927;
+  --bg-hover:     #1a2235;
+  --bg-active:    #1e2840;
 
-  --border-dim:   rgba(57,78,255,0.06);
-  --border-soft:  rgba(57,78,255,0.12);
-  --border-mid:   rgba(57,78,255,0.2);
-  --border-strong:rgba(57,78,255,0.35);
+  --border-dim:   rgba(255,255,255,0.04);
+  --border-soft:  rgba(255,255,255,0.08);
+  --border-mid:   rgba(255,255,255,0.12);
+  --border-strong:rgba(255,255,255,0.18);
 
-  /* Primary: VirusTotal blue — exact brand color */
-  --blue:         #394EFF;
-  --blue-light:   #5b6fff;
-  --blue-dim:     rgba(57,78,255,0.15);
-  --blue-glow:    0 0 24px rgba(57,78,255,0.35);
-  --blue-border:  rgba(57,78,255,0.45);
+  --blue:         #00a8ff;
+  --blue-dim:     rgba(0,168,255,0.12);
+  --blue-glow:    0 0 20px rgba(0,168,255,0.25);
+  --blue-border:  rgba(0,168,255,0.35);
 
-  /* Accent: VT teal */
-  --cyan:         #00d2ff;
-  --cyan-dim:     rgba(0,210,255,0.1);
+  --cyan:         #00d4e8;
+  --cyan-dim:     rgba(0,212,232,0.1);
 
-  /* Threat colors — VT standard */
-  --red:          #ff4444;
-  --red-dim:      rgba(255,68,68,0.12);
-  --red-glow:     0 0 20px rgba(255,68,68,0.35);
-  --orange:       #ff8c00;
-  --orange-dim:   rgba(255,140,0,0.12);
+  --red:          #ff3358;
+  --red-dim:      rgba(255,51,88,0.12);
+  --red-glow:     0 0 16px rgba(255,51,88,0.3);
+  --orange:       #ff7c2a;
+  --orange-dim:   rgba(255,124,42,0.1);
   --yellow:       #ffbe00;
-  --yellow-dim:   rgba(255,190,0,0.12);
-  --green:        #00c853;
-  --green-dim:    rgba(0,200,83,0.12);
+  --yellow-dim:   rgba(255,190,0,0.1);
+  --green:        #00e676;
+  --green-dim:    rgba(0,230,118,0.08);
 
-  /* Text */
-  --text-bright:  #e8eeff;
-  --text-primary: #a8b8d0;
-  --text-secondary:#6b7fa0;
-  --text-dim:     #3d4f6e;
-  --text-placeholder: #253047;
+  --text-bright:  #e8ecf4;
+  --text-primary: #a8b4cc;
+  --text-secondary:#6b7a96;
+  --text-dim:     #3d4d6a;
+  --text-placeholder: #2a3a52;
 
-  /* Fonts — VirusTotal uses Inter */
-  --font-mono:    'JetBrains Mono', 'Consolas', monospace;
-  --font-sans:    'Inter', system-ui, sans-serif;
-  --font-display: 'Inter', system-ui, sans-serif;
+  --font-mono:    'IBM Plex Mono', monospace;
+  --font-sans:    'IBM Plex Sans', sans-serif;
+  --font-display: 'Barlow Condensed', sans-serif;
 
-  /* Sidebar */
   --sidebar-w:    64px;
-  --topbar-h:     54px;
+  --topbar-h:     52px;
 
-  /* VT-style radius */
-  --radius-sm:    4px;
-  --radius-md:    8px;
-  --radius-lg:    12px;
+  --font-smooth: antialiased;
+  --moz-smooth: grayscale;
+}
+
+/* ── LIGHT MODE (system preference) ──────────────────────────── */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-void:      #f0f2f5;
+    --bg-base:      #e8ebf0;
+    --bg-card:      #ffffff;
+    --bg-panel:     #f5f7fa;
+    --bg-hover:     #edf0f5;
+    --bg-active:    #e2e6ec;
+
+    --border-dim:   rgba(0,0,0,0.06);
+    --border-soft:  rgba(0,0,0,0.10);
+    --border-mid:   rgba(0,0,0,0.15);
+    --border-strong:rgba(0,0,0,0.22);
+
+    --blue:         #006bcc;
+    --blue-dim:     rgba(0,107,204,0.08);
+    --blue-glow:    0 0 12px rgba(0,107,204,0.15);
+    --blue-border:  rgba(0,107,204,0.30);
+
+    --cyan:         #007a8f;
+    --cyan-dim:     rgba(0,122,143,0.08);
+
+    --red:          #c5001a;
+    --red-dim:      rgba(197,0,26,0.08);
+    --red-glow:     0 0 12px rgba(197,0,26,0.15);
+    --orange:       #b84c00;
+    --orange-dim:   rgba(184,76,0,0.08);
+    --yellow:       #8a6000;
+    --yellow-dim:   rgba(138,96,0,0.08);
+    --green:        #006e38;
+    --green-dim:    rgba(0,110,56,0.06);
+
+    --text-bright:  #0d1117;
+    --text-primary: #2c3748;
+    --text-secondary:#4a5568;
+    --text-dim:     #718096;
+    --text-placeholder: #a0aec0;
+
+    --font-smooth: auto;
+    --moz-smooth: auto;
+  }
+}
+
+/* ── LIGHT MODE (manual JS toggle, class on <html>) ─────────── */
+html.light-mode {
+  --bg-void:      #f0f2f5;
+  --bg-base:      #e8ebf0;
+  --bg-card:      #ffffff;
+  --bg-panel:     #f5f7fa;
+  --bg-hover:     #edf0f5;
+  --bg-active:    #e2e6ec;
+
+  --border-dim:   rgba(0,0,0,0.06);
+  --border-soft:  rgba(0,0,0,0.10);
+  --border-mid:   rgba(0,0,0,0.15);
+  --border-strong:rgba(0,0,0,0.22);
+
+  --blue:         #006bcc;
+  --blue-dim:     rgba(0,107,204,0.08);
+  --blue-glow:    0 0 12px rgba(0,107,204,0.15);
+  --blue-border:  rgba(0,107,204,0.30);
+
+  --cyan:         #007a8f;
+  --cyan-dim:     rgba(0,122,143,0.08);
+
+  --red:          #c5001a;
+  --red-dim:      rgba(197,0,26,0.08);
+  --red-glow:     0 0 12px rgba(197,0,26,0.15);
+  --orange:       #b84c00;
+  --orange-dim:   rgba(184,76,0,0.08);
+  --yellow:       #8a6000;
+  --yellow-dim:   rgba(138,96,0,0.08);
+  --green:        #006e38;
+  --green-dim:    rgba(0,110,56,0.06);
+
+  --text-bright:  #0d1117;
+  --text-primary: #2c3748;
+  --text-secondary:#4a5568;
+  --text-dim:     #718096;
+  --text-placeholder: #a0aec0;
+
+  --font-smooth: auto;
+  --moz-smooth: auto;
+}
+
+html.dark-mode {
+  --bg-void:      #070a10;
+  --bg-base:      #0b0f1a;
+  --bg-card:      #0f1520;
+  --bg-panel:     #131927;
+  --bg-hover:     #1a2235;
+  --bg-active:    #1e2840;
+  --border-dim:   rgba(255,255,255,0.04);
+  --border-soft:  rgba(255,255,255,0.08);
+  --border-mid:   rgba(255,255,255,0.12);
+  --border-strong:rgba(255,255,255,0.18);
+  --blue:         #00a8ff;
+  --blue-dim:     rgba(0,168,255,0.12);
+  --blue-glow:    0 0 20px rgba(0,168,255,0.25);
+  --blue-border:  rgba(0,168,255,0.35);
+  --cyan:         #00d4e8;
+  --cyan-dim:     rgba(0,212,232,0.1);
+  --red:          #ff3358;
+  --red-dim:      rgba(255,51,88,0.12);
+  --red-glow:     0 0 16px rgba(255,51,88,0.3);
+  --orange:       #ff7c2a;
+  --orange-dim:   rgba(255,124,42,0.1);
+  --yellow:       #ffbe00;
+  --yellow-dim:   rgba(255,190,0,0.1);
+  --green:        #00e676;
+  --green-dim:    rgba(0,230,118,0.08);
+  --text-bright:  #e8ecf4;
+  --text-primary: #a8b4cc;
+  --text-secondary:#6b7a96;
+  --text-dim:     #3d4d6a;
+  --text-placeholder: #2a3a52;
+  --font-smooth: antialiased;
+  --moz-smooth: grayscale;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -74,6 +185,8 @@ body {
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
+  -webkit-font-smoothing: var(--font-smooth);
+  -moz-osx-font-smoothing: var(--moz-smooth);
 }
 
 /* ── BACKGROUND GRID ──────────────────────────────────────────── */
@@ -81,32 +194,21 @@ body::before {
   content: '';
   position: fixed; inset: 0;
   background-image:
-    linear-gradient(rgba(57,78,255,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(57,78,255,0.025) 1px, transparent 1px);
+    linear-gradient(rgba(0,168,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,168,255,0.015) 1px, transparent 1px);
   background-size: 40px 40px;
   pointer-events: none; z-index: 0;
-}
-
-/* VT gradient accent — top of page */
-body::after {
-  content: '';
-  position: fixed; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, #394EFF 0%, #00d2ff 40%, #394EFF 70%, transparent 100%);
-  z-index: 9999;
-  box-shadow: 0 0 20px rgba(57,78,255,0.6);
 }
 
 /* ── TOP BAR ──────────────────────────────────────────────────── */
 .topbar {
   position: fixed; top: 0; left: 0; right: 0;
   height: var(--topbar-h);
-  background: linear-gradient(180deg, #0d1933 0%, #0a0f1e 100%);
-  border-bottom: 1px solid rgba(57,78,255,0.2);
-  backdrop-filter: blur(20px);
+  background: var(--bg-void);
+  border-bottom: 1px solid var(--border-soft);
   display: flex; align-items: center;
   padding: 0 20px 0 calc(var(--sidebar-w) + 20px);
   z-index: 200; gap: 0;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
 }
 
 .topbar-logo {
@@ -119,19 +221,15 @@ body::after {
 }
 .logo-mark svg { width: 32px; height: 32px; }
 .logo-text {
-  font-family: var(--font-sans);
-  font-size: 18px; font-weight: 800;
-  letter-spacing: -0.3px;
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 700;
+  letter-spacing: 2px;
   color: var(--text-bright);
-  text-transform: none;
-  background: linear-gradient(135deg, #fff 0%, #a0b4ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  text-transform: uppercase;
 }
 .logo-sub {
   font-family: var(--font-mono);
-  font-size: 11px; letter-spacing: 1px;
+  font-size: 9px; letter-spacing: 1.5px;
   color: var(--text-dim);
   text-transform: uppercase;
 }
@@ -146,17 +244,16 @@ body::after {
   display: flex; align-items: center; gap: 8px;
   padding: 5px 14px;
   background: var(--red-dim);
-  border: 1px solid rgba(255,68,68,0.3);
-  border-radius: 20px;
-  font-family: var(--font-sans);
-  font-size: 11px; font-weight: 700;
-  letter-spacing: 0.5px; color: var(--red);
+  border: 1px solid rgba(255,51,88,0.3);
+  border-radius: 3px;
+  font-family: var(--font-display);
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 2px; color: var(--red);
   text-transform: uppercase;
 }
 .threat-level-pill .dot {
   width: 6px; height: 6px; border-radius: 50%;
   background: var(--red);
-  box-shadow: 0 0 8px var(--red);
   animation: blink 1.5s infinite;
 }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
@@ -173,15 +270,15 @@ body::after {
 }
 .tstat:first-child { border-left: 1px solid var(--border-dim); }
 .tstat-val {
-  font-family: var(--font-sans);
-  font-size: 19px; font-weight: 800; line-height: 1;
-  color: var(--text-bright); letter-spacing: -0.5px;
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 700; line-height: 1;
+  color: var(--text-bright);
 }
 .tstat-lbl {
-  font-family: var(--font-sans);
-  font-size: 11px; letter-spacing: 0.3px;
+  font-family: var(--font-mono);
+  font-size: 8px; letter-spacing: 1.5px;
   color: var(--text-dim); text-transform: uppercase;
-  margin-top: 3px; font-weight: 500;
+  margin-top: 2px;
 }
 .tstat.danger .tstat-val { color: var(--red); }
 .tstat.warn   .tstat-val { color: var(--yellow); }
@@ -194,20 +291,20 @@ body::after {
 }
 .tb-btn {
   display: flex; align-items: center; gap: 6px;
-  padding: 7px 16px;
-  border-radius: 20px;
-  font-family: var(--font-sans);
-  font-size: 12px; font-weight: 600;
-  letter-spacing: 0.2px; text-transform: none;
+  padding: 6px 14px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase;
   cursor: pointer; border: 1px solid;
   transition: all 0.15s;
 }
 .tb-btn-report {
-  background: var(--blue);
-  border-color: var(--blue);
-  color: #fff;
+  background: var(--blue-dim);
+  border-color: var(--blue-border);
+  color: var(--blue);
 }
-.tb-btn-report:hover { background: var(--blue-light); box-shadow: var(--blue-glow); border-color: var(--blue-light); }
+.tb-btn-report:hover { background: rgba(0,107,204,0.15); }
 .tb-btn-theme {
   background: transparent;
   border-color: var(--border-mid);
@@ -217,7 +314,7 @@ body::after {
 
 .clock-wrap {
   font-family: var(--font-mono);
-  font-size: 12px; color: var(--text-secondary);
+  font-size: 10px; color: var(--text-secondary);
   letter-spacing: 0.5px;
   padding-left: 16px;
   border-left: 1px solid var(--border-dim);
@@ -228,13 +325,12 @@ body::after {
   position: fixed;
   top: 0; left: 0; bottom: 0;
   width: var(--sidebar-w);
-  background: linear-gradient(180deg, #0c1428 0%, #080e1c 100%);
-  border-right: 1px solid rgba(57,78,255,0.15);
+  background: var(--bg-void);
+  border-right: 1px solid var(--border-soft);
   display: flex; flex-direction: column;
   align-items: center;
   padding-top: var(--topbar-h);
   z-index: 150;
-  box-shadow: 2px 0 20px rgba(0,0,0,0.3);
 }
 .sidebar-nav {
   display: flex; flex-direction: column;
@@ -245,26 +341,25 @@ body::after {
   width: 44px; height: 44px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  border-radius: var(--radius-sm); cursor: pointer;
+  border-radius: 4px; cursor: pointer;
   position: relative; gap: 3px;
   transition: all 0.15s;
   border: 1px solid transparent;
 }
 .nav-item:hover {
-  background: rgba(57,78,255,0.12);
-  border-color: rgba(57,78,255,0.2);
+  background: var(--bg-hover);
+  border-color: var(--border-soft);
 }
 .nav-item.active {
-  background: rgba(57,78,255,0.2);
-  border-color: rgba(57,78,255,0.5);
-  box-shadow: 0 0 12px rgba(57,78,255,0.2);
+  background: var(--blue-dim);
+  border-color: var(--blue-border);
 }
 .nav-item svg { width: 18px; height: 18px; stroke: var(--text-dim); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .nav-item.active svg { stroke: var(--blue); }
 .nav-item:hover svg { stroke: var(--text-primary); }
 .nav-lbl {
-  font-family: var(--font-sans);
-  font-size: 11px; letter-spacing: 0.3px;
+  font-family: var(--font-mono);
+  font-size: 7px; letter-spacing: 0.5px;
   color: var(--text-dim); text-transform: uppercase;
 }
 .nav-item.active .nav-lbl { color: var(--blue); }
@@ -283,14 +378,13 @@ body::after {
 .wi-dot {
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--green);
-  box-shadow: 0 0 8px var(--green);
   animation: pulse-green 2.5s infinite;
 }
 @keyframes pulse-green { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(0.8);opacity:0.6} }
 .wi-lbl {
-  font-family: var(--font-sans);
-  font-size: 11px; color: var(--text-dim);
-  letter-spacing: 0.3px; text-transform: uppercase;
+  font-family: var(--font-mono);
+  font-size: 7px; color: var(--text-dim);
+  letter-spacing: 0.5px; text-transform: uppercase;
 }
 
 /* ── MAIN LAYOUT ──────────────────────────────────────────────── */
@@ -311,8 +405,8 @@ body::after {
 
 /* ── LEFT INPUT PANEL ─────────────────────────────────────────── */
 .input-panel {
-  background: linear-gradient(180deg, #0d1730 0%, #0a0f1e 100%);
-  border-right: 1px solid rgba(57,78,255,0.18);
+  background: var(--bg-base);
+  border-right: 1px solid var(--border-soft);
   overflow-y: auto;
   display: flex; flex-direction: column;
 }
@@ -324,8 +418,8 @@ body::after {
 .panel-header {
   display: flex; align-items: center; gap: 10px;
   padding: 12px 16px;
-  background: rgba(57,78,255,0.06);
-  border-bottom: 1px solid rgba(57,78,255,0.12);
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-dim);
   cursor: default;
 }
 .ph-accent {
@@ -333,63 +427,111 @@ body::after {
   border-radius: 1px;
   flex-shrink: 0;
 }
-.ph-accent.blue  { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
+.ph-accent.blue  { background: var(--blue); }
 .ph-accent.red   { background: var(--red); }
 .ph-accent.cyan  { background: var(--cyan); }
 .ph-accent.green { background: var(--green); }
 .ph-accent.orange { background: var(--orange); }
 
 .ph-title {
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
   font-size: 11px; font-weight: 700;
-  letter-spacing: 0.5px; text-transform: uppercase;
-  color: var(--text-primary);
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-secondary);
   flex: 1;
 }
 .ph-badge {
   font-family: var(--font-mono);
-  font-size: 11px; padding: 2px 8px;
+  font-size: 9px; padding: 2px 6px;
   border-radius: 2px;
   background: var(--bg-active);
   border: 1px solid var(--border-mid);
   color: var(--text-dim);
 }
 
+/* Workflow header */
+.workflow-hdr {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--bg-panel);
+}
+.workflow-hdr-title {
+  font-family: var(--font-display);
+  font-size: 13px; font-weight: 800;
+  letter-spacing: 2px; color: var(--text-bright);
+  text-transform: uppercase;
+  display: flex; align-items: center; gap: 8px;
+}
+.workflow-hdr-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  flex-shrink: 0;
+}
+.workflow-hdr-sub {
+  font-family: var(--font-mono);
+  font-size: 9px; color: var(--text-dim);
+  letter-spacing: 1px; margin-top: 5px;
+}
+/* Step number */
+.ph-step {
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 700;
+  color: var(--blue); flex-shrink: 0;
+}
+/* Quick-scan topbar input */
+.topbar-quick {
+  flex: 1; max-width: 360px;
+  display: flex; align-items: center;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-soft);
+  border-radius: 3px;
+  padding: 0 10px; gap: 8px;
+  margin: 0 16px;
+}
+.topbar-quick svg { flex-shrink: 0; stroke: var(--text-dim); fill: none; }
+.topbar-quick input {
+  background: none; border: none; outline: none;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-primary); width: 100%; padding: 7px 0;
+}
+.topbar-quick input::placeholder { color: var(--text-placeholder); }
+
 .panel-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
 
 /* Inputs */
 .inp-label {
-  font-family: var(--font-sans);
-  font-size: 11px; font-weight: 600; letter-spacing: 0.3px;
-  text-transform: uppercase; color: var(--text-secondary);
-  margin-bottom: 6px;
+  font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 5px;
 }
 .inp {
   width: 100%;
-  background: rgba(10,15,30,0.8);
-  border: 1px solid rgba(57,78,255,0.2);
-  border-radius: var(--radius-sm);
+  background: var(--bg-void);
+  border: 1px solid var(--border-soft);
+  border-radius: 3px;
   color: var(--text-bright);
   font-family: var(--font-mono);
   font-size: 11px;
-  padding: 10px 14px;
+  padding: 9px 12px;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .inp:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(57,78,255,0.12);
+  border-color: var(--blue-border);
+  box-shadow: 0 0 0 3px rgba(0,107,204,0.08);
 }
 .inp::placeholder { color: var(--text-placeholder); }
 
 /* Buttons */
 .btn {
   display: flex; align-items: center; justify-content: center;
-  gap: 6px; width: 100%; padding: 10px 18px;
-  border-radius: var(--radius-sm);
-  font-family: var(--font-sans);
-  font-size: 13px; font-weight: 600;
-  letter-spacing: 0.3px; text-transform: none;
+  gap: 6px; width: 100%; padding: 9px 16px;
+  border-radius: 3px;
+  font-family: var(--font-display);
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
   cursor: pointer; border: 1px solid;
   transition: all 0.15s;
 }
@@ -398,31 +540,28 @@ body::after {
 .btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
 .btn-primary {
-  background: var(--blue);
-  border-color: var(--blue);
-  color: #fff;
+  background: var(--blue-dim);
+  border-color: var(--blue-border);
+  color: var(--blue);
 }
 .btn-primary:hover:not(:disabled) {
-  background: var(--blue-light);
-  border-color: var(--blue-light);
-  box-shadow: var(--blue-glow);
+  background: rgba(0,107,204,0.15);
 }
 .btn-danger {
-  background: rgba(255,68,68,0.12);
-  border-color: rgba(255,68,68,0.35);
+  background: var(--red-dim);
+  border-color: rgba(197,0,26,0.3);
   color: var(--red);
 }
 .btn-danger:hover:not(:disabled) {
-  background: rgba(255,68,68,0.22);
-  box-shadow: var(--red-glow);
+  background: rgba(197,0,26,0.14);
 }
 .btn-cyan {
-  background: rgba(0,210,255,0.1);
-  border-color: rgba(0,210,255,0.3);
+  background: var(--cyan-dim);
+  border-color: rgba(0,122,143,0.3);
   color: var(--cyan);
 }
-.btn-cyan:hover:not(:disabled) { background: rgba(0,212,232,0.16); }
-.btn-sm { width: auto; padding: 6px 12px; font-size: 12px; }
+.btn-cyan:hover:not(:disabled) { background: rgba(0,122,143,0.14); }
+.btn-sm { width: auto; padding: 6px 12px; font-size: 10px; }
 .btn-ghost {
   background: transparent; border-color: var(--border-mid);
   color: var(--text-secondary);
@@ -437,7 +576,7 @@ body::after {
 }
 .eng-opt {
   flex: 1; padding: 7px 0; text-align: center;
-  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
   letter-spacing: 1px; text-transform: uppercase;
   cursor: pointer; color: var(--text-dim);
   background: transparent;
@@ -446,35 +585,35 @@ body::after {
   transition: all 0.15s;
 }
 .eng-opt:last-child { border-right: none; }
-.eng-opt.active-anyrun { background: rgba(139,92,246,0.15); color: #a78bfa; }
+.eng-opt.active-anyrun { background: rgba(139,92,246,0.12); color: #7c5cbf; }
 .eng-opt.active-triage { background: var(--blue-dim); color: var(--blue); }
 .eng-opt:hover:not(.active-anyrun):not(.active-triage) { background: var(--bg-hover); color: var(--text-primary); }
 
 /* File input */
 .file-zone {
   position: relative;
-  border: 1px dashed rgba(57,78,255,0.3);
-  border-radius: var(--radius-md);
-  padding: 14px;
+  border: 1px dashed var(--border-mid);
+  border-radius: 3px;
+  padding: 12px;
   cursor: pointer;
   transition: all 0.2s;
-  background: rgba(57,78,255,0.03);
+  background: var(--bg-void);
 }
-.file-zone:hover { border-color: var(--blue); background: rgba(57,78,255,0.08); box-shadow: 0 0 20px rgba(57,78,255,0.1); }
+.file-zone:hover { border-color: var(--blue-border); background: var(--blue-dim); }
 .file-zone label {
   display: flex; align-items: center; gap: 8px;
   cursor: pointer;
-  font-family: var(--font-mono); font-size: 12px;
+  font-family: var(--font-mono); font-size: 10px;
   color: var(--text-secondary);
 }
 .file-zone label svg { width: 14px; height: 14px; stroke: var(--text-dim); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .file-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-.file-meta { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+.file-meta { font-family: var(--font-mono); font-size: 9px; color: var(--text-secondary); margin-top: 4px; }
 
 /* Loading, error */
 .loading-row {
   display: flex; align-items: center; gap: 8px;
-  font-family: var(--font-mono); font-size: 12px; color: var(--blue);
+  font-family: var(--font-mono); font-size: 10px; color: var(--blue);
 }
 .spin {
   width: 12px; height: 12px; border-radius: 50%;
@@ -484,11 +623,11 @@ body::after {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .err-box {
-  background: rgba(255,51,88,0.07);
-  border: 1px solid rgba(255,51,88,0.2);
+  background: var(--red-dim);
+  border: 1px solid rgba(197,0,26,0.2);
   border-left: 3px solid var(--red);
   border-radius: 3px; padding: 8px 12px;
-  font-family: var(--font-mono); font-size: 12px; color: var(--red);
+  font-family: var(--font-mono); font-size: 10px; color: var(--red);
 }
 
 /* Progress */
@@ -497,77 +636,73 @@ body::after {
   border: 1px solid var(--border-soft);
   border-radius: 3px; padding: 10px 12px;
 }
-.prog-label { font-family: var(--font-sans); font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
-.prog-phase { font-family: var(--font-sans); font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--blue-light); text-transform: uppercase; margin-bottom: 6px; }
+.prog-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-primary); margin-bottom: 2px; }
+.prog-phase { font-family: var(--font-display); font-size: 9px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px; }
 .prog-bar-bg { height: 3px; background: var(--bg-active); border-radius: 2px; overflow: hidden; }
-.prog-bar { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--blue), var(--cyan)); transition: width 0.8s ease; width: 0%; box-shadow: 0 0 8px rgba(57,78,255,0.5); }
-.prog-task { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-top: 5px; word-break: break-all; }
+.prog-bar { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--blue), var(--cyan)); transition: width 0.8s ease; width: 0%; }
+.prog-task { font-family: var(--font-mono); font-size: 8px; color: var(--text-dim); margin-top: 4px; word-break: break-all; }
 
 /* Session stats */
 .session-rows { display: flex; flex-direction: column; gap: 0; }
 .srow {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 9px 0;
+  padding: 8px 0;
   border-bottom: 1px solid var(--border-dim);
-  font-family: var(--font-sans); font-size: 12px;
+  font-family: var(--font-mono); font-size: 10px;
 }
 .srow:last-child { border-bottom: none; }
-.srow-k { color: var(--text-secondary); font-weight: 500; }
-.srow-v { font-weight: 700; color: var(--text-bright); }
+.srow-k { color: var(--text-dim); letter-spacing: 0.5px; }
+.srow-v { font-weight: 600; color: var(--text-bright); }
+.srow-v.dim { color: var(--text-secondary); font-weight: 500; }
 .srow-v.danger { color: var(--red); }
 .srow-v.info   { color: var(--blue); }
 
-/* VT mini — detection ratio */
+/* VT mini */
 .detection-bar {
-  display: flex; align-items: center; gap: 14px; margin-bottom: 12px;
-  background: rgba(57,78,255,0.05);
-  border: 1px solid rgba(57,78,255,0.15);
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
 }
 .det-pct {
-  font-family: var(--font-sans);
-  font-size: 36px; font-weight: 900;
-  line-height: 1; min-width: 70px; letter-spacing: -1px;
+  font-family: var(--font-display);
+  font-size: 28px; font-weight: 800;
+  line-height: 1; min-width: 60px;
 }
 .det-right { flex: 1; }
-.det-sub { font-family: var(--font-sans); font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
-.det-bar-bg { height: 5px; background: var(--bg-active); border-radius: 3px; overflow: hidden; }
-.det-bar-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
+.det-sub { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); margin-bottom: 4px; letter-spacing: 1px; text-transform: uppercase; }
+.det-bar-bg { height: 4px; background: var(--bg-active); border-radius: 2px; overflow: hidden; }
+.det-bar-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
 
-.count-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.count-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
 .chip {
-  display: flex; align-items: center; gap: 5px;
-  padding: 4px 12px; border-radius: 20px;
-  font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  display: flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: 2px;
+  font-family: var(--font-mono); font-size: 9px; font-weight: 600;
   border: 1px solid;
 }
-.chip-red  { background: rgba(255,68,68,0.12);   border-color: rgba(255,68,68,0.3);    color: var(--red); }
-.chip-yellow { background: rgba(255,190,0,0.1);  border-color: rgba(255,190,0,0.28);   color: var(--yellow); }
-.chip-green { background: rgba(0,200,83,0.1);    border-color: rgba(0,200,83,0.25);    color: var(--green); }
-.chip-dim  { background: rgba(255,255,255,0.04); border-color: var(--border-soft);     color: var(--text-secondary); }
+.chip-red  { background: var(--red-dim);    border-color: rgba(197,0,26,0.25);  color: var(--red); }
+.chip-yellow { background: var(--yellow-dim); border-color: rgba(138,96,0,0.25); color: var(--yellow); }
+.chip-green { background: var(--green-dim);  border-color: rgba(0,110,56,0.2);  color: var(--green); }
+.chip-dim  { background: rgba(128,128,128,0.06); border-color: var(--border-soft); color: var(--text-dim); }
 
 /* Malware name block */
 .mal-block {
-  background: rgba(255,68,68,0.05);
-  border: 1px solid rgba(255,68,68,0.18);
+  background: var(--red-dim);
+  border: 1px solid rgba(197,0,26,0.15);
   border-left: 3px solid var(--red);
-  border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 10px;
-  box-shadow: 0 2px 12px rgba(255,68,68,0.08);
+  border-radius: 3px; padding: 10px 12px; margin-top: 8px;
 }
 .mal-name {
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
   font-size: 16px; font-weight: 800;
-  color: var(--red); letter-spacing: -0.3px;
-  margin-bottom: 8px; word-break: break-all;
+  color: var(--red); letter-spacing: 0.5px;
+  margin-bottom: 6px; word-break: break-all;
 }
 .mal-name.clean { color: var(--green); }
 .family-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
-.mal-meta { font-size: 12px; }
+.mal-meta { font-size: 9px; }
 .meta-row {
   display: flex; justify-content: space-between;
-  padding: 4px 0; border-bottom: 1px solid var(--border-dim);
-  font-family: var(--font-mono); font-size: 12px;
+  padding: 3px 0; border-bottom: 1px solid var(--border-dim);
+  font-family: var(--font-mono); font-size: 9px;
 }
 .meta-row:last-child { border-bottom: none; }
 .meta-v { color: var(--text-primary); font-weight: 600; text-align: right; max-width: 60%; word-break: break-all; }
@@ -577,12 +712,12 @@ body::after {
 .top-det-row {
   display: flex; align-items: center; gap: 8px;
   padding: 4px 8px;
-  background: rgba(255,51,88,0.04);
-  border: 1px solid rgba(255,51,88,0.1);
-  border-radius: 2px; font-size: 12px;
+  background: var(--red-dim);
+  border: 1px solid rgba(197,0,26,0.1);
+  border-radius: 2px; font-size: 10px;
 }
-.top-det-engine { font-weight: 700; color: var(--text-bright); flex: 1; font-family: var(--font-sans); font-size: 12px; }
-.top-det-verdict { color: var(--red); flex: 2; font-family: var(--font-mono); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top-det-engine { font-weight: 700; color: var(--text-bright); flex: 1; font-family: var(--font-sans); }
+.top-det-verdict { color: var(--red); flex: 2; font-family: var(--font-mono); font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* AV Panel */
 .av-panel {
@@ -591,30 +726,29 @@ body::after {
 }
 .av-panel-hdr {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 12px;
-  background: rgba(57,78,255,0.06);
-  border-top: 1px solid rgba(57,78,255,0.1);
+  padding: 7px 10px;
+  background: var(--bg-panel);
   cursor: pointer; user-select: none;
-  font-family: var(--font-sans); font-size: 13px; font-weight: 600;
-  color: var(--text-secondary); letter-spacing: 0.2px;
+  font-family: var(--font-mono); font-size: 9px; color: var(--text-dim);
+  letter-spacing: 1px; text-transform: uppercase;
 }
-.av-panel-hdr:hover { background: rgba(57,78,255,0.1); color: var(--text-primary); }
+.av-panel-hdr:hover { background: var(--bg-hover); color: var(--text-secondary); }
 .av-panel-body { display: none; max-height: 260px; overflow-y: auto; background: var(--bg-void); }
 .av-panel-body.open { display: block; }
 .av-filter-bar { display: flex; gap: 3px; padding: 6px 8px; flex-wrap: wrap; }
 .av-fbtn {
-  font-family: var(--font-sans); font-size: 12px; font-weight: 600;
-  letter-spacing: 0.2px; padding: 4px 10px; border-radius: 4px;
+  font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+  letter-spacing: 1px; padding: 2px 7px; border-radius: 2px;
   border: 1px solid var(--border-soft); background: transparent;
   color: var(--text-dim); cursor: pointer; text-transform: uppercase;
   transition: all 0.12s;
 }
 .av-fbtn.fa.active { background: var(--blue-dim); border-color: var(--blue-border); color: var(--blue); }
-.av-fbtn.fm.active { background: var(--red-dim); border-color: rgba(255,51,88,0.3); color: var(--red); }
-.av-fbtn.fs.active { background: var(--yellow-dim); border-color: rgba(255,190,0,0.25); color: var(--yellow); }
-.av-fbtn.fc.active { background: var(--green-dim); border-color: rgba(0,230,118,0.2); color: var(--green); }
+.av-fbtn.fm.active { background: var(--red-dim); border-color: rgba(197,0,26,0.3); color: var(--red); }
+.av-fbtn.fs.active { background: var(--yellow-dim); border-color: rgba(138,96,0,0.25); color: var(--yellow); }
+.av-fbtn.fc.active { background: var(--green-dim); border-color: rgba(0,110,56,0.2); color: var(--green); }
 .av-search {
-  font-family: var(--font-sans); font-size: 12px;
+  font-family: var(--font-mono); font-size: 10px;
   background: var(--bg-card); border: 1px solid var(--border-soft);
   border-radius: 2px; color: var(--text-bright); outline: none;
   padding: 3px 8px; flex: 1; min-width: 80px;
@@ -622,41 +756,31 @@ body::after {
 .av-search:focus { border-color: var(--blue-border); }
 .av-search::placeholder { color: var(--text-placeholder); }
 .av-row {
-  display: grid; grid-template-columns: 20px 1fr 1fr 62px;
-  gap: 8px; align-items: center;
-  padding: 6px 10px; font-size: 12px;
+  display: grid; grid-template-columns: 24px 1fr 1fr 60px;
+  gap: 6px; align-items: center;
+  padding: 4px 8px; font-size: 10px;
   border-bottom: 1px solid var(--border-dim);
   transition: background 0.1s;
 }
 .av-row:last-child { border-bottom: none; }
-.av-row:hover { background: rgba(57,78,255,0.06); }
-.av-row[data-cat="malicious"] { background: rgba(255,68,68,0.04); }
-.av-row[data-cat="malicious"]:hover { background: rgba(255,68,68,0.08); }
-.av-row[data-cat="suspicious"] { background: rgba(255,190,0,0.03); }
-/* VT-style colored status dot replaces icon column */
-.av-dot {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-  justify-self: center;
-}
-.av-dot-mal { background: var(--red); box-shadow: 0 0 6px var(--red); }
-.av-dot-sus { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
-.av-dot-cln { background: var(--green); box-shadow: 0 0 4px var(--green); }
-.av-dot-und { background: var(--text-dim); }
-.av-engine { font-family: var(--font-sans); font-weight: 600; color: var(--text-bright); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; }
-.av-result { font-family: var(--font-mono); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.av-row:hover { background: var(--bg-hover); }
+.av-row[data-cat="malicious"] { background: var(--red-dim); }
+.av-row[data-cat="suspicious"] { background: var(--yellow-dim); }
+.av-engine { font-family: var(--font-sans); font-weight: 600; color: var(--text-bright); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 10px; }
+.av-result { font-family: var(--font-mono); font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .av-result.mal { color: var(--red); font-weight: 700; }
 .av-result.sus { color: var(--yellow); font-weight: 600; }
 .av-result.cln { color: var(--green); }
 .av-result.und { color: var(--text-dim); }
 .av-badge {
-  font-family: var(--font-sans); font-size: 11px; font-weight: 700;
-  padding: 3px 8px; border-radius: 20px; text-align: center;
-  text-transform: uppercase; letter-spacing: 0.3px;
+  font-family: var(--font-mono); font-size: 8px; font-weight: 700;
+  padding: 1px 5px; border-radius: 2px; text-align: center;
+  text-transform: uppercase; letter-spacing: 0.5px;
 }
-.avb-mal { background: rgba(255,68,68,0.15); color: var(--red); border: 1px solid rgba(255,68,68,0.3); }
-.avb-sus { background: rgba(255,190,0,0.12); color: var(--yellow); border: 1px solid rgba(255,190,0,0.25); }
-.avb-cln { background: rgba(0,200,83,0.1); color: var(--green); border: 1px solid rgba(0,200,83,0.2); }
-.avb-und { background: rgba(255,255,255,0.03); color: var(--text-dim); border: 1px solid var(--border-dim); }
+.avb-mal { background: var(--red-dim); color: var(--red); border: 1px solid rgba(197,0,26,0.25); }
+.avb-sus { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(138,96,0,0.2); }
+.avb-cln { background: var(--green-dim); color: var(--green); border: 1px solid rgba(0,110,56,0.15); }
+.avb-und { background: rgba(128,128,128,0.06); color: var(--text-dim); border: 1px solid var(--border-dim); }
 
 .abuse-block {
   background: var(--bg-void);
@@ -678,21 +802,21 @@ body::after {
 .abuse-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
 .abuse-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
 .abuse-kv {
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-bottom: 1px solid var(--border-dim);
   border-right: 1px solid var(--border-dim);
-  font-family: var(--font-sans); font-size: 11px;
+  font-family: var(--font-mono); font-size: 9px;
 }
 .abuse-kv:nth-child(even) { border-right: none; }
-.abuse-k { color: var(--text-dim); letter-spacing: 0.3px; text-transform: uppercase; margin-bottom: 3px; font-size: 11px; }
-.abuse-v { color: var(--text-bright); font-weight: 600; font-size: 12px; }
+.abuse-k { color: var(--text-dim); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px; }
+.abuse-v { color: var(--text-bright); font-weight: 600; font-size: 10px; }
 .abuse-cats { display: flex; flex-wrap: wrap; gap: 3px; padding: 8px 10px; }
 .abuse-reports-section { padding: 8px 10px; border-top: 1px solid var(--border-dim); }
-.abuse-rpt-hdr { font-family: var(--font-sans); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 8px; }
+.abuse-rpt-hdr { font-family: var(--font-display); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
 .abuse-rpt-row {
   display: flex; align-items: flex-start; gap: 8px;
-  padding: 7px 0; border-bottom: 1px solid var(--border-dim);
-  font-family: var(--font-sans); font-size: 11px;
+  padding: 5px 0; border-bottom: 1px solid var(--border-dim);
+  font-family: var(--font-mono); font-size: 9px;
 }
 .abuse-rpt-row:last-child { border-bottom: none; }
 .abuse-rpt-comment { flex: 1; color: var(--text-primary); line-height: 1.4; }
@@ -702,34 +826,34 @@ body::after {
 .main-panel {
   display: flex; flex-direction: column;
   overflow: hidden;
-  background: linear-gradient(180deg, #0f1729 0%, #0a0f1e 100%);
+  background: var(--bg-base);
 }
 
 /* Tab bar */
 .tab-strip {
   display: flex; gap: 0; flex-shrink: 0;
-  background: linear-gradient(180deg, #0c1428 0%, #0a0f1e 100%);
-  border-bottom: 1px solid rgba(57,78,255,0.2);
+  background: var(--bg-void);
+  border-bottom: 1px solid var(--border-soft);
   overflow-x: auto;
   padding: 0 16px;
 }
 .tab-btn {
   display: flex; align-items: center; gap: 6px;
-  padding: 16px 18px;
-  font-family: var(--font-sans);
-  font-size: 12px; font-weight: 600;
-  letter-spacing: 0.3px; text-transform: none;
+  padding: 14px 16px;
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
   color: var(--text-dim); cursor: pointer;
   border: none; background: none;
   border-bottom: 2px solid transparent;
   transition: all 0.15s; white-space: nowrap;
   margin-bottom: -1px;
 }
-.tab-btn:hover { color: var(--text-primary); background: rgba(57,78,255,0.05); }
-.tab-btn.active { color: #fff; border-bottom-color: var(--blue); background: rgba(57,78,255,0.08); }
+.tab-btn:hover { color: var(--text-primary); }
+.tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
 .tab-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-.tab-content { flex: 1; overflow-y: auto; padding: 20px; }
+.tab-content { flex: 1; overflow-y: auto; padding: 16px; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 
@@ -737,26 +861,25 @@ body::after {
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border-soft);
-  border-radius: var(--radius-md); overflow: hidden;
+  border-radius: 4px; overflow: hidden;
   position: relative;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.3);
 }
 .card::before {
   content: '';
   position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(57,78,255,0.4), rgba(0,210,255,0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(0,107,204,0.2), transparent);
 }
 .card-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px;
+  padding: 10px 14px;
   background: var(--bg-panel);
   border-bottom: 1px solid var(--border-dim);
 }
 .card-title {
   display: flex; align-items: center; gap: 8px;
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
   font-size: 11px; font-weight: 700;
-  letter-spacing: 1.5px; text-transform: uppercase;
+  letter-spacing: 2px; text-transform: uppercase;
   color: var(--text-secondary);
 }
 .card-title-bar {
@@ -776,37 +899,34 @@ body::after {
 
 /* Overview stats */
 .stat-row {
-  display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 14px;
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 12px;
 }
 @media(max-width:700px) { .stat-row { grid-template-columns: repeat(2,1fr); } }
 .stat-box {
   background: var(--bg-card); border: 1px solid var(--border-soft);
-  border-radius: var(--radius-md); padding: 16px 18px;
+  border-radius: 4px; padding: 12px 14px;
   position: relative; overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
-  transition: transform 0.15s, box-shadow 0.15s;
 }
-.stat-box:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.35); }
 .stat-box::after {
   content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-  height: 3px; transform: scaleX(0); transition: transform 0.3s;
+  height: 2px; transform: scaleX(0); transition: transform 0.3s;
 }
 .stat-box:hover::after { transform: scaleX(1); }
-.sb-red::after  { background: linear-gradient(90deg, var(--red), #ff8080); }
-.sb-yellow::after { background: linear-gradient(90deg, var(--yellow), #ffe080); }
-.sb-orange::after { background: linear-gradient(90deg, var(--orange), #ffbe80); }
-.sb-blue::after { background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+.sb-red::after  { background: var(--red); }
+.sb-yellow::after { background: var(--yellow); }
+.sb-orange::after { background: var(--orange); }
+.sb-blue::after { background: var(--blue); }
 .stat-num {
-  font-family: var(--font-sans); font-size: 34px; font-weight: 800;
-  line-height: 1; margin-bottom: 6px; letter-spacing: -1px;
+  font-family: var(--font-display); font-size: 32px; font-weight: 800;
+  line-height: 1; margin-bottom: 4px;
 }
-.sb-red    .stat-num { color: var(--red); text-shadow: 0 0 20px rgba(255,68,68,0.4); }
-.sb-yellow .stat-num { color: var(--yellow); text-shadow: 0 0 20px rgba(255,190,0,0.3); }
-.sb-orange .stat-num { color: var(--orange); text-shadow: 0 0 20px rgba(255,140,0,0.3); }
-.sb-blue   .stat-num { color: var(--blue); text-shadow: 0 0 20px rgba(57,78,255,0.4); }
+.sb-red    .stat-num { color: var(--red); }
+.sb-yellow .stat-num { color: var(--yellow); }
+.sb-orange .stat-num { color: var(--orange); }
+.sb-blue   .stat-num { color: var(--blue); }
 .stat-lbl {
-  font-family: var(--font-sans); font-size: 11px; font-weight: 500;
-  letter-spacing: 0.3px; text-transform: none; color: var(--text-secondary);
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim);
 }
 
 /* Threat score */
@@ -823,103 +943,101 @@ body::after {
   align-items: center; justify-content: center;
 }
 .score-num {
-  font-family: var(--font-sans); font-size: 30px; font-weight: 900; line-height: 1; letter-spacing: -1px;
+  font-family: var(--font-display); font-size: 30px; font-weight: 800; line-height: 1;
 }
-.score-max { font-family: var(--font-sans); font-size: 12px; color: var(--text-dim); font-weight: 500; }
+.score-max { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); }
 .score-right { flex: 1; }
 .score-label {
-  font-family: var(--font-sans); font-size: 22px; font-weight: 800;
-  letter-spacing: -0.5px; text-transform: uppercase; margin-bottom: 8px;
+  font-family: var(--font-display); font-size: 22px; font-weight: 800;
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;
 }
 .score-bar-bg { height: 6px; background: var(--bg-active); border-radius: 3px; overflow: hidden; }
 .score-bar-fill { height: 100%; border-radius: 3px; transition: width 1.2s ease; background: linear-gradient(90deg, var(--green), var(--yellow), var(--red)); }
 .score-ticks {
   display: flex; justify-content: space-between;
-  font-family: var(--font-sans); font-size: 11px; color: var(--text-dim);
-  margin-top: 5px; font-weight: 500;
+  font-family: var(--font-mono); font-size: 8px; color: var(--text-dim);
+  margin-top: 4px; letter-spacing: 0.5px;
 }
 
 /* Alert list */
-.alert-list { display: flex; flex-direction: column; gap: 6px; padding: 0 14px 14px; }
+.alert-list { display: flex; flex-direction: column; gap: 4px; padding: 0 14px 14px; }
 .alert-row {
   display: flex; align-items: flex-start; gap: 10px;
-  background: rgba(255,68,68,0.05);
-  border: 1px solid rgba(255,68,68,0.14);
+  background: var(--red-dim);
+  border: 1px solid rgba(197,0,26,0.12);
   border-left: 3px solid var(--red);
-  border-radius: var(--radius-sm); padding: 9px 12px;
-  font-family: var(--font-sans); font-size: 12px; color: var(--text-primary);
+  border-radius: 3px; padding: 7px 10px;
+  font-family: var(--font-sans); font-size: 11px; color: var(--text-primary);
   animation: slide-in 0.3s ease-out;
 }
 @keyframes slide-in { from { opacity:0; transform: translateX(-6px); } to { opacity:1; transform:none; } }
 .alert-icon { flex-shrink: 0; color: var(--red); }
 .alert-msg { flex: 1; line-height: 1.4; }
 .sev-pill {
-  font-family: var(--font-sans); font-size: 11px; font-weight: 700;
-  padding: 3px 10px; border-radius: 20px;
-  text-transform: uppercase; letter-spacing: 0.3px;
+  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+  padding: 2px 6px; border-radius: 2px;
+  text-transform: uppercase; letter-spacing: 0.5px;
   white-space: nowrap; flex-shrink: 0;
 }
-.sev-critical { background: rgba(255,68,68,0.15); color: var(--red); border: 1px solid rgba(255,68,68,0.3); }
-.sev-high     { background: rgba(255,140,0,0.12); color: var(--orange); border: 1px solid rgba(255,140,0,0.28); }
-.sev-medium   { background: rgba(255,190,0,0.1); color: var(--yellow); border: 1px solid rgba(255,190,0,0.25); }
-.sev-low      { background: rgba(57,78,255,0.12); color: var(--blue-light); border: 1px solid rgba(57,78,255,0.3); }
+.sev-critical { background: var(--red-dim); color: var(--red); border: 1px solid rgba(197,0,26,0.25); }
+.sev-high     { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(184,76,0,0.25); }
+.sev-medium   { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(138,96,0,0.2); }
+.sev-low      { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue-border); }
 
 /* Kill chain */
 .killchain {
   display: flex; align-items: stretch; gap: 0; overflow-x: auto;
-  border: 1px solid var(--border-soft); border-radius: var(--radius-md); overflow: hidden;
+  border: 1px solid var(--border-soft); border-radius: 3px; overflow: hidden;
 }
 .kc-phase {
-  flex: 1; min-width: 80px; text-align: center; padding: 14px 6px;
+  flex: 1; min-width: 80px; text-align: center; padding: 12px 6px;
   border-right: 1px solid var(--border-dim);
-  font-family: var(--font-sans); font-size: 11px; font-weight: 600;
-  letter-spacing: 0.3px; text-transform: uppercase;
+  font-family: var(--font-display); font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
   color: var(--text-dim); background: var(--bg-void);
   transition: all 0.3s; cursor: default; position: relative;
 }
 .kc-phase:last-child { border-right: none; }
-.kc-num { display: block; font-size: 22px; font-weight: 800; line-height: 1; margin-bottom: 5px; letter-spacing: -0.5px; }
-.kc-phase.past { background: rgba(255,140,0,0.06); color: var(--orange); }
+.kc-num { display: block; font-size: 20px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+.kc-phase.past { background: var(--orange-dim); color: var(--orange); }
 .kc-phase.active {
-  background: rgba(57,78,255,0.1); color: var(--blue-light);
-  box-shadow: inset 0 0 24px rgba(57,78,255,0.08);
+  background: var(--blue-dim); color: var(--blue);
 }
 .kc-phase.active::after {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, var(--blue), var(--cyan));
-  box-shadow: 0 0 10px rgba(57,78,255,0.5);
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--blue);
 }
 
 /* MITRE */
-.mitre-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.mitre-grid { display: flex; flex-wrap: wrap; gap: 6px; }
 .mitre-tag {
-  display: flex; align-items: center; gap: 8px;
-  background: rgba(255,140,0,0.07);
-  border: 1px solid rgba(255,140,0,0.22);
-  border-radius: 20px; padding: 6px 12px;
-  font-family: var(--font-sans); font-size: 11px; font-weight: 500; color: var(--orange);
+  display: flex; align-items: center; gap: 6px;
+  background: var(--orange-dim);
+  border: 1px solid rgba(184,76,0,0.2);
+  border-radius: 3px; padding: 6px 10px;
+  font-family: var(--font-mono); font-size: 10px; color: var(--orange);
   cursor: pointer; transition: all 0.15s;
 }
-.mitre-tag:hover { background: rgba(255,140,0,0.14); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,140,0,0.15); }
-.mitre-id { font-weight: 700; font-size: 11px; opacity: 0.75; font-family: var(--font-mono); }
+.mitre-tag:hover { background: rgba(184,76,0,0.14); transform: translateY(-1px); }
+.mitre-id { font-weight: 700; font-size: 9px; opacity: 0.7; }
 
 /* Process tree */
 .proc-tree {
   background: var(--bg-void); border: 1px solid var(--border-soft);
   border-radius: 3px; padding: 10px; max-height: 220px; overflow-y: auto;
 }
-.proc-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 12px; }
+.proc-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 10px; }
 .proc-indent { color: var(--text-dim); font-family: var(--font-mono); }
 .proc-name { font-family: var(--font-mono); font-weight: 600; flex: 1; }
 .proc-name.flagged { color: var(--red); }
 .proc-name.normal  { color: var(--blue); }
-.proc-pid { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+.proc-pid { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); }
 
 /* Network table */
 .tbl-wrap { overflow-x: auto; }
-.tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+.tbl { width: 100%; border-collapse: collapse; font-size: 10px; }
 .tbl th {
-  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  font-family: var(--font-display); font-size: 9px; font-weight: 700;
   letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim);
   padding: 8px 12px; border-bottom: 1px solid var(--border-soft);
   text-align: left; white-space: nowrap; background: var(--bg-panel);
@@ -928,9 +1046,9 @@ body::after {
 .tbl tr:last-child td { border-bottom: none; }
 .tbl tr:hover td { background: var(--bg-hover); }
 .td-ip { color: var(--blue); font-family: var(--font-mono); font-weight: 600; cursor: pointer; }
-.td-ip:hover { color: var(--cyan); text-decoration: underline; }
+.td-ip:hover { text-decoration: underline; }
 .td-port { color: var(--yellow); font-family: var(--font-mono); }
-.td-proto { color: var(--text-dim); font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; }
+.td-proto { color: var(--text-dim); font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; }
 .risk-mini { display: flex; align-items: center; gap: 6px; }
 .mini-bar-bg { height: 3px; width: 50px; background: var(--bg-active); border-radius: 2px; overflow: hidden; }
 .mini-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s; }
@@ -942,24 +1060,23 @@ body::after {
   padding: 7px 12px;
   background: var(--bg-panel); border-bottom: 1px solid var(--border-dim);
 }
-.ioc-sec-title { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
-.ioc-sec-cnt { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--text-bright); }
+.ioc-sec-title { font-family: var(--font-display); font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+.ioc-sec-cnt { font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--text-bright); }
 .ioc-list { display: flex; flex-direction: column; gap: 2px; padding: 8px; }
 .ioc-row {
   display: flex; align-items: center; gap: 8px;
-  background: var(--bg-card); border: 1px solid rgba(57,78,255,0.1);
-  border-radius: var(--radius-sm); padding: 8px 12px;
-  font-family: var(--font-mono); font-size: 12px;
-  transition: border-color 0.15s, background 0.15s;
+  background: var(--bg-card); border: 1px solid var(--border-dim);
+  border-radius: 2px; padding: 6px 10px;
+  font-family: var(--font-mono); font-size: 10px;
+  transition: border-color 0.15s;
 }
-.ioc-row:hover { border-color: rgba(57,78,255,0.3); background: rgba(57,78,255,0.05); }
+.ioc-row:hover { border-color: var(--border-mid); }
 .ioc-val { flex: 1; color: var(--text-bright); font-weight: 600; word-break: break-all; }
 .ioc-raw-block {
-  font-family: var(--font-mono); font-size: 12px; line-height: 1.9;
-  background: #050c18; border: 1px solid rgba(57,78,255,0.15); border-radius: var(--radius-sm);
-  padding: 16px; color: #00e676; max-height: 220px; overflow-y: auto;
+  font-family: var(--font-mono); font-size: 10px; line-height: 1.8;
+  background: var(--bg-void); border: 1px solid var(--border-soft); border-radius: 3px;
+  padding: 14px; color: var(--green); max-height: 220px; overflow-y: auto;
   white-space: pre; word-break: break-all;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
 }
 
 /* Containment */
@@ -967,30 +1084,29 @@ body::after {
 @media(max-width:600px) { .contain-grid { grid-template-columns: 1fr; } }
 .contain-card {
   display: flex; align-items: flex-start; gap: 12px;
-  background: var(--bg-panel); border: 1px solid rgba(57,78,255,0.12);
-  border-radius: var(--radius-md); padding: 14px 16px; transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  background: var(--bg-panel); border: 1px solid var(--border-soft);
+  border-radius: 4px; padding: 12px 14px; transition: border-color 0.2s;
 }
-.contain-card:hover { border-color: rgba(57,78,255,0.3); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
+.contain-card:hover { border-color: var(--border-mid); }
 .contain-icon {
   width: 36px; height: 36px; border-radius: 4px;
   display: flex; align-items: center; justify-content: center;
   font-size: 18px; flex-shrink: 0;
 }
-.ci-red    { background: var(--red-dim); border: 1px solid rgba(255,51,88,0.2); }
-.ci-orange { background: var(--orange-dim); border: 1px solid rgba(255,124,42,0.2); }
+.ci-red    { background: var(--red-dim); border: 1px solid rgba(197,0,26,0.2); }
+.ci-orange { background: var(--orange-dim); border: 1px solid rgba(184,76,0,0.2); }
 .ci-blue   { background: var(--blue-dim); border: 1px solid var(--blue-border); }
-.ci-cyan   { background: var(--cyan-dim); border: 1px solid rgba(0,212,232,0.2); }
+.ci-cyan   { background: var(--cyan-dim); border: 1px solid rgba(0,122,143,0.2); }
 .contain-body .ct { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--text-bright); margin-bottom: 3px; }
 .contain-body .cs { font-size: 11px; color: var(--text-secondary); line-height: 1.5; }
 .priority-tag {
   display: inline-block; margin-top: 5px;
-  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  font-family: var(--font-mono); font-size: 8px; font-weight: 700;
   letter-spacing: 1.5px; text-transform: uppercase;
   padding: 2px 6px; border-radius: 2px;
 }
-.pt-critical { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,51,88,0.2); }
-.pt-high     { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(255,124,42,0.2); }
+.pt-critical { background: var(--red-dim); color: var(--red); border: 1px solid rgba(197,0,26,0.2); }
+.pt-high     { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(184,76,0,0.2); }
 .pt-med      { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue-border); }
 
 /* Drop items */
@@ -998,14 +1114,14 @@ body::after {
   display: flex; align-items: center; gap: 8px;
   background: var(--bg-void); border: 1px solid var(--border-soft);
   border-radius: 3px; padding: 7px 10px;
-  font-family: var(--font-mono); font-size: 12px;
+  font-family: var(--font-mono); font-size: 10px;
   transition: border-color 0.15s;
 }
-.drop-item:hover { border-color: rgba(255,190,0,0.3); }
+.drop-item:hover { border-color: rgba(138,96,0,0.3); }
 .drop-ext {
-  font-size: 11px; font-weight: 700; padding: 2px 5px; border-radius: 2px;
+  font-size: 8px; font-weight: 700; padding: 2px 5px; border-radius: 2px;
   background: var(--yellow-dim); color: var(--yellow);
-  border: 1px solid rgba(255,190,0,0.2); letter-spacing: 1px;
+  border: 1px solid rgba(138,96,0,0.2); letter-spacing: 1px;
 }
 
 /* Screenshot */
@@ -1013,43 +1129,42 @@ body::after {
   background: var(--bg-void); border: 1px solid var(--border-soft);
   border-radius: 3px; overflow: hidden; min-height: 140px;
   display: flex; align-items: center; justify-content: center;
-  color: var(--text-dim); font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-dim); font-family: var(--font-mono); font-size: 10px;
 }
 
-/* Badges — VT pill style */
+/* Badges */
 .badge {
   display: inline-flex; align-items: center; gap: 4px;
-  font-family: var(--font-sans); font-size: 11px; font-weight: 600;
-  padding: 3px 10px; border-radius: 20px; letter-spacing: 0.2px;
+  font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+  padding: 2px 7px; border-radius: 2px; letter-spacing: 0.5px;
 }
-.b-red    { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(255,51,88,0.25); }
-.b-yellow { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(255,190,0,0.2); }
-.b-green  { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(0,230,118,0.15); }
+.b-red    { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(197,0,26,0.25); }
+.b-yellow { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(138,96,0,0.2); }
+.b-green  { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(0,110,56,0.15); }
 .b-blue   { background: var(--blue-dim);   color: var(--blue);   border: 1px solid var(--blue-border); }
-.b-orange { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(255,124,42,0.2); }
-.b-purple { background: rgba(167,139,250,0.1); color: #a78bfa; border: 1px solid rgba(167,139,250,0.2); }
-.b-cyan   { background: var(--cyan-dim);   color: var(--cyan);   border: 1px solid rgba(0,212,232,0.2); }
-.b-dim    { background: rgba(255,255,255,0.04); color: var(--text-dim); border: 1px solid var(--border-dim); }
+.b-orange { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(184,76,0,0.2); }
+.b-purple { background: rgba(124,92,191,0.1); color: #7c5cbf; border: 1px solid rgba(124,92,191,0.2); }
+.b-cyan   { background: var(--cyan-dim);   color: var(--cyan);   border: 1px solid rgba(0,122,143,0.2); }
+.b-dim    { background: rgba(128,128,128,0.06); color: var(--text-dim); border: 1px solid var(--border-dim); }
 
 /* Empty state */
 .empty-state {
-  text-align: center; padding: 32px 20px;
-  border: 1px dashed rgba(57,78,255,0.2);
-  border-radius: var(--radius-md);
-  font-family: var(--font-sans); font-size: 12px; font-weight: 500;
-  color: var(--text-dim); letter-spacing: 0.2px;
-  background: rgba(57,78,255,0.02);
+  text-align: center; padding: 28px;
+  border: 1px dashed var(--border-soft);
+  border-radius: 3px;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-dim); letter-spacing: 0.5px;
 }
 
 /* Copy btn */
 .copy-btn {
-  background: none; border: 1px solid rgba(57,78,255,0.2);
-  border-radius: 20px; color: var(--text-secondary);
-  font-family: var(--font-sans); font-size: 11px; font-weight: 500;
-  padding: 4px 12px; cursor: pointer;
-  transition: all 0.15s; letter-spacing: 0.2px; white-space: nowrap;
+  background: none; border: 1px solid var(--border-soft);
+  border-radius: 2px; color: var(--text-secondary);
+  font-family: var(--font-mono); font-size: 9px;
+  padding: 3px 8px; cursor: pointer;
+  transition: all 0.15s; letter-spacing: 0.5px; white-space: nowrap;
 }
-.copy-btn:hover { border-color: var(--blue); color: var(--blue-light); background: rgba(57,78,255,0.08); }
+.copy-btn:hover { border-color: var(--blue-border); color: var(--blue); }
 .copy-cell { cursor: pointer; }
 .copy-cell:hover { color: var(--blue); }
 
@@ -1057,7 +1172,7 @@ body::after {
 .sb-manual-block { display: none; }
 .triage-link {
   display: inline-flex; align-items: center; gap: 5px;
-  font-family: var(--font-mono); font-size: 11px; color: var(--blue);
+  font-family: var(--font-mono); font-size: 9px; color: var(--blue);
   border: 1px solid var(--blue-border); border-radius: 2px;
   padding: 3px 8px; text-decoration: none; transition: all 0.15s;
 }
@@ -1074,9 +1189,8 @@ body::after {
   position: fixed; bottom: 20px; right: 20px;
   background: var(--bg-panel); border: 1px solid var(--blue-border);
   border-left: 3px solid var(--blue);
-  color: var(--blue); font-family: var(--font-mono); font-size: 12px;
+  color: var(--blue); font-family: var(--font-mono); font-size: 10px;
   padding: 10px 16px; border-radius: 3px; z-index: 999;
-  box-shadow: var(--blue-glow);
   animation: toast-in 0.2s ease-out forwards;
 }
 @keyframes toast-in { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:none; } }
@@ -1084,7 +1198,7 @@ body::after {
 /* Modals */
 .modal-backdrop {
   position: fixed; inset: 0;
-  background: rgba(0,4,12,0.88);
+  background: rgba(0,4,12,0.75);
   backdrop-filter: blur(8px); z-index: 300;
   display: flex; align-items: center; justify-content: center;
   padding: 20px;
@@ -1097,12 +1211,10 @@ body::after {
   border-radius: 4px; width: 100%; max-width: 860px;
   max-height: 85vh; overflow: hidden;
   display: flex; flex-direction: column;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.6);
 }
 .modal::before {
-  content: ''; display: block; height: 3px; flex-shrink: 0;
-  background: linear-gradient(90deg, var(--blue) 0%, var(--cyan) 50%, var(--blue) 100%);
-  box-shadow: 0 0 16px rgba(57,78,255,0.5);
+  content: ''; display: block; height: 2px; flex-shrink: 0;
+  background: linear-gradient(90deg, var(--blue), var(--cyan), transparent);
 }
 .modal-hdr {
   display: flex; align-items: center; justify-content: space-between;
@@ -1117,7 +1229,7 @@ body::after {
   color: var(--text-secondary); font-size: 12px; cursor: pointer;
   padding: 4px 10px; transition: all 0.15s;
 }
-.modal-close:hover { border-color: rgba(255,51,88,0.4); color: var(--red); }
+.modal-close:hover { border-color: rgba(197,0,26,0.4); color: var(--red); }
 .modal-body { overflow-y: auto; padding: 20px; flex: 1; }
 .modal-footer {
   padding: 12px 20px; border-top: 1px solid var(--border-soft);
@@ -1133,13 +1245,13 @@ body::after {
   display: flex; align-items: center; gap: 8px;
   padding: 7px 10px;
   background: var(--bg-panel); border: 1px solid var(--border-dim);
-  border-radius: 3px; font-size: 12px; transition: border-color 0.15s;
+  border-radius: 3px; font-size: 10px; transition: border-color 0.15s;
 }
 .av-modal-row:hover { border-color: var(--border-mid); }
-.av-modal-row[data-cat="malicious"] { background: rgba(255,51,88,0.04); border-color: rgba(255,51,88,0.12); }
-.av-modal-row[data-cat="suspicious"] { background: rgba(255,190,0,0.03); border-color: rgba(255,190,0,0.1); }
+.av-modal-row[data-cat="malicious"] { background: var(--red-dim); border-color: rgba(197,0,26,0.12); }
+.av-modal-row[data-cat="suspicious"] { background: var(--yellow-dim); border-color: rgba(138,96,0,0.1); }
 .av-modal-engine { font-weight: 700; color: var(--text-bright); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-sans); }
-.av-modal-verdict { flex: 2; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-mono); font-size: 11px; }
+.av-modal-verdict { flex: 2; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-mono); font-size: 9px; }
 .av-modal-verdict.mal { color: var(--red); font-weight: 700; }
 .av-modal-verdict.sus { color: var(--yellow); }
 .av-modal-verdict.cln { color: var(--green); }
@@ -1147,188 +1259,19 @@ body::after {
 
 /* Report */
 .rpt-title { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--text-bright); margin-bottom: 4px; }
-.rpt-meta { font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px; }
+.rpt-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px; }
 .rpt-section { margin-bottom: 20px; }
 .rpt-sh {
-  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  font-family: var(--font-display); font-size: 10px; font-weight: 700;
   letter-spacing: 2.5px; text-transform: uppercase; color: var(--blue);
   margin-bottom: 10px; padding-bottom: 6px;
   border-bottom: 1px solid var(--border-soft);
 }
 .rpt-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .rpt-kv { background: var(--bg-panel); border: 1px solid var(--border-soft); border-radius: 3px; padding: 10px; font-size: 11px; }
-.rpt-kv-k { color: var(--text-dim); margin-bottom: 3px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+.rpt-kv-k { color: var(--text-dim); margin-bottom: 3px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
 .rpt-kv-v { color: var(--text-bright); font-weight: 600; font-family: var(--font-sans); }
-.rpt-ioc-block { background: var(--bg-void); border: 1px solid var(--border-soft); border-radius: 3px; padding: 12px; font-family: var(--font-mono); font-size: 12px; line-height: 1.8; color: var(--green); white-space: pre; overflow-x: auto; max-height: 200px; overflow-y: auto; }
-
-/* ── WORKFLOW STEP NUMBERS ────────────────────────────────────── */
-.step-num {
-  width: 20px; height: 20px; border-radius: 50%;
-  background: rgba(57,78,255,0.18);
-  border: 1px solid rgba(57,78,255,0.4);
-  color: var(--blue-light);
-  font-family: var(--font-sans); font-size: 11px; font-weight: 800;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; letter-spacing: 0;
-}
-
-/* ── INPUT KEYBOARD HINT ─────────────────────────────────────── */
-.inp-row { position: relative; }
-.inp-enter-hint {
-  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-  font-family: var(--font-mono); font-size: 11px; color: var(--text-dim);
-  pointer-events: none; white-space: nowrap;
-  background: var(--bg-panel); padding: 1px 5px; border-radius: 3px;
-  border: 1px solid var(--border-dim);
-  opacity: 0; transition: opacity 0.2s;
-}
-.inp-row:focus-within .inp-enter-hint { opacity: 1; }
-.inp-row .inp { padding-right: 70px; }
-
-/* ── HASH TYPE INDICATOR ─────────────────────────────────────── */
-.hash-type-badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
-  padding: 2px 8px; border-radius: 20px;
-  background: rgba(0,210,255,0.1); color: var(--cyan);
-  border: 1px solid rgba(0,210,255,0.2);
-  animation: fade-in 0.2s ease-out;
-}
-
-/* ── TAB BADGE ───────────────────────────────────────────────── */
-.tab-badge {
-  display: none; align-items: center; justify-content: center;
-  min-width: 18px; height: 18px; padding: 0 5px;
-  border-radius: 20px;
-  font-family: var(--font-sans); font-size: 11px; font-weight: 700;
-  background: rgba(255,68,68,0.18); color: var(--red);
-  border: 1px solid rgba(255,68,68,0.3);
-}
-.tab-badge.show { display: flex; }
-.tab-badge.blue { background: rgba(57,78,255,0.18); color: var(--blue-light); border-color: rgba(57,78,255,0.3); }
-.tab-badge.green { background: rgba(0,200,83,0.12); color: var(--green); border-color: rgba(0,200,83,0.25); }
-.tab-badge.orange { background: rgba(255,140,0,0.12); color: var(--orange); border-color: rgba(255,140,0,0.28); }
-
-/* ── VT DETECTION COUNT ROW ──────────────────────────────────── */
-.det-engine-count {
-  font-family: var(--font-sans); font-size: 12px; font-weight: 600;
-  color: var(--text-secondary); margin-top: 4px;
-}
-.det-engine-count span { font-weight: 800; }
-
-/* ── DRAG-OVER FILE ZONE ─────────────────────────────────────── */
-.file-zone.drag-over {
-  border-color: var(--blue);
-  background: rgba(57,78,255,0.12);
-  box-shadow: 0 0 24px rgba(57,78,255,0.15);
-}
-.file-zone.drag-over .file-drop-hint { color: var(--blue-light); }
-.file-drop-hint {
-  font-family: var(--font-sans); font-size: 12px;
-  color: var(--text-dim); margin-top: 4px; text-align: center;
-  transition: color 0.2s;
-}
-
-/* ── SESSION ACTIONS ─────────────────────────────────────────── */
-.session-actions {
-  display: flex; gap: 6px; padding: 10px 16px;
-  border-top: 1px solid var(--border-dim);
-}
-.session-actions .btn { font-size: 11px; padding: 8px 14px; }
-
-/* ── PANEL SECTION DIVIDER ───────────────────────────────────── */
-.panel-section { border-bottom: 1px solid rgba(57,78,255,0.1); }
-
-/* ── TOP-LEVEL SEARCH BAR ────────────────────────────────────── */
-.topbar-search {
-  flex: 1; max-width: 340px; margin: 0 16px;
-  position: relative;
-}
-.topbar-search input {
-  width: 100%; height: 32px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(57,78,255,0.25);
-  border-radius: 20px;
-  color: var(--text-primary);
-  font-family: var(--font-sans); font-size: 12px;
-  padding: 0 14px 0 36px;
-  outline: none; transition: all 0.2s;
-}
-.topbar-search input:focus {
-  border-color: var(--blue);
-  background: rgba(57,78,255,0.08);
-  box-shadow: 0 0 0 3px rgba(57,78,255,0.1);
-}
-.topbar-search input::placeholder { color: var(--text-dim); }
-.topbar-search-icon {
-  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-  color: var(--text-dim); pointer-events: none;
-}
-.topbar-search-icon svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-/* ── PROC TREE IMPROVED ──────────────────────────────────────── */
-.proc-tree { background: var(--bg-void); border: 1px solid rgba(57,78,255,0.12); border-radius: var(--radius-sm); padding: 10px; max-height: 260px; overflow-y: auto; }
-
-/* ── NETWORK TABLE IMPROVED ──────────────────────────────────── */
-.tbl th { font-family: var(--font-sans); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-dim); padding: 10px 14px; border-bottom: 1px solid var(--border-soft); text-align: left; white-space: nowrap; background: rgba(57,78,255,0.05); }
-.tbl td { padding: 9px 14px; border-bottom: 1px solid var(--border-dim); color: var(--text-primary); vertical-align: middle; font-size: 11px; }
-
-/* ── TRIAGE LINK ─────────────────────────────────────────────── */
-.triage-link {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-family: var(--font-sans); font-size: 12px; font-weight: 600;
-  color: var(--cyan); border: 1px solid rgba(0,210,255,0.3);
-  border-radius: 20px; padding: 6px 14px;
-  text-decoration: none; transition: all 0.15s;
-  background: rgba(0,210,255,0.06);
-}
-.triage-link:hover { background: rgba(0,210,255,0.12); box-shadow: 0 0 16px rgba(0,210,255,0.15); }
-
-/* ── PANEL BODY SPACING ──────────────────────────────────────── */
-.panel-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
-
-/* ── TOP-DET ROW IMPROVED ────────────────────────────────────── */
-.top-det-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 6px 10px;
-  background: rgba(255,68,68,0.04);
-  border: 1px solid rgba(255,68,68,0.1);
-  border-radius: var(--radius-sm); font-size: 11px;
-}
-.top-det-engine { font-weight: 700; color: var(--text-bright); flex: 1; font-family: var(--font-sans); }
-.top-det-verdict { color: var(--red); flex: 2; font-family: var(--font-mono); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* ── SAMPLE DOWNLOAD ─────────────────────────────────────────── */
-.btn-dl-sample {
-  display: flex; align-items: center; gap: 8px;
-  width: 100%; padding: 9px 14px; margin-top: 8px;
-  background: rgba(255,51,88,0.07);
-  border: 1px solid rgba(255,51,88,0.25);
-  border-radius: var(--radius-sm);
-  color: var(--red); font-family: var(--font-sans);
-  font-size: 12px; font-weight: 600; letter-spacing: 0.2px;
-  cursor: pointer; transition: all 0.15s;
-}
-.btn-dl-sample:hover:not(:disabled) {
-  background: rgba(255,51,88,0.14);
-  border-color: rgba(255,51,88,0.5);
-  box-shadow: 0 0 16px rgba(255,51,88,0.12);
-}
-.btn-dl-sample:disabled { opacity: 0.45; cursor: not-allowed; }
-.dl-zip-tag {
-  margin-left: auto;
-  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
-  background: rgba(255,51,88,0.14); color: var(--red);
-  border: 1px solid rgba(255,51,88,0.3);
-  border-radius: 3px; padding: 2px 7px; letter-spacing: 1.5px;
-}
-.dl-warn-strip {
-  display: flex; align-items: center; gap: 7px;
-  font-family: var(--font-mono); font-size: 11px; color: var(--yellow);
-  background: rgba(255,190,0,0.05); border: 1px solid rgba(255,190,0,0.18);
-  border-radius: var(--radius-sm); padding: 7px 10px; margin-top: 5px;
-  line-height: 1.4;
-}
+.rpt-ioc-block { background: var(--bg-void); border: 1px solid var(--border-soft); border-radius: 3px; padding: 12px; font-family: var(--font-mono); font-size: 10px; line-height: 1.8; color: var(--green); white-space: pre; overflow-x: auto; max-height: 200px; overflow-y: auto; }
 </style>
 </head>
 <body>
@@ -1362,9 +1305,9 @@ body::after {
     <span id="threat-level-txt">THREAT LEVEL: CHECKING</span>
   </div>
 
-  <div class="topbar-search">
-    <span class="topbar-search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-    <input type="text" id="topbar-search-inp" placeholder="Quick scan — paste hash or IP…" onkeydown="handleTopbarSearch(event)"/>
+  <div class="topbar-quick">
+    <svg viewBox="0 0 24 24" width="13" height="13" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="quick-inp" placeholder="Quick scan — paste hash or IP…" onkeydown="if(event.key==='Enter'){const v=this.value.trim();if(v){if(v.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)||v.match(/^[0-9a-f:]{3,39}$/i)&&v.includes(':')){document.getElementById('ip-inp').value=v;doIPLookup(v);}else{document.getElementById('hash-inp').value=v;doVTScan();}this.value='';}}"/>
   </div>
 
   <div class="topbar-stats" style="margin-left:auto">
@@ -1425,34 +1368,26 @@ body::after {
     <div class="input-panel">
 
       <!-- Workflow Header -->
-      <div style="padding:12px 16px 10px;background:rgba(57,78,255,0.07);border-bottom:1px solid rgba(57,78,255,0.14);display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div style="font-family:var(--font-sans);font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--blue-light)">Investigation Workflow</div>
-          <div style="font-family:var(--font-sans);font-size:12px;color:var(--text-dim);margin-top:2px">Follow steps 01 → 04 for full coverage</div>
+      <div class="workflow-hdr">
+        <div class="workflow-hdr-title">
+          <div class="workflow-hdr-dot"></div>
+          Investigation Workflow
         </div>
-        <div style="display:flex;gap:4px">
-          <div style="width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)" title="Worker online" id="mini-wi-dot"></div>
-        </div>
+        <div class="workflow-hdr-sub">Follow steps 01 → 04 for full coverage</div>
       </div>
 
       <!-- VT Hash Scan -->
       <div class="panel-section">
         <div class="panel-header">
-          <div class="step-num">01</div>
           <div class="ph-accent blue"></div>
+          <div class="ph-step">01</div>
           <div class="ph-title">Hash Analysis</div>
           <div class="ph-badge">VT API</div>
         </div>
         <div class="panel-body">
           <div>
-            <div class="inp-label" style="display:flex;justify-content:space-between;align-items:center">
-              <span>MD5 / SHA1 / SHA256</span>
-              <span id="hash-type-indicator"></span>
-            </div>
-            <div class="inp-row">
-              <input class="inp" id="hash-inp" type="text" placeholder="Paste hash to analyze…" oninput="detectHashType(this.value)"/>
-              <span class="inp-enter-hint">Enter ↵</span>
-            </div>
+            <div class="inp-label">MD5 / SHA1 / SHA256</div>
+            <input class="inp" id="hash-inp" type="text" placeholder="Paste hash to analyze…"/>
           </div>
           <button class="btn btn-primary" id="btn-vt" onclick="doVTScan()">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1463,35 +1398,23 @@ body::after {
 
           <div id="vt-mini" style="display:none">
             <div class="detection-bar">
-              <div class="det-pct" id="vt-det-pct" style="color:var(--text-dim)">—</div>
+              <div class="det-pct" id="vt-det-pct" style="color:var(--text-dim)">—%</div>
               <div class="det-right">
-                <div class="det-sub" id="det-engine-label">Detection Rate</div>
+                <div class="det-sub">Detection Rate</div>
                 <div class="det-bar-bg"><div class="det-bar-fill" id="det-bar-fill" style="width:0%"></div></div>
-                <div class="det-engine-count" id="det-engine-count" style="display:none">
-                  <span id="det-mal-count">0</span> / <span id="det-total-count">0</span> security vendors flagged this
-                </div>
               </div>
             </div>
             <div class="count-chips" id="vt-chips"></div>
             <div id="vt-verdict-badge" style="margin-top:6px"></div>
-            <!-- SHA-256 sample download row -->
-            <div id="vt-download-row" style="display:none">
-              <button class="btn-dl-sample" id="btn-dl-sample" onclick="downloadSample()">
-                <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Download Sample
-                <span class="dl-zip-tag">ZIP</span>
-              </button>
-              <div id="dl-status"></div>
-            </div>
             <div id="vt-mal-block" class="mal-block" style="display:none">
-              <div id="vt-hash-type" style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px"></div>
+              <div id="vt-hash-type" style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px"></div>
               <div id="vt-threat-name" class="mal-name"></div>
               <div id="vt-families" class="family-badges"></div>
               <div id="vt-cats" class="family-badges"></div>
               <div id="vt-meta"></div>
             </div>
             <div id="vt-top-dets" style="display:none;margin-top:8px">
-              <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px">Top Detections</div>
+              <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px">Top Detections</div>
               <div id="vt-top-det-list" class="top-det-list"></div>
             </div>
             <div id="vt-av-panel" class="av-panel" style="display:none">
@@ -1502,17 +1425,16 @@ body::after {
               <div id="vt-av-body" class="av-panel-body">
                 <div class="av-filter-bar">
                   <button class="av-fbtn fa active" onclick="filterAV('all',this)">All</button>
-                  <button class="av-fbtn fm" onclick="filterAV('malicious',this)">Malicious</button>
-                  <button class="av-fbtn fs" onclick="filterAV('suspicious',this)">Suspicious</button>
+                  <button class="av-fbtn fm" onclick="filterAV('malicious',this)">Mal</button>
+                  <button class="av-fbtn fs" onclick="filterAV('suspicious',this)">Sus</button>
                   <button class="av-fbtn fc" onclick="filterAV('clean',this)">Clean</button>
-                  <input class="av-search" id="av-search" placeholder="Search engines…" oninput="searchAV(this.value)"/>
+                  <input class="av-search" id="av-search" placeholder="Search…" oninput="searchAV(this.value)"/>
                 </div>
                 <div id="av-rows"></div>
               </div>
             </div>
-            <button class="btn btn-ghost" style="width:100%;margin-top:2px" onclick="openAVModal()">
-              <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              View Full AV Breakdown
+            <button class="copy-btn" style="width:100%;text-align:center;margin-top:6px" onclick="openAVModal()">
+              🛡 Full AV Breakdown
             </button>
           </div>
         </div>
@@ -1521,18 +1443,15 @@ body::after {
       <!-- AbuseIPDB -->
       <div class="panel-section">
         <div class="panel-header">
-          <div class="step-num">02</div>
           <div class="ph-accent orange"></div>
+          <div class="ph-step">02</div>
           <div class="ph-title">IP Reputation</div>
           <div class="ph-badge">AbuseIPDB</div>
         </div>
         <div class="panel-body">
           <div>
-            <div class="inp-label">IPv4 / IPv6 Address</div>
-            <div class="inp-row">
-              <input class="inp" id="ip-inp" type="text" placeholder="e.g. 185.220.101.5"/>
-              <span class="inp-enter-hint">Enter ↵</span>
-            </div>
+            <div class="inp-label">IPV4 / IPV6 ADDRESS</div>
+            <input class="inp" id="ip-inp" type="text" placeholder="e.g. 185.220.101.5"/>
           </div>
           <button class="btn btn-danger" id="btn-ip" onclick="doIPLookup()">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -1547,8 +1466,8 @@ body::after {
       <!-- Sandbox -->
       <div class="panel-section">
         <div class="panel-header">
-          <div class="step-num">03</div>
           <div class="ph-accent cyan"></div>
+          <div class="ph-step">03</div>
           <div class="ph-title">Sandbox Detonation</div>
           <div class="ph-badge" id="engine-badge">TRIAGE</div>
         </div>
@@ -1556,18 +1475,17 @@ body::after {
           <div>
             <div class="inp-label">Engine</div>
             <div class="engine-toggle">
-              <button id="eng-triage" class="eng-opt active-triage" onclick="selectEngine('triage')">Triage</button>
+              <button id="eng-triage" class="eng-opt active-triage" onclick="selectEngine('triage')">TRIAGE</button>
               <button id="eng-anyrun" class="eng-opt" onclick="selectEngine('anyrun')">ANY.RUN</button>
             </div>
           </div>
-          <div class="file-zone" id="file-drop-zone">
+          <div class="file-zone">
             <label>
               <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <span id="file-lbl">Click or drag file here…</span>
+              <span id="file-lbl">Choose file for sandbox…</span>
               <input type="file" id="f-inp" onchange="onFileChange()"/>
             </label>
             <div id="file-meta" class="file-meta" style="display:none"></div>
-            <div class="file-drop-hint">Drag &amp; drop any file to detonate</div>
           </div>
           <button class="btn btn-cyan" id="btn-sb" onclick="runSandbox()">
             <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -1581,46 +1499,42 @@ body::after {
           </div>
           <div id="triage-report-link" style="display:none;margin-top:4px"></div>
           <div id="sb-manual-block" class="sb-manual-block">
-            <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Fetch Existing Task</div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Fetch Existing Task</div>
             <div style="display:flex;gap:6px">
               <input class="inp" id="sb-manual-id" placeholder="Task / Sample ID…" style="flex:1;font-size:11px;padding:7px 10px"/>
               <button class="btn btn-sm btn-cyan" onclick="fetchManualTask()" style="width:auto">Fetch</button>
             </div>
           </div>
           <div id="sb-error" class="err-box" style="display:none"></div>
-          <button class="btn btn-ghost" style="width:100%;font-size:11px" onclick="toggleManual()">
-            <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-            Fetch Existing Task by ID
-          </button>
+          <button class="copy-btn" style="width:100%;text-align:center" onclick="toggleManual()">⌨ Fetch by Task ID</button>
         </div>
       </div>
 
       <!-- Session Stats -->
       <div class="panel-section">
         <div class="panel-header">
-          <div class="step-num" style="background:rgba(0,200,83,0.12);border-color:rgba(0,200,83,0.3);color:var(--green)">04</div>
           <div class="ph-accent green"></div>
+          <div class="ph-step">04</div>
           <div class="ph-title">Session Metrics</div>
-          <div class="ph-badge" id="session-time-badge" style="display:none"></div>
         </div>
-        <div class="panel-body" style="padding-top:10px;padding-bottom:4px">
+        <div class="panel-body" style="padding-top:8px;padding-bottom:8px">
           <div class="session-rows">
             <div class="srow"><span class="srow-k">Hashes Scanned</span><span class="srow-v" id="ss-hashes">0</span></div>
             <div class="srow"><span class="srow-k">IPs Checked</span><span class="srow-v" id="ss-ips">0</span></div>
             <div class="srow"><span class="srow-k">Threats Found</span><span class="srow-v danger" id="ss-threats">0</span></div>
             <div class="srow"><span class="srow-k">IOCs Collected</span><span class="srow-v info" id="ss-iocs">0</span></div>
-            <div class="srow"><span class="srow-k">Session Duration</span><span class="srow-v" id="ss-duration" style="color:var(--text-dim)">—</span></div>
+            <div class="srow"><span class="srow-k">Session Duration</span><span class="srow-v dim" id="ss-dur">0s</span></div>
           </div>
-        </div>
-        <div class="session-actions">
-          <button class="btn btn-primary" style="flex:1;font-size:11px;padding:8px" onclick="openReport()">
-            <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            Export Report
-          </button>
-          <button class="btn btn-ghost" style="flex:1;font-size:11px;padding:8px" onclick="clearSession()">
-            <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.08"/></svg>
-            New Session
-          </button>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="btn btn-primary" style="flex:1;font-size:11px;padding:8px 6px" onclick="openReport()">
+              <svg viewBox="0 0 24 24" width="11" height="11"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Export Report
+            </button>
+            <button class="btn" style="flex:1;font-size:11px;padding:8px 6px;background:var(--bg-panel);border:1px solid var(--border-mid);color:var(--text-secondary)" onclick="newSession()">
+              <svg viewBox="0 0 24 24" width="11" height="11"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              New Session
+            </button>
+          </div>
         </div>
       </div>
     </div><!-- /input-panel -->
@@ -1631,27 +1545,22 @@ body::after {
         <button class="tab-btn active" id="tab-btn-overview" onclick="switchMainTab('overview')">
           <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           Overview
-          <span class="tab-badge" id="tbadge-overview"></span>
         </button>
         <button class="tab-btn" id="tab-btn-sandbox" onclick="switchMainTab('sandbox')">
           <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
           Sandbox
-          <span class="tab-badge orange" id="tbadge-sandbox"></span>
         </button>
         <button class="tab-btn" id="tab-btn-network" onclick="switchMainTab('network')">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          Network
-          <span class="tab-badge blue" id="tbadge-network"></span>
+          Network & IP Intel
         </button>
         <button class="tab-btn" id="tab-btn-ioc" onclick="switchMainTab('ioc')">
           <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           IOC Export
-          <span class="tab-badge green" id="tbadge-ioc"></span>
         </button>
         <button class="tab-btn" id="tab-btn-containment" onclick="switchMainTab('containment')">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
           Containment
-          <span class="tab-badge" id="tbadge-containment"></span>
         </button>
       </div>
 
@@ -1659,7 +1568,6 @@ body::after {
 
         <!-- OVERVIEW TAB -->
         <div class="tab-panel active" id="tp-overview">
-          <!-- Stat Row -->
           <div class="stat-row">
             <div class="stat-box sb-red"><div class="stat-num" id="ov-mal">—</div><div class="stat-lbl">Malicious Detections</div></div>
             <div class="stat-box sb-yellow"><div class="stat-num" id="ov-conn">—</div><div class="stat-lbl">Network Connections</div></div>
@@ -1667,7 +1575,6 @@ body::after {
             <div class="stat-box sb-blue"><div class="stat-num" id="ov-mitre">—</div><div class="stat-lbl">MITRE Techniques</div></div>
           </div>
 
-          <!-- Score + Kill Chain row -->
           <div class="grid2 mbottom">
             <div class="card">
               <div class="card-header">
@@ -1713,37 +1620,36 @@ body::after {
             </div>
           </div>
 
-          <!-- MITRE -->
           <div class="card">
             <div class="card-header">
               <div class="card-title"><div class="card-title-bar red"></div>MITRE ATT&amp;CK Techniques</div>
-              <span id="mitre-count" style="font-family:var(--font-mono);font-size:12px;color:var(--text-dim)"></span>
+              <span id="mitre-count" style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim)"></span>
             </div>
             <div class="card-body">
-              <div id="mitre-list"><div class="empty-state">No MITRE ATT&amp;CK techniques mapped yet — complete a sandbox detonation (Step 03) to populate this view</div></div>
+              <div id="mitre-list"><div class="empty-state">No ATT&CK techniques detected — run sandbox analysis</div></div>
             </div>
           </div>
-        </div><!-- /overview -->
+        </div>
 
         <!-- SANDBOX TAB -->
         <div class="tab-panel" id="tp-sandbox">
           <div class="card mbottom">
             <div class="card-header">
               <div class="card-title"><div class="card-title-bar cyan"></div>Process Tree</div>
-              <span id="proc-count" style="font-family:var(--font-mono);font-size:12px;color:var(--text-dim)"></span>
+              <span id="proc-count" style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim)"></span>
             </div>
             <div class="card-body">
-              <div id="proc-tree"><div class="empty-state">Process tree will appear here after sandbox detonation — use Step 03 on the left panel to submit a file</div></div>
+              <div id="proc-tree"><div class="empty-state">Submit a file to sandbox to view process tree</div></div>
             </div>
           </div>
           <div class="grid2">
             <div class="card">
               <div class="card-header">
                 <div class="card-title"><div class="card-title-bar orange"></div>Dropped Files</div>
-                <span id="drop-count" style="font-family:var(--font-mono);font-size:12px;color:var(--text-dim)"></span>
+                <span id="drop-count" style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim)"></span>
               </div>
               <div class="card-body" style="display:flex;flex-direction:column;gap:4px" id="drop-list">
-                <div class="empty-state">No dropped files recorded — sandbox results will populate this list</div>
+                <div class="empty-state">No dropped files</div>
               </div>
             </div>
             <div class="card">
@@ -1762,16 +1668,13 @@ body::after {
               <div class="card-title"><div class="card-title-bar blue"></div>Network Connections</div>
               <div class="card-actions">
                 <button class="copy-btn" onclick="copyIPs()">Copy IPs</button>
-                <button class="btn btn-sm btn-danger" style="width:auto;font-size:12px;padding:5px 12px" onclick="bulkIPCheck()">
-                  <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                  Enrich All IPs
-                </button>
+                <button class="copy-btn" onclick="bulkIPCheck()">Enrich All → AbuseIPDB</button>
               </div>
             </div>
             <div class="tbl-wrap" style="padding:0 14px 14px">
               <table class="tbl">
                 <thead><tr><th>IP Address</th><th>Hostname</th><th>Port</th><th>Proto</th><th>Abuse Score</th><th>Country</th></tr></thead>
-                <tbody id="net-tbody"><tr><td colspan="6" style="color:var(--text-dim);text-align:center;padding:20px;font-family:var(--font-mono);font-size:12px">Awaiting sandbox results…</td></tr></tbody>
+                <tbody id="net-tbody"><tr><td colspan="6" style="color:var(--text-dim);text-align:center;padding:20px;font-family:var(--font-mono);font-size:10px">Awaiting sandbox results…</td></tr></tbody>
               </table>
             </div>
           </div>
@@ -1789,17 +1692,14 @@ body::after {
           <div class="card mbottom">
             <div class="card-header">
               <div class="card-title"><div class="card-title-bar green"></div>Structured IOC Export</div>
-              <div class="card-actions" style="gap:5px">
+              <div class="card-actions">
                 <button class="copy-btn" onclick="copyRawIOC()">Copy Raw</button>
-                <button class="btn btn-sm btn-ghost" style="width:auto;font-size:12px;padding:5px 10px" onclick="downloadIOC('txt')">TXT</button>
-                <button class="btn btn-sm btn-ghost" style="width:auto;font-size:12px;padding:5px 10px" onclick="downloadIOC('csv')">CSV</button>
-                <button class="btn btn-sm btn-primary" style="width:auto;font-size:12px;padding:5px 10px" onclick="downloadIOC('json')">
-                  <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                  JSON
-                </button>
+                <button class="copy-btn" onclick="downloadIOC('txt')">⬇ TXT</button>
+                <button class="copy-btn" onclick="downloadIOC('csv')">⬇ CSV</button>
+                <button class="copy-btn" onclick="downloadIOC('json')">⬇ JSON</button>
               </div>
             </div>
-            <div class="card-body" id="ioc-structured"><div class="empty-state">Complete Steps 01–03 to collect IOCs — hashes, IPs, domains, and MITRE techniques will be structured here for export</div></div>
+            <div class="card-body" id="ioc-structured"><div class="empty-state">Run analysis to populate IOCs</div></div>
           </div>
           <div class="card">
             <div class="card-header"><div class="card-title"><div class="card-title-bar cyan"></div>Raw Blocklist</div></div>
@@ -1814,27 +1714,24 @@ body::after {
           <div class="card">
             <div class="card-header">
               <div class="card-title"><div class="card-title-bar red"></div>Incident Response — Containment Plan</div>
-              <button class="btn btn-sm btn-cyan" style="width:auto;font-size:12px;padding:5px 12px" onclick="copyContainment()">
-                <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                Copy Playbook
-              </button>
+              <button class="copy-btn" onclick="copyContainment()">Copy Steps</button>
             </div>
             <div class="card-body">
-              <div id="contain-grid" class="contain-grid"><div class="empty-state">Containment playbook generates automatically after threat analysis — run a hash scan (Step 01) or sandbox detonation (Step 03) to populate</div></div>
+              <div id="contain-grid" class="contain-grid"><div class="empty-state">Run analysis to generate containment recommendations</div></div>
             </div>
           </div>
         </div>
 
-      </div><!-- /tab-content -->
-    </div><!-- /main-panel -->
-  </div><!-- /content-grid -->
-</div><!-- /app-shell -->
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- AV FULL MODAL -->
 <div id="av-modal" class="modal-backdrop" style="display:none" onclick="if(event.target===this)closeAVModal()">
   <div class="modal" style="max-width:960px">
     <div class="modal-hdr">
-      <div class="modal-title">Full AV Engine Breakdown</div>
+      <div class="modal-title">🛡 Full AV Engine Breakdown</div>
       <button class="modal-close" onclick="closeAVModal()">✕ Close</button>
     </div>
     <div class="modal-body">
@@ -1860,7 +1757,7 @@ body::after {
 <div id="report-modal" class="modal-backdrop" style="display:none" onclick="if(event.target===this)closeReport()">
   <div class="modal">
     <div class="modal-hdr">
-      <div class="modal-title">Incident Report — JDLThreatIntel</div>
+      <div class="modal-title">📄 Incident Report — JDLThreatIntel</div>
       <button class="modal-close" onclick="closeReport()">✕ Close</button>
     </div>
     <div class="modal-body" id="report-body"><div class="empty-state">No analysis data yet. Run a scan first.</div></div>
@@ -1873,7 +1770,6 @@ body::after {
 </div>
 
 <script>
-// ── CONFIG ─────────────────────────────────────────────────────────────
 const WORKER = "https://soc-backend.johndominicklimpag.workers.dev";
 let sandboxEngine = "triage";
 
@@ -1891,168 +1787,74 @@ const state = {
   vtData:null, sbData:null, ipData:{}, pollTimer:null,
   sessionStats:{hashes:0,ips:0,threats:0,iocs:0},
   iocs:{ips:[],domains:[],files:[],hashes:[],mitre:[]},
-  analysisTs:null, vtAllEngines:[], avModalCat:'all',
-  sessionStart: Date.now()
+  analysisTs:null, vtAllEngines:[], avModalCat:'all'
 };
-
-// ── SESSION TIMER ─────────────────────────────────────────────────────
-setInterval(()=>{
-  const el = document.getElementById('ss-duration');
-  if(!el) return;
-  const s = Math.floor((Date.now()-state.sessionStart)/1000);
-  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
-  el.textContent = h ? `${h}h ${m}m ${sec}s` : m ? `${m}m ${sec}s` : `${sec}s`;
-}, 1000);
-
-// ── HASH TYPE DETECTOR ────────────────────────────────────────────────
-function detectHashType(val){
-  const v = val.trim();
-  const el = document.getElementById('hash-type-indicator');
-  if(!el) return;
-  if(v.length===32 && /^[a-fA-F0-9]+$/.test(v))
-    el.innerHTML='<span class="hash-type-badge">MD5</span>';
-  else if(v.length===40 && /^[a-fA-F0-9]+$/.test(v))
-    el.innerHTML='<span class="hash-type-badge">SHA-1</span>';
-  else if(v.length===64 && /^[a-fA-F0-9]+$/.test(v))
-    el.innerHTML='<span class="hash-type-badge">SHA-256</span>';
-  else
-    el.innerHTML='';
-}
-
-// ── TOPBAR QUICK SCAN ─────────────────────────────────────────────────
-function handleTopbarSearch(e){
-  if(e.key!=='Enter') return;
-  const v = e.target.value.trim();
-  if(!v) return;
-  const isIP = /^\d{1,3}(\.\d{1,3}){3}$/.test(v) || /^[0-9a-fA-F:]+:[0-9a-fA-F:]+$/.test(v);
-  const isHash = /^[a-fA-F0-9]{32}$|^[a-fA-F0-9]{40}$|^[a-fA-F0-9]{64}$/.test(v);
-  if(isHash){
-    document.getElementById('hash-inp').value = v;
-    detectHashType(v);
-    doVTScan();
-    toast('Hash routed to VT analysis');
-  } else if(isIP){
-    document.getElementById('ip-inp').value = v;
-    doIPLookup();
-    toast('IP routed to AbuseIPDB');
-  } else {
-    toast('Unrecognised — enter a hash (MD5/SHA1/SHA256) or an IP');
-  }
-  e.target.value='';
-}
-
-// ── DRAG & DROP FILE ZONE ─────────────────────────────────────────────
-(function initDragDrop(){
-  const zone = document.getElementById('file-drop-zone');
-  if(!zone) return;
-  ['dragenter','dragover'].forEach(ev=>zone.addEventListener(ev,e=>{
-    e.preventDefault(); zone.classList.add('drag-over');
-  }));
-  ['dragleave','dragend'].forEach(ev=>zone.addEventListener(ev,()=>zone.classList.remove('drag-over')));
-  zone.addEventListener('drop',e=>{
-    e.preventDefault(); zone.classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if(!file) return;
-    const inp = document.getElementById('f-inp');
-    const dt = new DataTransfer(); dt.items.add(file); inp.files = dt.files;
-    onFileChange();
-    toast(`File loaded: ${file.name}`);
-  });
-})();
-
-// ── CLEAR SESSION ─────────────────────────────────────────────────────
-function clearSession(){
-  if(!confirm('Reset all session data and results?')) return;
-  state.vtData=null; state.sbData=null; state.ipData={};
-  if(state.pollTimer) clearInterval(state.pollTimer);
-  state.sessionStats={hashes:0,ips:0,threats:0,iocs:0};
-  state.iocs={ips:[],domains:[],files:[],hashes:[],mitre:[]};
-  state.analysisTs=null; state.vtAllEngines=[]; state.sessionStart=Date.now();
-  // Clear inputs
-  ['hash-inp','ip-inp','f-inp'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('hash-type-indicator').innerHTML='';
-  document.getElementById('file-lbl').textContent='Click or drag file here…';
-  hide('file-meta'); hide('vt-mini'); hide('vt-error'); hide('ip-result');
-  hide('ip-error'); hide('sb-progress'); hide('sb-error'); hide('triage-report-link');
-  hide('vt-loading'); hide('ip-loading');
-  // Clear displays
-  setEl('ov-mal','—'); setEl('ov-conn','—'); setEl('ov-files','—'); setEl('ov-mitre','—');
-  setEl('score-num','—'); setEl('score-label','AWAITING');
-  setEl('alert-list',''); setEl('mitre-list','<div class="empty-state">No ATT&CK techniques detected — run sandbox analysis</div>');
-  setEl('proc-tree','<div class="empty-state">Submit a file to sandbox to view process tree</div>');
-  setEl('drop-list','<div class="empty-state">No dropped files</div>');
-  setEl('sb-screen','⬡ No screenshot available');
-  setEl('net-tbody','<tr><td colspan="6" style="color:var(--text-dim);text-align:center;padding:20px;font-family:var(--font-mono);font-size:12px">Awaiting sandbox results…</td></tr>');
-  setEl('ioc-structured','<div class="empty-state">Run analysis to populate IOCs</div>');
-  setEl('ioc-raw','; Awaiting analysis…');
-  setEl('contain-grid','<div class="empty-state">Run analysis to generate containment recommendations</div>');
-  document.getElementById('score-ring').style.strokeDashoffset='283';
-  document.getElementById('score-bar').style.width='0%';
-  document.getElementById('threat-level-txt').textContent='THREAT LEVEL: MONITORING';
-  document.querySelectorAll('.kc-phase').forEach(p=>p.className='kc-phase');
-  updateStats(); updateTabBadges();
-  document.getElementById('abuse-detail-card').style.display='none';
-  toast('Session cleared — ready for new investigation');
-}
-
-// ── TAB BADGE UPDATER ─────────────────────────────────────────────────
-function updateTabBadges(){
-  const mal = state.sessionStats.threats;
-  const nets = (state.sbData?.network_connections||[]).length;
-  const iocs = state.sessionStats.iocs;
-  const sb   = state.sbData ? 1 : 0;
-
-  function setBadge(id, count, show){
-    const el = document.getElementById(id); if(!el) return;
-    el.textContent = count||'';
-    el.classList.toggle('show', !!show && count>0);
-  }
-  setBadge('tbadge-overview', mal, mal>0);
-  // sandbox badge: show checkmark when complete
-  const sbEl=document.getElementById('tbadge-sandbox');
-  if(sbEl){sbEl.textContent=sb?'✓':'';sbEl.classList.toggle('show',sb>0);sbEl.classList.add('green');}
-  setBadge('tbadge-network',  nets, nets>0);
-  setBadge('tbadge-ioc',      iocs, iocs>0);
-  // containment badge: exclamation when threats found
-  const ctEl=document.getElementById('tbadge-containment');
-  if(ctEl){ctEl.textContent=mal>0?'!':'';ctEl.classList.toggle('show',mal>0);}
-}
 
 // ── THEME ─────────────────────────────────────────────────────────────
 let isLight = false;
 function toggleTheme(){
   isLight = !isLight;
   if(isLight){
-    document.documentElement.style.setProperty('--bg-void','#f0f2f5');
-    document.documentElement.style.setProperty('--bg-base','#e8ebf0');
-    document.documentElement.style.setProperty('--bg-card','#ffffff');
-    document.documentElement.style.setProperty('--bg-panel','#f5f7fa');
-    document.documentElement.style.setProperty('--bg-hover','#edf0f5');
-    document.documentElement.style.setProperty('--bg-active','#e2e6ec');
-    document.documentElement.style.setProperty('--border-dim','rgba(0,0,0,0.06)');
-    document.documentElement.style.setProperty('--border-soft','rgba(0,0,0,0.1)');
-    document.documentElement.style.setProperty('--border-mid','rgba(0,0,0,0.15)');
-    document.documentElement.style.setProperty('--border-strong','rgba(0,0,0,0.22)');
-    document.documentElement.style.setProperty('--text-bright','#1a1e2a');
-    document.documentElement.style.setProperty('--text-primary','#3a4255');
-    document.documentElement.style.setProperty('--text-secondary','#6b7a96');
-    document.documentElement.style.setProperty('--text-dim','#8f9ab5');
-    document.documentElement.style.setProperty('--text-placeholder','#bbc3d4');
+    document.documentElement.classList.add('light-mode');
+    document.documentElement.classList.remove('dark-mode');
     document.getElementById('themeBtn').textContent = '🌙 Dark';
   } else {
-    const reset = ['--bg-void','--bg-base','--bg-card','--bg-panel','--bg-hover','--bg-active','--border-dim','--border-soft','--border-mid','--border-strong','--text-bright','--text-primary','--text-secondary','--text-dim','--text-placeholder'];
-    reset.forEach(v => document.documentElement.style.removeProperty(v));
+    document.documentElement.classList.add('dark-mode');
+    document.documentElement.classList.remove('light-mode');
     document.getElementById('themeBtn').textContent = '☀ Light';
   }
 }
+
+// Auto-detect system preference on load
+(function(){
+  if(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches){
+    isLight = true;
+    document.documentElement.classList.add('light-mode');
+    document.getElementById('themeBtn').textContent = '🌙 Dark';
+  }
+})();
 
 // ── CLOCK ─────────────────────────────────────────────────────────────
 function tickClock(){document.getElementById('clock').textContent = new Date().toUTCString().replace('GMT','UTC');}
 setInterval(tickClock,1000); tickClock();
 
+// ── SESSION TIMER ──────────────────────────────────────────────────
+const sessionStart = Date.now();
+function formatElapsed(ms){
+  const s=Math.floor(ms/1000), m=Math.floor(s/60), h=Math.floor(m/60);
+  if(h>0) return h+'h '+(m%60)+'m';
+  if(m>0) return m+'m '+(s%60)+'s';
+  return s+'s';
+}
+setInterval(()=>{
+  const el=document.getElementById('ss-dur');
+  if(el) el.textContent=formatElapsed(Date.now()-sessionStart);
+},1000);
+
+function newSession(){
+  if(!confirm('Reset this session? All collected data will be cleared.')) return;
+  state.vtData=null; state.sbData=null; state.ipData={};
+  state.sessionStats={hashes:0,ips:0,threats:0,iocs:0};
+  state.iocs={ips:[],domains:[],files:[],hashes:[],mitre:[]};
+  state.analysisTs=null; state.vtAllEngines=[]; state.avModalCat='all';
+  ['ss-hashes','ss-ips','ss-threats','ss-iocs'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.textContent='0';
+  });
+  ['ts-threats','ts-iocs','ts-hashes','ts-ips'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.textContent='0';
+  });
+  ['vt-mini','vt-error','ip-result','ip-error','sb-error'].forEach(id=>hide(id));
+  document.getElementById('hash-inp').value='';
+  document.getElementById('ip-inp').value='';
+  document.getElementById('ov-mal').textContent='—';
+  document.getElementById('ov-conn').textContent='—';
+  document.getElementById('ov-files').textContent='—';
+  document.getElementById('ov-mitre').textContent='—';
+  updateIOC(); toast('Session reset');
+}
+
 // ── WORKER STATUS ─────────────────────────────────────────────────────
 (async()=>{
-  const miniDot = document.getElementById('mini-wi-dot');
   try{
     const r = await fetch(WORKER+'/health',{signal:AbortSignal.timeout(4000)});
     const dot = document.getElementById('wi-dot');
@@ -2060,18 +1862,15 @@ setInterval(tickClock,1000); tickClock();
     if(r.ok){
       lbl.textContent = 'Online';
       document.getElementById('threat-level-txt').textContent = 'THREAT LEVEL: MONITORING';
-      if(miniDot){ miniDot.style.background='var(--green)'; miniDot.title='Backend online'; }
     } else {
-      dot.style.background = 'var(--yellow)'; dot.style.boxShadow = '0 0 8px var(--yellow)';
+      dot.style.background = 'var(--yellow)';
       lbl.textContent = 'Degraded'; lbl.style.color = 'var(--yellow)';
-      if(miniDot){ miniDot.style.background='var(--yellow)'; miniDot.title='Backend degraded'; }
     }
   } catch {
     const dot = document.getElementById('wi-dot');
-    dot.style.background = 'var(--red)'; dot.style.boxShadow = '0 0 8px var(--red)'; dot.style.animation = 'none';
+    dot.style.background = 'var(--red)'; dot.style.animation = 'none';
     document.getElementById('wi-lbl').textContent = 'Offline';
     document.getElementById('wi-lbl').style.color = 'var(--red)';
-    if(miniDot){ miniDot.style.background='var(--red)'; miniDot.title='Backend offline'; }
   }
 })();
 
@@ -2115,7 +1914,6 @@ function updateStats(){
     const score = parseInt(document.getElementById('score-num').textContent)||0;
     pill.textContent = score>=75?'THREAT LEVEL: CRITICAL':score>=50?'THREAT LEVEL: HIGH':score>=25?'THREAT LEVEL: MEDIUM':'THREAT LEVEL: LOW';
   }
-  updateTabBadges();
 }
 
 // ── VT SCAN ───────────────────────────────────────────────────────────
@@ -2128,7 +1926,12 @@ async function doVTScan(){
   document.getElementById('btn-vt').disabled=true;
   try{
     const r = await fetch(WORKER+'/vt/'+encodeURIComponent(h));
-    if(!r.ok) throw new Error('Worker returned '+r.status);
+    if(!r.ok){
+      if(r.status===404) throw new Error('Hash not found in VirusTotal — it may not have been submitted yet');
+      if(r.status===401) throw new Error('Invalid VirusTotal API key — check your Worker VT_KEY secret');
+      if(r.status===429) throw new Error('VirusTotal rate limit reached — wait a moment and try again');
+      throw new Error('VirusTotal lookup failed (HTTP '+r.status+')');
+    }
     const v = await r.json();
     const attr = v?.data?.attributes;
     const s = attr?.last_analysis_stats;
@@ -2140,19 +1943,9 @@ async function doVTScan(){
     const pct=total>0?Math.round(mal/total*100):0;
     const col=getCol(pct);
 
-    // VT-style "X / Y" display
     const pctEl=document.getElementById('vt-det-pct');
-    pctEl.textContent=mal+' / '+total; pctEl.style.color=col;
+    pctEl.textContent=pct+'%'; pctEl.style.color=col;
     document.getElementById('det-bar-fill').style.cssText=`width:${pct}%;background:${col}`;
-    document.getElementById('det-engine-label').textContent='Security Vendors';
-    const countEl=document.getElementById('det-engine-count');
-    const malCountEl=document.getElementById('det-mal-count');
-    const totCountEl=document.getElementById('det-total-count');
-    if(countEl&&malCountEl&&totCountEl){
-      malCountEl.textContent=mal; malCountEl.style.color=col;
-      totCountEl.textContent=total;
-      countEl.style.display=total>0?'block':'none';
-    }
 
     setEl('vt-chips',`
       <span class="chip chip-red"><span>${mal}</span> Malicious</span>
@@ -2190,57 +1983,11 @@ async function doVTScan(){
   finally { document.getElementById('btn-vt').disabled=false; }
 }
 
-function downloadSample(){
-  const h=document.getElementById('hash-inp').value.trim();
-  if(!h||h.length!==64||!/^[a-fA-F0-9]+$/.test(h)){toast('⚠ SHA-256 hash required for sample download');return;}
-  const btn=document.getElementById('btn-dl-sample');
-  const statusEl=document.getElementById('dl-status');
-  const svgIcon=`<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
-  btn.disabled=true;
-  btn.innerHTML=`<span class="spin"></span> Fetching from VirusTotal… <span class="dl-zip-tag">ZIP</span>`;
-  statusEl.innerHTML='';
-  fetch(`${WORKER}/download-sample?hash=${encodeURIComponent(h)}`)
-    .then(async r=>{
-      if(!r.ok){const e=await r.json().catch(()=>({error:r.statusText}));throw new Error(e.error||`HTTP ${r.status}`);}
-      const source=r.headers.get('X-Sample-Source')||'Unknown';
-      const blob=await r.blob();
-      return {blob,source};
-    })
-    .then(({blob,source})=>{
-      const url=URL.createObjectURL(blob);
-      const a=document.createElement('a');
-      a.href=url; a.download=`${h.toLowerCase()}.zip`; a.click();
-      URL.revokeObjectURL(url);
-      toast(`✓ Sample downloaded from ${source} — password: infected`);
-      const srcBadge=source==='MalwareBazaar'
-        ?`<span style="color:var(--cyan);font-weight:700">MalwareBazaar</span>`
-        :`<span style="color:var(--blue-light);font-weight:700">VirusTotal</span>`;
-      statusEl.innerHTML=`<div class="dl-warn-strip">⚠ Source: ${srcBadge} · Handle in isolated VM · ZIP password: <strong style="color:var(--red);margin-left:4px">infected</strong></div>`;
-    })
-    .catch(err=>{
-      const notFound=err.message.toLowerCase().includes('not found');
-      const isPremium=err.message.toLowerCase().includes('premium');
-      statusEl.innerHTML=notFound
-        ?`<div class="err-box" style="margin-top:4px">⚠ Sample not found in MalwareBazaar. Try submitting it via <a href="https://bazaar.abuse.ch/upload/" target="_blank" style="color:var(--blue)">MalwareBazaar upload</a> first.</div>`
-        :isPremium
-          ?`<div class="err-box" style="margin-top:4px">⛔ Not in MalwareBazaar. VirusTotal download requires a Premium API key.</div>`
-          :`<div class="err-box" style="margin-top:4px">✗ ${esc(err.message)}</div>`;
-      toast('✗ '+err.message);
-    })
-    .finally(()=>{
-      btn.disabled=false;
-      btn.innerHTML=`${svgIcon} Download Sample <span class="dl-zip-tag">ZIP</span>`;
-    });
-}
-
 function renderVTMalBlock(attr, hash){
   const block=document.getElementById('vt-mal-block');
   const hlen=hash.length;
   const htype=hlen===32?'MD5':hlen===40?'SHA-1':hlen===64?'SHA-256':'HASH';
   document.getElementById('vt-hash-type').textContent=htype+' · '+hash.substring(0,16)+'…';
-  // Show download button only for SHA-256
-  const dlRow=document.getElementById('vt-download-row');
-  if(dlRow) dlRow.style.display=hlen===64?'':'none';
   const label=attr?.suggested_threat_label||attr?.popular_threat_classification?.suggested_threat_label||attr?.meaningful_name||null;
   const families=(attr?.popular_threat_classification?.popular_threat_name||[]).map(f=>f.value).filter(Boolean);
   const cats=(attr?.popular_threat_classification?.popular_threat_category||[]).map(c=>c.value).filter(Boolean);
@@ -2248,8 +1995,8 @@ function renderVTMalBlock(attr, hash){
   const nameEl=document.getElementById('vt-threat-name');
   nameEl.textContent=label||attr?.meaningful_name||'';
   nameEl.className='mal-name'+(label?'':' clean');
-  setEl('vt-families',families.map(f=>`<span class="badge b-red" style="font-size:11px">🦠 ${esc(f)}</span>`).join(''));
-  setEl('vt-cats',[...cats.map(c=>`<span class="badge b-orange" style="font-size:11px">🏷 ${esc(c)}</span>`),(attr?.tags||[]).slice(0,4).map(t=>`<span class="badge b-purple" style="font-size:11px">${esc(t)}</span>`)].flat().join(''));
+  setEl('vt-families',families.map(f=>`<span class="badge b-red" style="font-size:8px">🦠 ${esc(f)}</span>`).join(''));
+  setEl('vt-cats',[...cats.map(c=>`<span class="badge b-orange" style="font-size:8px">🏷 ${esc(c)}</span>`),(attr?.tags||[]).slice(0,4).map(t=>`<span class="badge b-purple" style="font-size:8px">${esc(t)}</span>`)].flat().join(''));
   const meta=[];
   if(attr?.meaningful_name) meta.push({k:'Filename',v:attr.meaningful_name});
   if(attr?.type_description) meta.push({k:'Type',v:attr.type_description});
@@ -2285,10 +2032,9 @@ function renderAVRows(engines){
     const iM=c==='malicious',iS=c==='suspicious',iC=c==='harmless'||c==='clean';
     const rc=iM?'mal':iS?'sus':iC?'cln':'und';
     const bc=iM?'avb-mal':iS?'avb-sus':iC?'avb-cln':'avb-und';
-    const bt=iM?'MALICIOUS':iS?'SUSPICIOUS':iC?'CLEAN':'UNDETECTED';
-    const dc=iM?'av-dot av-dot-mal':iS?'av-dot av-dot-sus':iC?'av-dot av-dot-cln':'av-dot av-dot-und';
+    const bt=iM?'MAL':iS?'SUS':iC?'CLN':'—';
     return `<div class="av-row" data-cat="${esc(c)}" data-engine="${esc(e.engine.toLowerCase())}" data-result="${esc((e.result||'').toLowerCase())}">
-      <span class="${dc}"></span>
+      <span style="font-size:12px">${getAVIcon(e.engine)}</span>
       <span class="av-engine">${esc(e.engine)}</span>
       <span class="av-result ${rc}">${esc(iM||iS?e.result||'—':'—')}</span>
       <span class="av-badge ${bc}">${bt}</span>
@@ -2333,7 +2079,7 @@ function buildAVModalSummary(){
   const label=attr?.suggested_threat_label||attr?.popular_threat_classification?.suggested_threat_label||null;
   setEl('av-modal-summary',`
     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px">
-      ${label?`<div><div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);letter-spacing:1px;margin-bottom:3px">IDENTIFIED AS</div>
+      ${label?`<div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-bottom:3px">IDENTIFIED AS</div>
         <div style="font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--red)">${esc(label)}</div></div>`:''}
       <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
         <span class="chip chip-red">${mal} Malicious</span>
@@ -2351,9 +2097,8 @@ function renderAVModalGrid(engines){
     const vc=iM?'mal':iS?'sus':iC?'cln':'und';
     const bc=iM?'avb-mal':iS?'avb-sus':iC?'avb-cln':'avb-und';
     const bt=iM?'MALICIOUS':iS?'SUSPICIOUS':iC?'CLEAN':'UNDETECTED';
-    const dc=iM?'av-dot av-dot-mal':iS?'av-dot av-dot-sus':iC?'av-dot av-dot-cln':'av-dot av-dot-und';
     return `<div class="av-modal-row" data-cat="${esc(c)}" data-engine="${esc(e.engine.toLowerCase())}" data-result="${esc((e.result||'').toLowerCase())}">
-      <span class="${dc}"></span>
+      <span style="font-size:14px">${getAVIcon(e.engine)}</span>
       <span class="av-modal-engine">${esc(e.engine)}</span>
       <span class="av-modal-verdict ${vc}">${esc(e.result||'—')}</span>
       <span class="av-badge ${bc}">${bt}</span>
@@ -2388,7 +2133,11 @@ async function doIPLookup(ip){
   document.getElementById('btn-ip').disabled=true;
   try{
     const r=await fetch(WORKER+'/abuseipdb/'+encodeURIComponent(addr));
-    if(!r.ok) throw new Error('Worker returned '+r.status);
+    if(!r.ok){
+      if(r.status===401) throw new Error('Invalid AbuseIPDB API key — check your Worker ABUSEIPDB_KEY secret');
+      if(r.status===429) throw new Error('AbuseIPDB rate limit reached — wait a moment and try again');
+      throw new Error('AbuseIPDB lookup failed (HTTP '+r.status+')');
+    }
     const j=await r.json();
     if(j.errors) throw new Error(j.errors[0]?.detail||'AbuseIPDB error');
     const d=j?.data; if(!d) throw new Error('No data from AbuseIPDB');
@@ -2410,10 +2159,10 @@ function renderAbuseBlock(containerId,d){
   const uniqueCats=[...new Set(cats)];
   const html=`<div class="abuse-block">
     <div class="abuse-score-row">
-      <div class="abuse-ring" style="color:${col};border-color:${col};box-shadow:0 0 12px ${col}30">${score}</div>
+      <div class="abuse-ring" style="color:${col};border-color:${col}">${score}</div>
       <div>
         <div class="abuse-ip-name">${esc(d.ipAddress)}</div>
-        <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-bottom:5px">ABUSE CONFIDENCE SCORE</div>
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);margin-bottom:5px">ABUSE CONFIDENCE SCORE</div>
         <div class="abuse-badges">
           ${score>=75?'<span class="badge b-red">■ HIGH RISK</span>':score>=40?'<span class="badge b-orange">▲ MODERATE</span>':score>0?'<span class="badge b-yellow">◆ LOW RISK</span>':'<span class="badge b-green">✓ CLEAN</span>'}
           ${d.isWhitelisted?'<span class="badge b-green">✓ Whitelisted</span>':''}
@@ -2431,7 +2180,7 @@ function renderAbuseBlock(containerId,d){
       <div class="abuse-kv"><div class="abuse-k">Distinct Users</div><div class="abuse-v">${d.numDistinctUsers??'—'}</div></div>
       <div class="abuse-kv"><div class="abuse-k">Hostname</div><div class="abuse-v">${esc(d.hostnames?.[0]||'—')}</div></div>
     </div>
-    ${uniqueCats.length?`<div class="abuse-cats">${uniqueCats.slice(0,6).map(c=>`<span class="badge b-orange" style="font-size:11px">${esc(ABUSE_CATEGORIES[c]||'Cat '+c)}</span>`).join('')}${uniqueCats.length>6?`<span class="badge b-dim" style="font-size:11px">+${uniqueCats.length-6}</span>`:''}</div>`:''}
+    ${uniqueCats.length?`<div class="abuse-cats">${uniqueCats.slice(0,6).map(c=>`<span class="badge b-orange" style="font-size:8px">${esc(ABUSE_CATEGORIES[c]||'Cat '+c)}</span>`).join('')}${uniqueCats.length>6?`<span class="badge b-dim" style="font-size:8px">+${uniqueCats.length-6}</span>`:''}</div>`:''}
     ${(d.reports&&d.reports.length)?`<div class="abuse-reports-section">
       <div class="abuse-rpt-hdr">Recent Reports (${d.reports.length} total)</div>
       ${d.reports.slice(0,3).map(rep=>`<div class="abuse-rpt-row">
@@ -2470,7 +2219,7 @@ function updateNetworkAbuseScores(){
     const score=d.abuseConfidenceScore||0;
     const col=score>=75?'var(--red)':score>=40?'var(--orange)':score>0?'var(--yellow)':'var(--green)';
     const ac=row.querySelector('.abuse-cell');
-    if(ac) ac.innerHTML=`<div class="risk-mini"><div class="mini-bar-bg"><div class="mini-bar-fill" style="width:${score}%;background:${col}"></div></div><span style="color:${col};font-weight:700;font-family:var(--font-mono);font-size:12px">${score}%</span><span class="copy-btn" onclick="showIPDetail('${ip.replace(/'/g,"\\'")}')">🔍</span></div>`;
+    if(ac) ac.innerHTML=`<div class="risk-mini"><div class="mini-bar-bg"><div class="mini-bar-fill" style="width:${score}%;background:${col}"></div></div><span style="color:${col};font-weight:700;font-family:var(--font-mono);font-size:10px">${score}%</span><span class="copy-btn" onclick="showIPDetail('${ip.replace(/'/g,"\\'")}')">🔍</span></div>`;
     const cc=row.querySelector('.country-cell');
     if(cc) cc.textContent=(d.countryCode||'—')+(d.isTor?' 🧅':'');
   });
@@ -2488,9 +2237,9 @@ function showIPDetail(ip){
 // ── SANDBOX ───────────────────────────────────────────────────────────
 function selectEngine(engine){
   sandboxEngine=engine;
-  document.getElementById('eng-triage').className='eng-opt'+(engine==='triage'?' active-triage':'');
   document.getElementById('eng-anyrun').className='eng-opt'+(engine==='anyrun'?' active-anyrun':'');
-  document.getElementById('engine-badge').textContent=engine==='triage'?'TRIAGE':'ANY.RUN';
+  document.getElementById('eng-triage').className='eng-opt'+(engine==='triage'?' active-triage':'');
+  document.getElementById('engine-badge').textContent=engine==='anyrun'?'ANY.RUN':'TRIAGE';
 }
 
 function onFileChange(){
@@ -2526,7 +2275,7 @@ async function runSandbox(){
     if(!r.ok){let d='';try{const ej=await r.json();d=ej?.error||ej?.message||'';}catch{}throw new Error(`Submission failed (HTTP ${r.status})${d?': '+d:''}`);}
     const j=await r.json();
     const taskId=j?.data?.taskid||j?.data?.taskId||j?.data?.id||j?.taskid||j?.taskId||j?.id||null;
-    if(!taskId){if(j?.data?.status==='completed'){state.sbData=j.data;state.analysisTs=new Date().toISOString();renderAll(state.sbData);updateTabBadges();clearSbProgress();toast('✓ Analysis complete');document.getElementById('btn-sb').disabled=false;return;}throw new Error('No task ID: '+JSON.stringify(j).slice(0,200));}
+    if(!taskId){if(j?.data?.status==='completed'){state.sbData=j.data;state.analysisTs=new Date().toISOString();renderAll(state.sbData);clearSbProgress();toast('✓ Analysis complete');document.getElementById('btn-sb').disabled=false;return;}throw new Error('No task ID: '+JSON.stringify(j).slice(0,200));}
     setSbProgress('Task queued…','QUEUED',15,taskId);
     toast(`Submitted: ${taskId}`);
     startPolling(taskId,sandboxEngine);
@@ -2534,7 +2283,7 @@ async function runSandbox(){
 }
 
 function startPolling(taskId,engine){
-  engine=engine||'triage';
+  engine=engine||'anyrun';
   if(state.pollTimer) clearInterval(state.pollTimer);
   let polls=0; const MAX=60; const INT=8000;
   const elbl=engine==='triage'?'Triage':'ANY.RUN';
@@ -2561,7 +2310,7 @@ function startPolling(taskId,engine){
         }
         toast('✓ Sandbox analysis complete');
         if(engine==='triage'&&result?.data?.triage_families?.length) toast('🦠 '+result.data.triage_families.join(', '),4000);
-        renderAll(state.sbData); updateTabBadges(); return;
+        renderAll(state.sbData); return;
       }
       if(status==='failed'){clearInterval(state.pollTimer);clearSbProgress();document.getElementById('btn-sb').disabled=false;setErr('sb-error','Sandbox task failed');return;}
     } catch(e){console.warn('[poll]',e.message);}
@@ -2629,7 +2378,7 @@ function renderProcessTree(d){
       <span class="proc-indent">${i>0?'└':'·'}</span>
       <span class="proc-name ${flagged?'flagged':'normal'}">${esc(p.name||'unknown')}</span>
       ${p.pid?`<span class="proc-pid">PID:${p.pid}</span>`:''}
-      ${flagged?'<span class="badge b-red" style="font-size:11px">⚠ FLAGGED</span>':''}
+      ${flagged?'<span class="badge b-red" style="font-size:8px">⚠ FLAGGED</span>':''}
     </div>`;
   }).join('')+'</div>');
 }
@@ -2640,7 +2389,7 @@ function renderDroppedFiles(d){
   document.getElementById('drop-count').textContent=files.length+' files';
   setEl('drop-list',files.map(f=>{
     const ext=(f.name||'').split('.').pop().toUpperCase().slice(0,6)||'FILE';
-    return `<div class="drop-item"><span class="drop-ext">.${esc(ext)}</span><span style="flex:1;color:var(--text-primary)">${esc(f.name||'unknown')}</span>${f.size?`<span style="color:var(--text-dim);font-size:11px">${formatSize(f.size)}</span>`:''}</div>`;
+    return `<div class="drop-item"><span class="drop-ext">.${esc(ext)}</span><span style="flex:1;color:var(--text-primary)">${esc(f.name||'unknown')}</span>${f.size?`<span style="color:var(--text-dim);font-size:9px">${formatSize(f.size)}</span>`:''}</div>`;
   }).join(''));
   state.iocs.files=files.map(f=>f.name).filter(Boolean);
 }
@@ -2658,7 +2407,7 @@ function renderMITRE(d){
 
 function renderNetwork(d){
   const conns=d.network_connections||[];
-  if(!conns.length){setEl('net-tbody','<tr><td colspan="6" style="color:var(--text-dim);text-align:center;padding:20px;font-family:var(--font-mono);font-size:12px">No connections captured</td></tr>');return;}
+  if(!conns.length){setEl('net-tbody','<tr><td colspan="6" style="color:var(--text-dim);text-align:center;padding:20px;font-family:var(--font-mono);font-size:10px">No connections captured</td></tr>');return;}
   state.iocs.ips=[...new Set(conns.map(n=>n.ip).filter(Boolean))];
   state.iocs.domains=[...new Set(conns.map(n=>n.host).filter(Boolean))];
   setEl('net-tbody',conns.map(n=>`
@@ -2667,8 +2416,8 @@ function renderNetwork(d){
       <td style="color:var(--text-primary)">${esc(n.host||'—')}</td>
       <td class="td-port">${esc(String(n.port||'—'))}</td>
       <td class="td-proto">${esc(n.protocol||'TCP')}</td>
-      <td class="abuse-cell"><span style="color:var(--text-dim);font-family:var(--font-mono);font-size:11px">Pending…</span></td>
-      <td class="country-cell" style="color:var(--text-dim);font-family:var(--font-mono);font-size:12px">—</td>
+      <td class="abuse-cell"><span style="color:var(--text-dim);font-family:var(--font-mono);font-size:9px">Pending…</span></td>
+      <td class="country-cell" style="color:var(--text-dim);font-family:var(--font-mono);font-size:10px">—</td>
     </tr>`).join(''));
 }
 
@@ -2713,7 +2462,7 @@ function updateRisk(){
   const col=getCol(score);
   const lbl=score>=75?'CRITICAL':score>=50?'HIGH RISK':score>=25?'MEDIUM RISK':score>0?'LOW RISK':'CLEAN';
   const ring=document.getElementById('score-ring');
-  const circumference=2*Math.PI*45; // r=45
+  const circumference=2*Math.PI*45;
   const offset=circumference-(score/100)*circumference;
   ring.style.strokeDashoffset=offset;
   ring.style.strokeDasharray=circumference;
@@ -2799,10 +2548,10 @@ function updateIOC(){
       <div class="ioc-list">
         ${state.iocs[c.key].map(v=>{
           const d=c.key==='ips'?state.ipData[v]:null;
-          const ab=d!=null?`<span class="badge ${(d.abuseConfidenceScore||0)>=75?'b-red':(d.abuseConfidenceScore||0)>=40?'b-yellow':'b-green'}" style="font-size:11px">${d.abuseConfidenceScore}% abuse</span>`:'';
+          const ab=d!=null?`<span class="badge ${(d.abuseConfidenceScore||0)>=75?'b-red':(d.abuseConfidenceScore||0)>=40?'b-yellow':'b-green'}" style="font-size:8px">${d.abuseConfidenceScore}% abuse</span>`:'';
           return `<div class="ioc-row">
             <span class="ioc-val">${esc(v)}</span>${ab}
-            <span class="badge ${c.bc}" style="font-size:11px">IOC</span>
+            <span class="badge ${c.bc}" style="font-size:8px">IOC</span>
             <span class="copy-btn" onclick="navigator.clipboard.writeText('${v.replace(/'/g,"\\'")}').then(()=>toast('Copied'))">Copy</span>
           </div>`;
         }).join('')}
@@ -2841,7 +2590,6 @@ function downloadIOC(fmt){
     content=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
     mime='text/csv';
   } else if(fmt==='json'){
-    const attr=state.vtData?.data?.attributes;
     content=JSON.stringify({generated:new Date().toISOString(),iocs:{
       ips:state.iocs.ips.map(ip=>({ip,abuseScore:state.ipData[ip]?.abuseConfidenceScore,country:state.ipData[ip]?.countryCode,isp:state.ipData[ip]?.isp})),
       domains:state.iocs.domains,files:state.iocs.files,hashes:state.iocs.hashes,mitre:state.iocs.mitre
@@ -2902,7 +2650,7 @@ function buildReport(){
     <div class="rpt-section">
       <div class="rpt-sh">Malware Identification</div>
       ${malwareName?`<div class="rpt-kv" style="margin-bottom:8px"><div class="rpt-kv-k">Threat Name</div><div class="rpt-kv-v" style="font-size:16px;color:var(--red)">${esc(malwareName)}</div></div>`:''}
-      ${families.length?`<div class="rpt-kv"><div class="rpt-kv-k">Families</div><div class="rpt-kv-v">${families.map(f=>`<span class="badge b-red" style="margin:2px;font-size:11px">${esc(f)}</span>`).join('')}</div></div>`:''}
+      ${families.length?`<div class="rpt-kv"><div class="rpt-kv-k">Families</div><div class="rpt-kv-v">${families.map(f=>`<span class="badge b-red" style="margin:2px;font-size:8px">${esc(f)}</span>`).join('')}</div></div>`:''}
     </div>`:''}
     ${topDetections.length?`
     <div class="rpt-section">
@@ -2919,11 +2667,11 @@ function buildReport(){
     ${state.iocs.ips.length||state.iocs.domains.length?`
     <div class="rpt-section">
       <div class="rpt-sh">Indicators of Compromise</div>
-      ${state.iocs.ips.length?`<div style="margin-bottom:8px"><div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">IPs</div>${state.iocs.ips.map(ip=>{const d=state.ipData[ip];return `<div class="rpt-kv" style="margin-bottom:4px;display:flex;gap:8px;align-items:center"><span style="color:var(--blue);font-family:var(--font-mono);font-weight:700">${esc(ip)}</span>${d?`<span class="badge ${(d.abuseConfidenceScore||0)>=75?'b-red':'b-yellow'}" style="font-size:11px">${d.abuseConfidenceScore}% · ${d.countryCode||'?'}</span>`:''}</div>`;}).join('')}</div>`:''}
+      ${state.iocs.ips.length?`<div style="margin-bottom:8px"><div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">IPs</div>${state.iocs.ips.map(ip=>{const d=state.ipData[ip];return `<div class="rpt-kv" style="margin-bottom:4px;display:flex;gap:8px;align-items:center"><span style="color:var(--blue);font-family:var(--font-mono);font-weight:700">${esc(ip)}</span>${d?`<span class="badge ${(d.abuseConfidenceScore||0)>=75?'b-red':'b-yellow'}" style="font-size:8px">${d.abuseConfidenceScore}% · ${d.countryCode||'?'}</span>`:''}</div>`;}).join('')}</div>`:''}
     </div>`:''}
     <div class="rpt-section">
       <div class="rpt-sh">Raw IOC Blocklist</div>
-      <div class="rpt-ioc-block">${esc(document.getElementById('ioc-raw').textContent)}</div>
+      <div class="rpt-ioc-block">${esc(document.getElementById('ioc-raw').textContent)}</div>crip
     </div>
     <div class="rpt-section">
       <div class="rpt-sh">Containment Recommendations</div>
@@ -2943,8 +2691,8 @@ function copyReport(){
 function downloadReport(){
   const body=document.getElementById('report-body').innerHTML;
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Incident Report</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600&family=Roboto+Mono:wght@400;600&family=Roboto+Condensed:wght@700;800&display=swap" rel="stylesheet">
-  <style>:root{--bg-void:#0d0e14;--bg-card:#1a1b27;--bg-panel:#1e1f2e;--border-soft:rgba(255,255,255,0.08);--blue:#394EFF;--red:#ff5252;--orange:#ff9800;--yellow:#ffc107;--green:#4caf50;--text-bright:#f0f6fc;--text-primary:#c9d1d9;--text-secondary:#8b949e;--text-dim:#484f58;--font-mono:'Roboto Mono',monospace;--font-sans:'Roboto',sans-serif;--font-display:'Roboto Condensed',sans-serif}body{font-family:var(--font-sans);background:var(--bg-void);color:var(--text-primary);padding:40px;max-width:900px;margin:0 auto}.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:2px;font-family:var(--font-mono);font-size:9px;font-weight:600;margin:2px}.b-red{background:rgba(255,82,82,0.12);color:var(--red);border:1px solid rgba(255,82,82,0.25)}.b-yellow{background:rgba(255,193,7,0.1);color:var(--yellow);border:1px solid rgba(255,193,7,0.2)}.b-green{background:rgba(76,175,80,0.1);color:var(--green);border:1px solid rgba(76,175,80,0.2)}.b-blue{background:rgba(57,78,255,0.12);color:var(--blue);border:1px solid rgba(57,78,255,0.3)}.b-orange{background:rgba(255,152,0,0.1);color:var(--orange);border:1px solid rgba(255,152,0,0.2)}.b-cyan{background:rgba(0,212,232,0.1);color:#00d4e8;border:1px solid rgba(0,212,232,0.2)}.b-dim{background:rgba(255,255,255,0.04);color:var(--text-dim);border:1px solid rgba(255,255,255,0.08)}.rpt-title{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--text-bright);margin-bottom:4px}.rpt-meta{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-bottom:20px;display:flex;flex-wrap:wrap;gap:12px}.rpt-sh{font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border-soft)}.rpt-kv{background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:3px;padding:10px;margin-bottom:5px}.rpt-kv-k{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:2px}.rpt-kv-v{color:var(--text-bright);font-weight:600}.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rpt-ioc-block{background:#0d0e14;padding:12px;border-radius:3px;font-family:var(--font-mono);font-size:10px;line-height:1.8;white-space:pre;overflow-x:auto;color:var(--green);border:1px solid var(--border-soft)}.empty-state{text-align:center;padding:20px;border:1px dashed rgba(255,255,255,0.08);border-radius:3px;color:var(--text-dim)}</style>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+  <style>:root{--bg-void:#070a10;--bg-card:#0f1520;--bg-panel:#131927;--border-soft:rgba(255,255,255,0.08);--blue:#00a8ff;--red:#ff3358;--orange:#ff7c2a;--yellow:#ffbe00;--green:#00e676;--text-bright:#e8ecf4;--text-primary:#a8b4cc;--text-secondary:#6b7a96;--text-dim:#3d4d6a;--font-mono:'IBM Plex Mono',monospace;--font-sans:'IBM Plex Sans',sans-serif;--font-display:'Barlow Condensed',sans-serif}@media(prefers-color-scheme:light){:root{--bg-void:#f0f2f5;--bg-card:#fff;--bg-panel:#f5f7fa;--border-soft:rgba(0,0,0,0.1);--blue:#006bcc;--red:#c5001a;--orange:#b84c00;--yellow:#8a6000;--green:#006e38;--text-bright:#0d1117;--text-primary:#2c3748;--text-secondary:#4a5568;--text-dim:#718096}}body{font-family:var(--font-sans);background:var(--bg-void);color:var(--text-primary);padding:40px;max-width:900px;margin:0 auto}.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:2px;font-family:var(--font-mono);font-size:9px;font-weight:600;margin:2px}.b-red{background:rgba(197,0,26,0.1);color:var(--red);border:1px solid rgba(197,0,26,0.25)}.b-yellow{background:rgba(138,96,0,0.08);color:var(--yellow);border:1px solid rgba(138,96,0,0.2)}.b-green{background:rgba(0,110,56,0.06);color:var(--green);border:1px solid rgba(0,110,56,0.15)}.b-blue{background:rgba(0,107,204,0.08);color:var(--blue);border:1px solid rgba(0,107,204,0.25)}.b-orange{background:rgba(184,76,0,0.08);color:var(--orange);border:1px solid rgba(184,76,0,0.2)}.b-dim{background:rgba(128,128,128,0.06);color:var(--text-dim);border:1px solid rgba(128,128,128,0.1)}.rpt-title{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--text-bright);margin-bottom:4px}.rpt-meta{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-bottom:20px;display:flex;flex-wrap:wrap;gap:12px}.rpt-sh{font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border-soft)}.rpt-kv{background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:3px;padding:10px;margin-bottom:5px}.rpt-kv-k{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:2px}.rpt-kv-v{color:var(--text-bright);font-weight:600}.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rpt-ioc-block{background:var(--bg-void);padding:12px;border-radius:3px;font-family:var(--font-mono);font-size:10px;line-height:1.8;white-space:pre;overflow-x:auto;color:var(--green);border:1px solid var(--border-soft)}.empty-state{text-align:center;padding:20px;border:1px dashed rgba(128,128,128,0.2);border-radius:3px;color:var(--text-dim)}</style>
   </head><body>${body}</body></html>`;
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
