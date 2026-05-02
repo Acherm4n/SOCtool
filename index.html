@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1190,21 +1189,75 @@ body::before {
 .av-modal-verdict.cln { color: var(--green); }
 .av-modal-verdict.und { color: var(--text-dim); }
 
-/* Report */
-.rpt-title { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--text-bright); margin-bottom: 4px; }
-.rpt-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px; }
-.rpt-section { margin-bottom: 20px; }
-.rpt-sh {
-  font-family: var(--font-display); font-size: 10px; font-weight: 700;
-  letter-spacing: 2.5px; text-transform: uppercase; color: var(--blue);
-  margin-bottom: 10px; padding-bottom: 6px;
-  border-bottom: 1px solid var(--border-soft);
-}
-.rpt-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.rpt-kv { background: var(--bg-panel); border: 1px solid var(--border-soft); border-radius: 3px; padding: 10px; font-size: 11px; }
-.rpt-kv-k { color: var(--text-dim); margin-bottom: 3px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
-.rpt-kv-v { color: var(--text-bright); font-weight: 600; font-family: var(--font-sans); }
-.rpt-ioc-block { background: var(--bg-void); border: 1px solid var(--border-soft); border-radius: var(--radius-sm); padding: 12px; font-family: var(--font-mono); font-size: 12px; line-height: 1.8; color: var(--green); white-space: pre; overflow-x: auto; max-height: 200px; overflow-y: auto; }
+/* ── REPORT (professional redesign) ──────────────────────────── */
+.rpt-header{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid var(--border-mid);flex-wrap:wrap;gap:12px;}
+.rpt-logo-wrap{display:flex;align-items:center;gap:10px;}
+.rpt-logo-texts{display:flex;flex-direction:column;gap:2px;}
+.rpt-logo-name{font-family:var(--font-display);font-size:16px;font-weight:800;letter-spacing:2px;color:var(--text-bright);text-transform:uppercase;}
+.rpt-logo-sub{font-family:var(--font-mono);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.rpt-doc-info{text-align:right;}
+.rpt-case-id{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:1px;}
+.rpt-ts{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);margin-top:3px;}
+.rpt-analyst{font-family:var(--font-mono);font-size:9px;color:var(--text-secondary);margin-top:2px;}
+.rpt-class-bar{text-align:center;padding:7px 14px;font-family:var(--font-mono);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;margin:12px 0 18px;border-radius:3px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.rpt-class-critical{background:var(--red-dim);color:var(--red);border:1px solid rgba(248,75,106,0.3);}
+.rpt-class-high{background:var(--orange-dim);color:var(--orange);border:1px solid rgba(255,140,66,0.25);}
+.rpt-class-medium{background:var(--yellow-dim);color:var(--yellow);border:1px solid rgba(255,197,51,0.25);}
+.rpt-class-low{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border);}
+.rpt-class-clean{background:var(--green-dim);color:var(--green);border:1px solid rgba(48,217,136,0.2);}
+.rpt-class-dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:blink 1.5s infinite;flex-shrink:0;}
+.rpt-section{margin-bottom:22px;}
+.rpt-sh{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-secondary);margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border-soft);}
+.rpt-sh::after{content:'';flex:1;height:1px;background:var(--border-dim);}
+.rpt-sh-num{font-family:var(--font-mono);font-size:8px;font-weight:700;color:var(--blue);padding:2px 7px;border-radius:2px;background:var(--blue-dim);border:1px solid var(--blue-border);letter-spacing:0;flex-shrink:0;}
+.rpt-overview-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:4px;padding:16px;margin-bottom:10px;}
+.rpt-score-block{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;}
+.rpt-score-circle{width:86px;height:86px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid currentColor;position:relative;}
+.rpt-score-circle::before{content:'';position:absolute;inset:4px;border-radius:50%;opacity:.1;background:currentColor;}
+.rpt-score-big{font-family:var(--font-display);font-size:28px;font-weight:800;line-height:1;position:relative;}
+.rpt-score-max{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);position:relative;}
+.rpt-score-lbl{font-family:var(--font-mono);font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;}
+.rpt-ov-stats{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.rpt-ov-item{background:var(--bg-card);border:1px solid var(--border-dim);border-radius:3px;padding:8px 10px;}
+.rpt-ov-lbl{font-family:var(--font-mono);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;}
+.rpt-ov-val{font-family:var(--font-sans);font-size:12px;font-weight:700;color:var(--text-bright);}
+.rpt-det-wrap{margin-bottom:12px;}
+.rpt-det-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.rpt-det-pct{font-family:var(--font-display);font-size:20px;font-weight:800;}
+.rpt-det-lbl{font-family:var(--font-mono);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.rpt-det-bar-bg{height:10px;background:var(--bg-active);border-radius:5px;overflow:hidden;margin-bottom:8px;}
+.rpt-det-bar-fill{height:100%;border-radius:5px;}
+.rpt-det-stats{display:flex;gap:14px;flex-wrap:wrap;}
+.rpt-det-stat{font-family:var(--font-mono);font-size:9px;display:flex;align-items:center;gap:5px;color:var(--text-secondary);}
+.rpt-det-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.rpt-threat-banner{padding:10px 14px 10px 16px;background:var(--red-dim);border:1px solid rgba(248,75,106,0.2);border-left:4px solid var(--red);border-radius:0 3px 3px 0;margin-bottom:10px;}
+.rpt-threat-name-text{font-family:var(--font-display);font-size:17px;font-weight:800;color:var(--red);letter-spacing:1px;text-transform:uppercase;}
+.rpt-threat-sub{font-family:var(--font-mono);font-size:9px;color:rgba(248,75,106,0.7);letter-spacing:0.5px;margin-top:3px;}
+.rpt-kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.rpt-kv{background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:3px;padding:9px 12px;}
+.rpt-kv-k{color:var(--text-dim);margin-bottom:3px;font-family:var(--font-mono);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;}
+.rpt-kv-v{color:var(--text-bright);font-weight:600;font-family:var(--font-mono);font-size:11px;word-break:break-all;}
+.rpt-tbl{width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:10px;border:1px solid var(--border-soft);overflow:hidden;}
+.rpt-tbl th{background:var(--bg-panel);color:var(--text-dim);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;padding:7px 10px;text-align:left;border-bottom:1px solid var(--border-soft);font-weight:700;white-space:nowrap;}
+.rpt-tbl td{padding:6px 10px;border-bottom:1px solid var(--border-dim);color:var(--text-primary);vertical-align:top;line-height:1.4;}
+.rpt-tbl tr:last-child td{border-bottom:none;}
+.rpt-ioc-block{background:var(--bg-void);border:1px solid var(--border-soft);border-radius:3px;padding:12px 14px;font-family:var(--font-mono);font-size:10px;line-height:1.8;color:var(--green);white-space:pre-wrap;overflow-x:auto;max-height:180px;overflow-y:auto;}
+.rpt-ioc-section{margin-bottom:14px;}
+.rpt-ioc-type-hdr{font-family:var(--font-mono);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px;padding-bottom:4px;border-bottom:1px dashed rgba(6,200,224,0.2);}
+.rpt-ioc-entry{display:flex;align-items:center;gap:10px;padding:4px 6px;border-radius:2px;font-family:var(--font-mono);font-size:10px;margin-bottom:2px;}
+.rpt-ioc-bullet{color:var(--blue);flex-shrink:0;}
+.rpt-ioc-val{color:var(--blue);font-weight:600;flex:1;word-break:break-all;}
+.rpt-ioc-tag{font-size:8px;padding:1px 5px;border-radius:2px;flex-shrink:0;}
+.rpt-action-item{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;margin-bottom:6px;background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:3px;}
+.rpt-action-num{font-family:var(--font-mono);font-size:10px;font-weight:800;color:var(--blue);flex-shrink:0;margin-top:1px;min-width:22px;}
+.rpt-action-body{flex:1;}
+.rpt-action-title{font-family:var(--font-sans);font-size:12px;font-weight:600;color:var(--text-bright);margin-bottom:3px;}
+.rpt-action-desc{font-family:var(--font-mono);font-size:9px;color:var(--text-secondary);line-height:1.5;}
+.rpt-action-pri{font-family:var(--font-mono);font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:2px;flex-shrink:0;margin-top:2px;}
+.rpt-footer{margin-top:24px;padding-top:12px;border-top:1px solid var(--border-soft);display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-wrap:wrap;gap:6px;}
+.rpt-title{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text-bright);}
+.rpt-meta{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);display:flex;flex-wrap:wrap;gap:12px;}
 
 /* ═══════════════════════════════════════════════════════════════
    VT + ANY.RUN VISUAL OVERHAUL — font sizes, radius, polish
@@ -1380,13 +1433,6 @@ body { font-size: 13px; letter-spacing: 0; }
 .av-modal-engine  { font-size: 12px; }
 .av-modal-verdict { font-size: 11px; }
 
-/* Report */
-.rpt-title { font-size: 22px; font-weight: 800; }
-.rpt-meta  { font-size: 11px; }
-.rpt-sh    { font-size: 11px; letter-spacing: 1.5px; }
-.rpt-kv    { font-size: 13px; border-radius: var(--radius-sm); }
-.rpt-kv-k  { font-size: 10px; letter-spacing: 0.5px; }
-
 /* Drop items */
 .drop-item { border-radius: var(--radius-sm); }
 .drop-ext  { font-size: 10px; border-radius: var(--radius-sm); }
@@ -1400,6 +1446,155 @@ body::before {
 /* Scrollbars — thinner, more modern */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-thumb { border-radius: 4px; background: var(--border-mid); }
+
+/* ── PCAP ANALYSIS TAB ───────────────────────────────────────────── */
+.pcap-drop-zone {
+  border: 2px dashed var(--border-mid);
+  border-radius: 6px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--bg-panel);
+  margin-bottom: 14px;
+  position: relative;
+  user-select: none;
+}
+.pcap-drop-zone:hover, .pcap-drop-zone.drag-over {
+  border-color: var(--cyan);
+  background: var(--cyan-dim);
+}
+.pcap-drop-icon {
+  width: 48px; height: 48px;
+  margin: 0 auto 12px;
+  background: var(--cyan-dim);
+  border: 1px solid rgba(6,200,224,0.3);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.pcap-drop-icon svg { width: 22px; height: 22px; stroke: var(--cyan); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.pcap-drop-text { font-family: var(--font-sans); font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.pcap-drop-text u { color: var(--cyan); cursor: pointer; }
+.pcap-drop-sub { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.5px; }
+
+.pcap-file-info-bar {
+  background: var(--bg-void);
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+}
+.pcap-file-icon {
+  width: 40px; height: 40px; border-radius: 4px;
+  background: var(--cyan-dim);
+  border: 1px solid rgba(6,200,224,0.25);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+  color: var(--cyan); letter-spacing: 0.5px; text-transform: uppercase;
+}
+.pcap-file-details { flex: 1; min-width: 0; }
+.pcap-file-name { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pcap-file-meta { display: flex; flex-wrap: wrap; gap: 10px; }
+.pcap-fmeta-item { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); }
+.pcap-fmeta-item span { color: var(--text-primary); font-weight: 600; }
+.pcap-file-valid { display: flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; white-space: nowrap; }
+.pcap-file-valid.ok { color: var(--green); }
+.pcap-file-valid.err { color: var(--red); }
+
+.pcap-api-section {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  padding: 12px 14px;
+}
+.pcap-api-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; }
+.pcap-api-status {
+  margin-top: 8px; padding: 8px 10px; border-radius: 3px;
+  font-family: var(--font-mono); font-size: 10px;
+  border: 1px solid var(--border-soft);
+  display: flex; align-items: center; gap: 8px;
+}
+.pcap-api-status.loading { background: var(--blue-dim); border-color: var(--blue-border); color: var(--blue); }
+.pcap-api-status.success { background: var(--green-dim); border-color: rgba(48,217,136,0.2); color: var(--green); }
+.pcap-api-status.error { background: var(--red-dim); border-color: rgba(248,75,106,0.2); color: var(--red); }
+.pcap-spin { display: inline-block; width: 10px; height: 10px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: pcap-spin 0.7s linear infinite; flex-shrink: 0; }
+@keyframes pcap-spin { to { transform: rotate(360deg); } }
+
+.pcap-tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 10px; }
+.pcap-tool-btn {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 14px 10px;
+  background: var(--bg-void);
+  border: 1px solid var(--border-soft);
+  border-radius: 4px; text-decoration: none;
+  transition: all 0.15s; cursor: pointer; gap: 5px;
+}
+.pcap-tool-btn:hover { border-color: var(--blue-border); background: var(--blue-dim); }
+.pcap-tool-icon { font-size: 22px; line-height: 1; }
+.pcap-tool-name { font-family: var(--font-display); font-size: 11px; font-weight: 700; color: var(--text-bright); letter-spacing: 0.5px; }
+.pcap-tool-desc { font-family: var(--font-mono); font-size: 8px; color: var(--text-dim); text-align: center; }
+.pcap-tool-tag { font-family: var(--font-mono); font-size: 8px; padding: 1px 5px; border-radius: 2px; margin-top: 2px; }
+.pcap-tool-tag.free { background: var(--green-dim); color: var(--green); border: 1px solid rgba(48,217,136,0.2); }
+.pcap-tool-tag.api { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue-border); }
+
+.pcap-stat-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 12px; }
+@media(max-width:700px) { .pcap-stat-row { grid-template-columns: repeat(3,1fr); } }
+.pcap-stat-box { background: var(--bg-card); border: 1px solid var(--border-soft); border-radius: 4px; padding: 10px 12px; text-align: center; }
+.pcap-stat-num { font-family: var(--font-display); font-size: 24px; font-weight: 800; line-height: 1; margin-bottom: 3px; }
+.pcap-stat-lbl { font-family: var(--font-mono); font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); }
+
+.pcap-proto-bar { display: flex; gap: 2px; height: 18px; border-radius: 3px; overflow: hidden; margin: 8px 0 6px; }
+.pcap-proto-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.85); min-width: 16px; overflow: hidden; transition: flex 0.5s ease; }
+.pcap-proto-legend { display: flex; flex-wrap: wrap; gap: 8px; }
+.pcap-proto-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; flex-shrink: 0; }
+.pcap-proto-leg-item { font-family: var(--font-mono); font-size: 9px; color: var(--text-secondary); display: flex; align-items: center; }
+
+.pcap-tbl { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 10px; }
+.pcap-tbl th { background: var(--bg-panel); color: var(--text-dim); font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--border-soft); font-weight: 700; white-space: nowrap; }
+.pcap-tbl td { padding: 6px 10px; border-bottom: 1px solid var(--border-dim); color: var(--text-primary); vertical-align: middle; }
+.pcap-tbl tr:last-child td { border-bottom: none; }
+.pcap-tbl tr:hover td { background: var(--bg-hover); }
+.pcap-ip-link { color: var(--blue); cursor: pointer; background: none; border: none; font-family: var(--font-mono); font-size: 10px; padding: 0; text-align: left; }
+.pcap-ip-link:hover { text-decoration: underline; }
+
+.pcap-alert-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 10px 8px 12px;
+  border-left: 3px solid var(--red);
+  background: var(--red-dim);
+  margin-bottom: 4px; border-radius: 0 3px 3px 0;
+}
+.pcap-alert-item.medium { border-left-color: var(--yellow); background: var(--yellow-dim); }
+.pcap-alert-item.low { border-left-color: var(--blue); background: var(--blue-dim); }
+.pcap-alert-sev { font-family: var(--font-mono); font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 2px 6px; border-radius: 2px; flex-shrink: 0; margin-top: 1px; }
+.pcap-alert-sev.high { background: var(--red-dim); color: var(--red); border: 1px solid rgba(248,75,106,0.3); }
+.pcap-alert-sev.medium { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(255,197,51,0.3); }
+.pcap-alert-sev.low { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue-border); }
+.pcap-alert-body { flex: 1; }
+.pcap-alert-rule { font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: var(--text-bright); margin-bottom: 3px; }
+.pcap-alert-meta { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); }
+
+.pcap-dns-row { display: flex; align-items: center; gap: 8px; padding: 5px 10px; border-bottom: 1px solid var(--border-dim); font-family: var(--font-mono); font-size: 10px; }
+.pcap-dns-row:last-child { border-bottom: none; }
+.pcap-dns-type { padding: 1px 5px; border-radius: 2px; font-size: 8px; font-weight: 700; flex-shrink: 0; }
+.pcap-dns-a { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue-border); }
+.pcap-dns-aaaa { background: var(--cyan-dim); color: var(--cyan); border: 1px solid rgba(6,200,224,0.25); }
+.pcap-dns-mx { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(255,140,66,0.2); }
+.pcap-dns-other { background: rgba(128,128,128,0.1); color: var(--text-secondary); border: 1px solid var(--border-dim); }
+.pcap-dns-name { flex: 1; color: var(--text-bright); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pcap-dns-answer { color: var(--text-secondary); font-size: 9px; flex-shrink: 0; }
+
+.pcap-http-row { padding: 6px 10px; border-bottom: 1px solid var(--border-dim); font-family: var(--font-mono); font-size: 9px; }
+.pcap-http-row:last-child { border-bottom: none; }
+.pcap-http-method { display: inline-block; padding: 1px 5px; border-radius: 2px; font-size: 8px; font-weight: 700; margin-right: 6px; }
+.pcap-http-get { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue-border); }
+.pcap-http-post { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(255,140,66,0.2); }
+.pcap-http-url { color: var(--text-primary); font-weight: 600; }
+.pcap-http-host { color: var(--text-dim); margin-top: 2px; }
+.pcap-no-results { text-align: center; padding: 20px; font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.5px; }
 </style>
 </head>
 <body>
@@ -1479,6 +1674,11 @@ body::before {
     <div class="nav-item" onclick="switchMainTab('containment')" id="snav-containment" title="Containment">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
       <span class="nav-lbl">Contain</span>
+    </div>
+    <div class="nav-section-sep"></div>
+    <div class="nav-item" onclick="switchMainTab('pcap')" id="snav-pcap" title="PCAP Analysis">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span class="nav-lbl">PCAP</span>
     </div>
   </div>
 
@@ -1690,6 +1890,10 @@ body::before {
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
           Containment
         </button>
+        <button class="tab-btn" id="tab-btn-pcap" onclick="switchMainTab('pcap')">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          PCAP Analysis
+        </button>
       </div>
 
       <div class="tab-content">
@@ -1850,6 +2054,188 @@ body::before {
           </div>
         </div>
 
+        <!-- PCAP ANALYSIS TAB -->
+        <div class="tab-panel" id="tp-pcap">
+
+          <!-- Upload Card -->
+          <div class="card mbottom">
+            <div class="card-header">
+              <div class="card-title"><div class="card-title-bar cyan"></div>PCAP File Analyzer</div>
+              <div class="card-actions">
+                <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:0.5px">Powered by DynamiteLab + Local Parser</span>
+                <button class="copy-btn" id="pcap-clear-btn" onclick="resetPCAP()" style="display:none">✕ Clear</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- Drop zone -->
+              <div class="pcap-drop-zone" id="pcap-drop-zone"
+                onclick="document.getElementById('pcap-file-input').click()"
+                ondragover="pcapDragOver(event)" ondragleave="pcapDragLeave(event)" ondrop="pcapDrop(event)">
+                <div class="pcap-drop-icon">
+                  <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <div class="pcap-drop-text">Drop your <b>.pcap</b> or <b>.pcapng</b> file here, or <u>click to browse</u></div>
+                <div class="pcap-drop-sub">Supports: .pcap · .pcapng · .cap — Parsed locally in your browser, never uploaded here</div>
+                <input type="file" id="pcap-file-input" accept=".pcap,.pcapng,.cap,.pcap.gz" style="display:none" onchange="handlePCAPInput(this.files[0])"/>
+              </div>
+
+              <!-- File info bar (hidden until file loaded) -->
+              <div class="pcap-file-info-bar" id="pcap-file-info" style="display:none">
+                <div class="pcap-file-icon" id="pcap-file-icon">PCAP</div>
+                <div class="pcap-file-details">
+                  <div class="pcap-file-name" id="pcap-file-name"></div>
+                  <div class="pcap-file-meta" id="pcap-file-meta"></div>
+                </div>
+                <div class="pcap-file-valid ok" id="pcap-file-valid">✔ Valid PCAP</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DynamiteLab Launch Card -->
+          <div class="card mbottom" id="pcap-dynamite-card" style="display:none">
+            <div class="card-header">
+              <div class="card-title"><div class="card-title-bar cyan"></div>⬡ Open in DynamiteLab</div>
+            </div>
+            <div class="card-body">
+              <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:4px 0 10px">
+                <div style="flex:1;min-width:220px">
+                  <div style="font-family:var(--font-sans);font-size:13px;font-weight:600;color:var(--text-bright);margin-bottom:4px">Visual Graph · Timeline · Communications</div>
+                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);line-height:1.6">
+                    DynamiteLab gives you interactive network graphs, protocol timelines, conversation flows, and threat enrichment layers — all in-browser, 100% free.
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0">
+                  <a href="https://dynamitelab.com/pcaps" target="_blank" class="btn btn-cyan" style="display:flex;align-items:center;gap:8px;text-decoration:none;padding:10px 20px;font-size:12px">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    Open DynamiteLab ↗
+                  </a>
+                  <button class="copy-btn" onclick="copyPCAPName()" style="text-align:center">📋 Copy Filename</button>
+                </div>
+              </div>
+              <div style="background:var(--bg-void);border:1px solid var(--border-dim);border-radius:3px;padding:10px 12px;">
+                <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">How to analyze your file on DynamiteLab</div>
+                <div style="display:flex;flex-direction:column;gap:5px">
+                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-primary);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--cyan);font-weight:700;flex-shrink:0">1.</span>Click "Open DynamiteLab" above → the site opens in a new tab</div>
+                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-primary);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--cyan);font-weight:700;flex-shrink:0">2.</span>Click the upload / "+" button on DynamiteLab and select your PCAP file</div>
+                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-primary);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--cyan);font-weight:700;flex-shrink:0">3.</span>Use Visual Graph, Timeline, and Communications views to investigate</div>
+                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-primary);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--cyan);font-weight:700;flex-shrink:0">4.</span>Copy extracted IPs/domains back into JDL for VT + AbuseIPDB enrichment</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Local Parse Results (shown after file load) -->
+          <div id="pcap-results" style="display:none">
+
+            <!-- Summary Stats -->
+            <div class="pcap-stat-row mbottom">
+              <div class="pcap-stat-box"><div class="pcap-stat-num" id="pcap-s-packets" style="color:var(--cyan)">—</div><div class="pcap-stat-lbl">Packets</div></div>
+              <div class="pcap-stat-box"><div class="pcap-stat-num" id="pcap-s-ips" style="color:var(--blue)">—</div><div class="pcap-stat-lbl">Unique IPs</div></div>
+              <div class="pcap-stat-box"><div class="pcap-stat-num" id="pcap-s-duration" style="color:var(--green)">—</div><div class="pcap-stat-lbl">Duration (s)</div></div>
+              <div class="pcap-stat-box"><div class="pcap-stat-num" id="pcap-s-protos" style="color:var(--orange)">—</div><div class="pcap-stat-lbl">Protocols</div></div>
+              <div class="pcap-stat-box"><div class="pcap-stat-num" id="pcap-s-size" style="color:var(--text-primary)">—</div><div class="pcap-stat-lbl">File Size</div></div>
+            </div>
+
+            <div class="grid2 mbottom">
+              <!-- Protocol Distribution -->
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title"><div class="card-title-bar cyan"></div>Protocol Distribution</div>
+                </div>
+                <div class="card-body">
+                  <div class="pcap-proto-bar" id="pcap-proto-bar"></div>
+                  <div class="pcap-proto-legend" id="pcap-proto-legend"></div>
+                </div>
+              </div>
+
+              <!-- Capture Info -->
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title"><div class="card-title-bar blue"></div>Capture Metadata</div>
+                </div>
+                <div class="card-body">
+                  <div id="pcap-meta-rows" style="display:flex;flex-direction:column;gap:6px"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Extracted IPs -->
+            <div class="card mbottom">
+              <div class="card-header">
+                <div class="card-title"><div class="card-title-bar blue"></div>Extracted IP Addresses</div>
+                <div class="card-actions">
+                  <button class="copy-btn" onclick="copyPCAPIPs()">Copy IPs</button>
+                  <button class="copy-btn" onclick="pushPCAPIPs()" style="background:var(--blue-dim);border-color:var(--blue-border);color:var(--blue)">→ Push to Network Tab</button>
+                </div>
+              </div>
+              <div style="padding:0 14px 14px">
+                <table class="pcap-tbl">
+                  <thead><tr><th>IP Address</th><th>Direction</th><th>Protocol</th><th>Port</th><th>Packets</th><th>Actions</th></tr></thead>
+                  <tbody id="pcap-ip-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- DNS Queries -->
+            <div class="card mbottom" id="pcap-dns-card" style="display:none">
+              <div class="card-header">
+                <div class="card-title"><div class="card-title-bar orange"></div>DNS Queries</div>
+                <span id="pcap-dns-count" style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim)"></span>
+              </div>
+              <div id="pcap-dns-list" style="padding:0 0 6px"></div>
+            </div>
+
+          </div><!-- /pcap-results -->
+
+          <!-- Other Tools -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><div class="card-title-bar blue"></div>Other Free PCAP Tools</div>
+            </div>
+            <div class="card-body">
+              <div class="pcap-tools-grid">
+                <a href="https://dynamitelab.com/pcaps" target="_blank" class="pcap-tool-btn">
+                  <div class="pcap-tool-icon">⬡</div>
+                  <div class="pcap-tool-name">DynamiteLab</div>
+                  <div class="pcap-tool-desc">Visual graph · Timeline · Comms</div>
+                  <span class="pcap-tool-tag free">FREE</span>
+                </a>
+                <a href="https://apackets.com/upload" target="_blank" class="pcap-tool-btn">
+                  <div class="pcap-tool-icon">📡</div>
+                  <div class="pcap-tool-name">A-Packets</div>
+                  <div class="pcap-tool-desc">HTTP · DNS · FTP · Telnet decode</div>
+                  <span class="pcap-tool-tag free">FREE</span>
+                </a>
+                <a href="https://packettotal.com" target="_blank" class="pcap-tool-btn">
+                  <div class="pcap-tool-icon">🔬</div>
+                  <div class="pcap-tool-name">PacketTotal</div>
+                  <div class="pcap-tool-desc">IDS alerts · IOC extraction · API</div>
+                  <span class="pcap-tool-tag api">API</span>
+                </a>
+                <a href="https://redhand.io/analyzer" target="_blank" class="pcap-tool-btn">
+                  <div class="pcap-tool-icon">🖐</div>
+                  <div class="pcap-tool-name">RedHand</div>
+                  <div class="pcap-tool-desc">Free online PCAP analyzer</div>
+                  <span class="pcap-tool-tag free">FREE</span>
+                </a>
+                <a href="https://flowtriq.com/tools/pcap-analyzer" target="_blank" class="pcap-tool-btn">
+                  <div class="pcap-tool-icon">🌊</div>
+                  <div class="pcap-tool-name">Flowtriq</div>
+                  <div class="pcap-tool-desc">DDoS detection · Flow analysis</div>
+                  <span class="pcap-tool-tag free">FREE</span>
+                </a>
+                <a href="https://www.gigasheet.com" target="_blank" class="pcap-tool-btn">
+                  <div class="pcap-tool-icon">📊</div>
+                  <div class="pcap-tool-name">Gigasheet</div>
+                  <div class="pcap-tool-desc">PCAP as spreadsheet · SOAR</div>
+                  <span class="pcap-tool-tag api">API</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /tp-pcap -->
+
       </div>
     </div>
   </div>
@@ -1883,16 +2269,28 @@ body::before {
 
 <!-- REPORT MODAL -->
 <div id="report-modal" class="modal-backdrop" style="display:none" onclick="if(event.target===this)closeReport()">
-  <div class="modal">
-    <div class="modal-hdr">
-      <div class="modal-title">📄 Incident Report — JDLThreatIntel</div>
-      <button class="modal-close" onclick="closeReport()">✕ Close</button>
+  <div class="modal" style="max-width:980px;max-height:92vh">
+    <div class="modal-hdr" style="padding:12px 20px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="modal-title" style="font-size:14px">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Incident Report
+        </div>
+        <span id="rpt-case-badge" style="font-family:var(--font-mono);font-size:10px;color:var(--cyan);letter-spacing:1px"></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="copy-btn" onclick="copyReport()" title="Copy text to clipboard">📋 Copy</button>
+        <button class="btn btn-sm" style="background:var(--bg-panel);border:1px solid var(--border-mid);color:var(--text-secondary);font-size:11px" onclick="printReport()" title="Print / Save as PDF">🖨 Print / PDF</button>
+        <button class="btn btn-sm btn-cyan" onclick="downloadReport()" title="Download standalone HTML report">⬇ Download HTML</button>
+        <button class="modal-close" onclick="closeReport()">✕</button>
+      </div>
     </div>
-    <div class="modal-body" id="report-body"><div class="empty-state">No analysis data yet. Run a scan first.</div></div>
-    <div class="modal-footer">
-      <button class="copy-btn" onclick="copyReport()">Copy</button>
-      <button class="btn btn-sm btn-cyan" onclick="downloadReport()">⬇ Download HTML</button>
-      <button class="btn btn-sm btn-ghost" onclick="printReport()">🖨 Print</button>
+    <div class="modal-body" id="report-body" style="padding:24px 28px;background:var(--bg-base)">
+      <div class="empty-state" style="padding:60px 20px">
+        <div style="font-size:28px;margin-bottom:12px">📄</div>
+        <div style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:6px">No analysis data yet</div>
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim)">Run a VT scan, sandbox analysis, or IP lookup first</div>
+      </div>
     </div>
   </div>
 </div>
@@ -2004,7 +2402,7 @@ function newSession(){
 
 // ── TAB SWITCHING ─────────────────────────────────────────────────────
 function switchMainTab(id){
-  ['overview','sandbox','network','ioc','containment'].forEach(t=>{
+  ['overview','sandbox','network','ioc','containment','pcap'].forEach(t=>{
     const tp = document.getElementById('tp-'+t);
     const tb = document.getElementById('tab-btn-'+t);
     const sn = document.getElementById('snav-'+t);
@@ -2744,96 +3142,953 @@ function copyContainment(){
 function openReport(){buildReport();document.getElementById('report-modal').style.display='flex';}
 function closeReport(){document.getElementById('report-modal').style.display='none';}
 
+// ── REPORT BUILD ───────────────────────────────────────────────────
 function buildReport(){
-  const ts=state.analysisTs||new Date().toISOString();
-  const d=state.sbData||{};
-  const vt=state.vtData?.data?.attributes;
-  const stats=vt?.last_analysis_stats;
-  const total=stats?(stats.malicious||0)+(stats.suspicious||0)+(stats.harmless||0)+(stats.undetected||0):0;
-  const pct=total>0?Math.round((stats.malicious||0)/total*100):0;
-  const riskNum=parseInt(document.getElementById('score-num').textContent)||0;
-  const riskLbl=document.getElementById('score-label').textContent||'UNKNOWN';
-  const malwareName=vt?.suggested_threat_label||vt?.popular_threat_classification?.suggested_threat_label||vt?.meaningful_name||null;
-  const families=(vt?.popular_threat_classification?.popular_threat_name||[]).map(f=>f.value);
-  const topDetections=state.vtAllEngines.filter(e=>e.category==='malicious').slice(0,10);
+  const ts   = state.analysisTs || new Date().toISOString();
+  const sb   = state.sbData || {};
+  const vt   = state.vtData?.data?.attributes;
+  const hash = state.vtData?.data?.id || document.getElementById('hash-inp').value.trim() || null;
+  const stats = vt?.last_analysis_stats;
+  const total = stats ? (stats.malicious||0)+(stats.suspicious||0)+(stats.harmless||0)+(stats.undetected||0) : 0;
+  const pct   = total > 0 ? Math.round((stats?.malicious||0)/total*100) : 0;
+  const riskNum = parseInt(document.getElementById('score-num').textContent) || 0;
+  const riskLbl = document.getElementById('score-label').textContent.trim() || 'UNKNOWN';
+  const threatColor = riskNum>=75?'#f84b6a':riskNum>=50?'#ff8c42':riskNum>=25?'#ffc533':'#30d988';
+  const classKey = riskNum>=75?'critical':riskNum>=50?'high':riskNum>=25?'medium':riskNum>0?'low':'clean';
+  const classLabel = riskNum>=75?'THREAT LEVEL: CRITICAL':riskNum>=50?'THREAT LEVEL: HIGH':riskNum>=25?'THREAT LEVEL: MEDIUM':riskNum>0?'THREAT LEVEL: LOW':'THREAT LEVEL: CLEAN';
+  const malwareName = vt?.suggested_threat_label||vt?.popular_threat_classification?.suggested_threat_label||vt?.meaningful_name||null;
+  const families = (vt?.popular_threat_classification?.popular_threat_name||[]).map(f=>f.value);
+  const categories = (vt?.popular_threat_classification?.popular_threat_category||[]).map(c=>c.value);
+  const tags = (vt?.tags||[]).slice(0,6);
+  const topDets = state.vtAllEngines.filter(e=>e.category==='malicious'&&e.result).slice(0,16);
+  const allMal  = state.vtAllEngines.filter(e=>e.category==='malicious').length;
+  const allSus  = state.vtAllEngines.filter(e=>e.category==='suspicious').length;
+  const allCln  = state.vtAllEngines.filter(e=>e.category==='harmless').length;
+  const allUnd  = state.vtAllEngines.filter(e=>e.category==='undetected').length;
+  const killPhase = document.querySelector('.kc-phase.active')?.textContent?.trim() || '—';
+  const techniques = (sb.attack_techniques||[]);
+  const netConns = (sb.network_connections||[]);
+  const drops = (sb.dropped_files||[]);
+  const caseId = 'CASE-' + new Date(ts).getFullYear() + '-' + String(new Date(ts).getTime()).slice(-6);
 
-  setEl('report-body',`
-    <div class="rpt-title">Incident Analysis Report</div>
-    <div class="rpt-meta">
-      <span>🕒 ${new Date(ts).toLocaleString()}</span>
-      <span>📦 JDLThreatIntel v3.0</span>
-      <span>🧰 Sandbox: ${(d.engine||sandboxEngine||'anyrun').toUpperCase()}</span>
-      ${d.triage_url?`<span><a href="${esc(d.triage_url)}" target="_blank" style="color:var(--blue)">↗ Triage Report</a></span>`:''}
-    </div>
-    <div class="rpt-section">
-      <div class="rpt-sh">Executive Summary</div>
-      <div class="rpt-grid2">
-        <div class="rpt-kv"><div class="rpt-kv-k">Threat Score</div><div class="rpt-kv-v" style="font-size:20px;color:${getCol(riskNum)}">${riskNum}/100 — ${riskLbl}</div></div>
-        <div class="rpt-kv"><div class="rpt-kv-k">Timestamp</div><div class="rpt-kv-v">${new Date(ts).toUTCString()}</div></div>
-        <div class="rpt-kv"><div class="rpt-kv-k">VT Detection</div><div class="rpt-kv-v" style="color:${getCol(pct)}">${pct}% (${stats?.malicious??'—'}/${total||'—'})</div></div>
-        <div class="rpt-kv"><div class="rpt-kv-k">Kill Chain Phase</div><div class="rpt-kv-v">${document.querySelector('.kc-phase.active')?.textContent?.trim()||'Unknown'}</div></div>
+  const badge = document.getElementById('rpt-case-badge');
+  if(badge) badge.textContent = caseId;
+
+  // ── SECTION HELPER ──────────────────────────────────────────────
+  const sec = (num, title, body) =>
+    `<div class="rpt-section">
+      <div class="rpt-sh"><span class="rpt-sh-num">${String(num).padStart(2,'0')}</span>${esc(title)}</div>
+      ${body}
+    </div>`;
+
+  // ── HASH DETECTION BAR ──────────────────────────────────────────
+  const detBar = total > 0 ? `
+    <div class="rpt-det-wrap">
+      <div class="rpt-det-header">
+        <div><div class="rpt-det-pct" style="color:${threatColor}">${pct}%</div><div class="rpt-det-lbl">Detection Rate — ${allMal+allSus} of ${total} engines flagged</div></div>
+      </div>
+      <div class="rpt-det-bar-bg"><div class="rpt-det-bar-fill" style="width:${pct}%;background:${threatColor}"></div></div>
+      <div class="rpt-det-stats">
+        <div class="rpt-det-stat"><div class="rpt-det-dot" style="background:#f84b6a"></div><b style="color:#f84b6a">${allMal}</b>&nbsp;Malicious</div>
+        <div class="rpt-det-stat"><div class="rpt-det-dot" style="background:#ffc533"></div><b style="color:#ffc533">${allSus}</b>&nbsp;Suspicious</div>
+        <div class="rpt-det-stat"><div class="rpt-det-dot" style="background:#30d988"></div><b style="color:#30d988">${allCln}</b>&nbsp;Clean</div>
+        <div class="rpt-det-stat"><div class="rpt-det-dot" style="background:#3a4a66"></div>${allUnd}&nbsp;Undetected</div>
+      </div>
+    </div>` : '';
+
+  // ── SECTION 01: OVERVIEW ────────────────────────────────────────
+  const s01 = sec(1,'Executive Overview',`
+    <div class="rpt-overview-wrap">
+      <div class="rpt-score-block">
+        <div class="rpt-score-circle" style="color:${threatColor}">
+          <div class="rpt-score-big" style="color:${threatColor}">${riskNum||'—'}</div>
+          <div class="rpt-score-max">/100</div>
+        </div>
+        <div class="rpt-score-lbl" style="color:${threatColor}">${esc(riskLbl)}</div>
+      </div>
+      <div class="rpt-ov-stats">
+        <div class="rpt-ov-item"><div class="rpt-ov-lbl">Analysis Timestamp</div><div class="rpt-ov-val" style="font-size:11px">${new Date(ts).toUTCString()}</div></div>
+        <div class="rpt-ov-item"><div class="rpt-ov-lbl">VT Detection Rate</div><div class="rpt-ov-val" style="color:${threatColor}">${total>0?pct+'% ('+allMal+'/'+total+' engines)':'No VT data'}</div></div>
+        <div class="rpt-ov-item"><div class="rpt-ov-lbl">Kill Chain Phase</div><div class="rpt-ov-val">${esc(killPhase)}</div></div>
+        <div class="rpt-ov-item"><div class="rpt-ov-lbl">Sandbox Engine</div><div class="rpt-ov-val">${esc((sb.engine||sandboxEngine||'—').toUpperCase())}${sb.triage_url?` <a href="${esc(sb.triage_url)}" target="_blank" style="color:var(--cyan);font-size:9px;font-family:var(--font-mono)">↗ Report</a>`:''}</div></div>
+        <div class="rpt-ov-item"><div class="rpt-ov-lbl">Network Connections</div><div class="rpt-ov-val">${netConns.length||document.getElementById('ov-conn').textContent||'0'}</div></div>
+        <div class="rpt-ov-item"><div class="rpt-ov-lbl">MITRE Techniques</div><div class="rpt-ov-val">${techniques.length||document.getElementById('ov-mitre').textContent||'0'}</div></div>
       </div>
     </div>
-    ${malwareName||families.length?`
-    <div class="rpt-section">
-      <div class="rpt-sh">Malware Identification</div>
-      ${malwareName?`<div class="rpt-kv" style="margin-bottom:8px"><div class="rpt-kv-k">Threat Name</div><div class="rpt-kv-v" style="font-size:16px;color:var(--red)">${esc(malwareName)}</div></div>`:''}
-      ${families.length?`<div class="rpt-kv"><div class="rpt-kv-k">Families</div><div class="rpt-kv-v">${families.map(f=>`<span class="badge b-red" style="margin:2px;font-size:11px">${esc(f)}</span>`).join('')}</div></div>`:''}
+    ${detBar}`);
+
+  // ── SECTION 02: FILE INTELLIGENCE ───────────────────────────────
+  const s02 = vt ? sec(2,'File Intelligence',`
+    <div class="rpt-kv-grid">
+      ${hash?`<div class="rpt-kv" style="grid-column:1/-1"><div class="rpt-kv-k">${hash.length===64?'SHA-256':hash.length===40?'SHA-1':hash.length===32?'MD5':'Hash'}</div><div class="rpt-kv-v">${esc(hash)}</div></div>`:''}
+      ${vt.md5?`<div class="rpt-kv"><div class="rpt-kv-k">MD5</div><div class="rpt-kv-v">${esc(vt.md5)}</div></div>`:''}
+      ${vt.sha1?`<div class="rpt-kv"><div class="rpt-kv-k">SHA-1</div><div class="rpt-kv-v">${esc(vt.sha1)}</div></div>`:''}
+      ${vt.meaningful_name?`<div class="rpt-kv"><div class="rpt-kv-k">Filename</div><div class="rpt-kv-v">${esc(vt.meaningful_name)}</div></div>`:''}
+      ${vt.type_description?`<div class="rpt-kv"><div class="rpt-kv-k">File Type</div><div class="rpt-kv-v">${esc(vt.type_description)}</div></div>`:''}
+      ${vt.size?`<div class="rpt-kv"><div class="rpt-kv-k">File Size</div><div class="rpt-kv-v">${formatSize(vt.size)}</div></div>`:''}
+      ${vt.first_submission_date?`<div class="rpt-kv"><div class="rpt-kv-k">First Seen</div><div class="rpt-kv-v">${new Date(vt.first_submission_date*1000).toUTCString()}</div></div>`:''}
+      ${vt.last_submission_date?`<div class="rpt-kv"><div class="rpt-kv-k">Last Seen</div><div class="rpt-kv-v">${new Date(vt.last_submission_date*1000).toUTCString()}</div></div>`:''}
+      ${vt.times_submitted?`<div class="rpt-kv"><div class="rpt-kv-k">Times Submitted</div><div class="rpt-kv-v">${vt.times_submitted}</div></div>`:''}
+    </div>`) : '';
+
+  // ── SECTION 03: THREAT IDENTIFICATION ───────────────────────────
+  const s03 = (malwareName||families.length||categories.length) ? sec(3,'Threat Identification',`
+    ${malwareName?`<div class="rpt-threat-banner">
+      <div class="rpt-threat-name-text">⬡ ${esc(malwareName)}</div>
+      ${categories.length?`<div class="rpt-threat-sub">${categories.join(' · ')}</div>`:''}
     </div>`:''}
-    ${topDetections.length?`
+    ${families.length?`<div style="margin-bottom:10px"><div style="font-family:var(--font-mono);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px">Known Families</div>${families.map(f=>`<span class="badge b-red" style="margin:2px">${esc(f)}</span>`).join('')}</div>`:''}
+    ${tags.length?`<div><div style="font-family:var(--font-mono);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px">Tags</div>${tags.map(t=>`<span class="badge b-dim" style="margin:2px">${esc(t)}</span>`).join('')}</div>`:''}
+    `) : '';
+
+  // ── SECTION 04: AV DETECTIONS ───────────────────────────────────
+  const s04 = topDets.length ? sec(4,`AV Detection Summary (${allMal} Malicious / ${total} Total)`,`
+    <table class="rpt-tbl" style="margin-bottom:0">
+      <thead><tr><th>#</th><th>AV Engine</th><th>Detection Result</th><th>Category</th></tr></thead>
+      <tbody>${topDets.map((e,i)=>`<tr>
+        <td style="color:var(--text-dim);width:30px">${i+1}</td>
+        <td style="font-weight:600;color:var(--text-bright)">${getAVIcon(e.engine)} ${esc(e.engine)}</td>
+        <td style="color:var(--red);font-weight:700">${esc(e.result||'—')}</td>
+        <td><span class="badge b-red" style="font-size:8px">${esc(e.category)}</span></td>
+      </tr>`).join('')}</tbody>
+    </table>
+    ${allMal>16?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);padding:6px 10px">… and ${allMal-16} more malicious detections. <button class="copy-btn" style="display:inline;padding:2px 8px;font-size:8px" onclick="closeReport();setTimeout(()=>document.getElementById('tab-btn-overview').click(),100)">View All →</button></div>`:''}`
+  ) : '';
+
+  // ── SECTION 05: NETWORK CONNECTIONS ─────────────────────────────
+  const connRows = netConns.length ? netConns.slice(0,20) : state.iocs.ips.length ?
+    state.iocs.ips.map(ip => ({host:ip, port:'—', protocol:'—'})) : [];
+  const s05 = connRows.length ? sec(5,'Network Activity',`
+    <table class="rpt-tbl">
+      <thead><tr><th>IP / Host</th><th>Port</th><th>Protocol</th><th>Abuse Score</th><th>Country</th></tr></thead>
+      <tbody>${connRows.map(c=>{
+        const ip = c.host||c.ip||'';
+        const ipd = state.ipData[ip]||{};
+        const aScore = ipd.abuseConfidenceScore||0;
+        const scoreCol = aScore>=75?'var(--red)':aScore>=40?'var(--orange)':aScore>0?'var(--yellow)':'var(--text-dim)';
+        return `<tr>
+          <td style="font-weight:600;color:var(--blue);font-family:var(--font-mono)">${esc(ip)}</td>
+          <td style="font-family:var(--font-mono)">${esc(String(c.port||'—'))}</td>
+          <td><span class="badge b-dim" style="font-size:8px">${esc(c.protocol||'—')}</span></td>
+          <td style="color:${scoreCol};font-weight:700;font-family:var(--font-mono)">${aScore>0?aScore+'%':'—'}</td>
+          <td style="font-family:var(--font-mono)">${esc(ipd.countryCode||'—')}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`) : '';
+
+  // ── SECTION 06: MITRE ATT&CK ────────────────────────────────────
+  const s06 = techniques.length ? sec(6,`MITRE ATT&CK — ${techniques.length} Technique${techniques.length>1?'s':''}`,`
+    <table class="rpt-tbl">
+      <thead><tr><th>ID</th><th>Technique</th><th>Tactic</th><th>Description</th></tr></thead>
+      <tbody>${techniques.map(t=>`<tr>
+        <td><span class="badge b-orange" style="font-size:9px">${esc(t.id||'—')}</span></td>
+        <td style="font-weight:600;color:var(--text-bright)">${esc(t.name||'—')}</td>
+        <td style="color:var(--text-secondary)">${esc((t.tactics||[]).join(', ')||t.tactic||'—')}</td>
+        <td style="color:var(--text-secondary);font-size:9px">${esc((t.description||'').substring(0,120)||'—')}</td>
+      </tr>`).join('')}</tbody>
+    </table>`) : '';
+
+  // ── SECTION 07: INDICATORS OF COMPROMISE ────────────────────────
+  const hasIOCs = state.iocs.ips.length||state.iocs.domains.length||state.iocs.hashes.length||state.iocs.files.length;
+  const s07 = hasIOCs ? sec(7,'Indicators of Compromise',`
+    ${state.iocs.ips.length?`<div class="rpt-ioc-section">
+      <div class="rpt-ioc-type-hdr">IP Addresses (${state.iocs.ips.length})</div>
+      ${state.iocs.ips.map(ip=>{
+        const d=state.ipData[ip]||{};
+        const sc=d.abuseConfidenceScore||0;
+        return `<div class="rpt-ioc-entry">
+          <span class="rpt-ioc-bullet">■</span>
+          <span class="rpt-ioc-val">${esc(ip)}</span>
+          ${sc>0?`<span class="rpt-ioc-tag ${sc>=75?'b-red':sc>=40?'b-yellow':'b-dim'}">${sc}%</span>`:''}
+          ${d.countryCode?`<span class="rpt-ioc-tag b-dim">${esc(d.countryCode)}</span>`:''}
+          ${d.isp?`<span style="font-size:9px;color:var(--text-dim)">${esc(d.isp)}</span>`:''}
+        </div>`;
+      }).join('')}
+    </div>`:''}
+    ${state.iocs.domains.length?`<div class="rpt-ioc-section">
+      <div class="rpt-ioc-type-hdr">Domains (${state.iocs.domains.length})</div>
+      ${state.iocs.domains.map(d=>`<div class="rpt-ioc-entry"><span class="rpt-ioc-bullet">■</span><span class="rpt-ioc-val">${esc(d)}</span></div>`).join('')}
+    </div>`:''}
+    ${state.iocs.hashes.length?`<div class="rpt-ioc-section">
+      <div class="rpt-ioc-type-hdr">File Hashes (${state.iocs.hashes.length})</div>
+      ${state.iocs.hashes.map(h=>`<div class="rpt-ioc-entry"><span class="rpt-ioc-bullet">■</span><span class="rpt-ioc-val">${esc(h)}</span></div>`).join('')}
+    </div>`:''}
+    ${state.iocs.files.length?`<div class="rpt-ioc-section">
+      <div class="rpt-ioc-type-hdr">Files (${state.iocs.files.length})</div>
+      ${state.iocs.files.map(f=>`<div class="rpt-ioc-entry"><span class="rpt-ioc-bullet">■</span><span class="rpt-ioc-val">${esc(f)}</span></div>`).join('')}
+    </div>`:''}
+    `) : '';
+
+  // ── SECTION 08: CONTAINMENT PLAN ────────────────────────────────
+  const containCards = [...document.querySelectorAll('.contain-card')];
+  const s08 = containCards.length ? sec(8,'Incident Response — Containment Plan',
+    containCards.map((el,i)=>{
+      const title = el.querySelector('.ct')?.textContent?.trim()||'';
+      const desc  = el.querySelector('.cs')?.textContent?.trim()||'';
+      const pri   = el.querySelector('.priority-tag')?.textContent?.trim()||'';
+      const priCls= pri.toLowerCase().includes('critical')?'b-red':pri.toLowerCase().includes('high')?'b-orange':pri.toLowerCase().includes('medium')?'b-yellow':'b-dim';
+      return `<div class="rpt-action-item">
+        <div class="rpt-action-num">${String(i+1).padStart(2,'0')}</div>
+        <div class="rpt-action-body">
+          <div class="rpt-action-title">${esc(title)}</div>
+          <div class="rpt-action-desc">${esc(desc)}</div>
+        </div>
+        ${pri?`<span class="rpt-action-pri badge ${priCls}">${esc(pri)}</span>`:''}
+      </div>`;
+    }).join('')) : '';
+
+  // ── APPENDIX: RAW IOC BLOCKLIST ─────────────────────────────────
+  const rawIOC = document.getElementById('ioc-raw')?.textContent?.trim()||'';
+  const sApp = rawIOC && rawIOC !== '; Awaiting analysis…' ? `
     <div class="rpt-section">
-      <div class="rpt-sh">Top AV Detections (${topDetections.length})</div>
-      <div style="display:flex;flex-wrap:wrap;gap:5px">
-        ${topDetections.map(e=>`<div class="rpt-kv" style="flex:1;min-width:200px"><div class="rpt-kv-k">${esc(e.engine)}</div><div class="rpt-kv-v" style="color:var(--red)">${esc(e.result||'—')}</div></div>`).join('')}
+      <div class="rpt-sh"><span class="rpt-sh-num">APP</span>Raw IOC Blocklist</div>
+      <div class="rpt-ioc-block">${esc(rawIOC)}</div>
+    </div>` : '';
+
+  // ── ASSEMBLE FULL REPORT ─────────────────────────────────────────
+  const noData = !vt && !sb.engine && !state.iocs.ips.length && !state.iocs.hashes.length;
+
+  const html = noData
+    ? `<div class="empty-state" style="padding:60px 20px">
+        <div style="font-size:28px;margin-bottom:12px">📄</div>
+        <div style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:6px">No analysis data yet</div>
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim)">Run a VT scan, sandbox analysis, or IP lookup first</div>
+      </div>`
+    : `<!-- HEADER -->
+      <div class="rpt-header">
+        <div class="rpt-logo-wrap">
+          <svg viewBox="0 0 32 32" width="32" height="32">
+            <rect width="32" height="32" rx="5" fill="#060c18"/>
+            <polygon points="16,4 27,10 27,22 16,28 5,22 5,10" stroke="#5b7cff" stroke-width="1.6" fill="rgba(91,124,255,0.15)" stroke-linejoin="round"/>
+            <polygon points="16,8 23,12 23,20 16,24 9,20 9,12" stroke="#06c8e0" stroke-width="0.8" fill="none" stroke-linejoin="round" opacity="0.75"/>
+            <circle cx="16" cy="16" r="3" fill="#5b7cff"/><circle cx="16" cy="16" r="1.3" fill="#06c8e0"/>
+          </svg>
+          <div class="rpt-logo-texts">
+            <div class="rpt-logo-name">JDLThreatIntel</div>
+            <div class="rpt-logo-sub">SOC Investigation Platform v3.1</div>
+          </div>
+        </div>
+        <div class="rpt-doc-info">
+          <div class="rpt-case-id">${esc(caseId)}</div>
+          <div class="rpt-ts">${new Date(ts).toUTCString()}</div>
+          <div class="rpt-analyst">Analyst: John Dominick B. Limpag · Sr. SOC Specialist</div>
+        </div>
       </div>
-    </div>`:''}
-    ${(d.attack_techniques||[]).length?`
-    <div class="rpt-section">
-      <div class="rpt-sh">MITRE ATT&CK (${d.attack_techniques.length})</div>
-      <div style="display:flex;flex-wrap:wrap;gap:5px">${d.attack_techniques.map(t=>`<span class="badge b-orange">${esc(t.id||'')} ${esc(t.name||'')}</span>`).join('')}</div>
-    </div>`:''}
-    ${state.iocs.ips.length||state.iocs.domains.length?`
-    <div class="rpt-section">
-      <div class="rpt-sh">Indicators of Compromise</div>
-      ${state.iocs.ips.length?`<div style="margin-bottom:8px"><div style="font-family:var(--font-mono);font-size:12px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">IPs</div>${state.iocs.ips.map(ip=>{const d=state.ipData[ip];return `<div class="rpt-kv" style="margin-bottom:4px;display:flex;gap:8px;align-items:center"><span style="color:var(--blue);font-family:var(--font-mono);font-weight:700">${esc(ip)}</span>${d?`<span class="badge ${(d.abuseConfidenceScore||0)>=75?'b-red':'b-yellow'}" style="font-size:11px">${d.abuseConfidenceScore}% · ${d.countryCode||'?'}</span>`:''}</div>`;}).join('')}</div>`:''}
-    </div>`:''}
-    <div class="rpt-section">
-      <div class="rpt-sh">Raw IOC Blocklist</div>
-      <div class="rpt-ioc-block">${esc(document.getElementById('ioc-raw').textContent)}</div>crip
-    </div>
-    <div class="rpt-section">
-      <div class="rpt-sh">Containment Recommendations</div>
-      ${[...document.querySelectorAll('.contain-card')].map(el=>{
-        const t=el.querySelector('.ct')?.textContent||'';
-        const s=el.querySelector('.cs')?.textContent||'';
-        const p=el.querySelector('.priority-tag')?.textContent||'';
-        return `<div class="rpt-kv" style="margin-bottom:5px"><div class="rpt-kv-k">[${esc(p)}] ${esc(t)}</div><div class="rpt-kv-v" style="font-weight:400;color:var(--text-secondary)">${esc(s)}</div></div>`;
-      }).join('')||'<div class="empty-state">No containment data</div>'}
-    </div>`);
+      <!-- CLASSIFICATION BANNER -->
+      <div class="rpt-class-bar rpt-class-${classKey}">
+        <span class="rpt-class-dot"></span>
+        ${classLabel} — FOR INTERNAL USE ONLY
+      </div>
+      ${s01}${s02}${s03}${s04}${s05}${s06}${s07}${s08}${sApp}
+      <!-- FOOTER -->
+      <div class="rpt-footer">
+        <span>⬡ JDLThreatIntel v3.1 · ${esc(caseId)}</span>
+        <span>Generated: ${new Date().toUTCString()}</span>
+        <span>John Dominick B. Limpag · Senior SOC Specialist / DFIR Lead</span>
+      </div>`;
+
+  setEl('report-body', html);
 }
 
 function copyReport(){
-  const text=[...document.getElementById('report-body').querySelectorAll('*')].map(e=>e.textContent.trim()).filter(Boolean).join('\n');
-  navigator.clipboard.writeText(text).then(()=>toast('✓ Report copied'));
+  const lines=[];
+  const rptEl=document.getElementById('report-body');
+  // Walk visible text nodes intelligently
+  rptEl.querySelectorAll('[class*="rpt-"],[class="badge"]').forEach(el=>{
+    const t=el.textContent.trim();
+    if(t&&t.length>1&&!el.querySelector('[class*="rpt-"],[class="badge"]'))lines.push(t);
+  });
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>toast('✓ Report text copied'));
 }
+
+// ── STANDALONE HTML CSS ──────────────────────────────────────────
+function getRptCSS(dark=true){
+  const d=dark;
+  return `
+:root{
+  --bg-void:${d?'#060c18':'#f1f4f9'};--bg-base:${d?'#09111f':'#e8ecf4'};--bg-card:${d?'#0e1a2e':'#ffffff'};
+  --bg-panel:${d?'#0b1525':'#f6f8fc'};--bg-active:${d?'#172540':'#e2e8f3'};
+  --border-soft:${d?'rgba(255,255,255,0.09)':'rgba(0,0,0,0.10)'};
+  --border-dim:${d?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.06)'};
+  --border-mid:${d?'rgba(255,255,255,0.14)':'rgba(0,0,0,0.15)'};
+  --blue:${d?'#5b7cff':'#3a56e8'};--blue-dim:${d?'rgba(91,124,255,0.13)':'rgba(58,86,232,0.09)'};
+  --blue-border:${d?'rgba(91,124,255,0.38)':'rgba(58,86,232,0.32)'};
+  --cyan:${d?'#06c8e0':'#0284c7'};
+  --red:${d?'#f84b6a':'#dc2626'};--red-dim:${d?'rgba(248,75,106,0.13)':'rgba(220,38,38,0.09)'};
+  --orange:${d?'#ff8c42':'#c2410c'};--orange-dim:${d?'rgba(255,140,66,0.11)':'rgba(194,65,12,0.09)'};
+  --yellow:${d?'#ffc533':'#b45309'};--yellow-dim:${d?'rgba(255,197,51,0.11)':'rgba(180,83,9,0.09)'};
+  --green:${d?'#30d988':'#15803d'};--green-dim:${d?'rgba(48,217,136,0.10)':'rgba(21,128,61,0.07)'};
+  --text-bright:${d?'#eef2ff':'#0d1628'};--text-primary:${d?'#b0bcd8':'#2c3a52'};
+  --text-secondary:${d?'#6e7e9e':'#4a5872'};--text-dim:${d?'#3a4a66':'#7a8aa8'};
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-font-smoothing:antialiased;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-void);color:var(--text-primary);padding:40px 48px;max-width:960px;margin:0 auto;line-height:1.5;font-size:13px;}
+a{color:var(--blue);text-decoration:none;}
+a:hover{text-decoration:underline;}
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:2px;font-family:'JetBrains Mono','Courier New',monospace;font-size:11px;font-weight:600;margin:2px;}
+.b-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(248,75,106,0.3);}
+.b-yellow{background:var(--yellow-dim);color:var(--yellow);border:1px solid rgba(255,197,51,0.3);}
+.b-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(48,217,136,0.2);}
+.b-blue{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border);}
+.b-orange{background:var(--orange-dim);color:var(--orange);border:1px solid rgba(255,140,66,0.25);}
+.b-dim{background:rgba(128,128,128,0.06);color:var(--text-dim);border:1px solid var(--border-dim);}
+.rpt-header{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:16px;border-bottom:2px solid var(--border-mid);flex-wrap:wrap;gap:12px;margin-bottom:0;}
+.rpt-logo-wrap{display:flex;align-items:center;gap:12px;}
+.rpt-logo-texts{display:flex;flex-direction:column;gap:3px;}
+.rpt-logo-name{font-family:system-ui,sans-serif;font-size:18px;font-weight:800;letter-spacing:2px;color:var(--text-bright);text-transform:uppercase;}
+.rpt-logo-sub{font-family:'JetBrains Mono','Courier New',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.rpt-doc-info{text-align:right;}
+.rpt-case-id{font-family:'JetBrains Mono','Courier New',monospace;font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:1px;}
+.rpt-ts{font-family:'JetBrains Mono','Courier New',monospace;font-size:9px;color:var(--text-dim);margin-top:3px;}
+.rpt-analyst{font-family:'JetBrains Mono','Courier New',monospace;font-size:9px;color:var(--text-secondary);margin-top:2px;}
+.rpt-class-bar{text-align:center;padding:8px 14px;font-family:'JetBrains Mono','Courier New',monospace;font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;margin:14px 0 20px;border-radius:3px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.rpt-class-critical{background:var(--red-dim);color:var(--red);border:1px solid rgba(248,75,106,0.3);}
+.rpt-class-high{background:var(--orange-dim);color:var(--orange);border:1px solid rgba(255,140,66,0.25);}
+.rpt-class-medium{background:var(--yellow-dim);color:var(--yellow);border:1px solid rgba(255,197,51,0.25);}
+.rpt-class-low{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border);}
+.rpt-class-clean{background:var(--green-dim);color:var(--green);border:1px solid rgba(48,217,136,0.2);}
+.rpt-class-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.rpt-section{margin-bottom:24px;}
+.rpt-sh{display:flex;align-items:center;gap:10px;font-family:system-ui,sans-serif;font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-secondary);margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border-soft);}
+.rpt-sh::after{content:'';flex:1;height:1px;background:var(--border-dim);}
+.rpt-sh-num{font-family:'JetBrains Mono','Courier New',monospace;font-size:8px;font-weight:700;color:var(--blue);padding:2px 7px;border-radius:2px;background:var(--blue-dim);border:1px solid var(--blue-border);letter-spacing:0;flex-shrink:0;}
+.rpt-overview-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:4px;padding:18px;margin-bottom:12px;}
+.rpt-score-block{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;}
+.rpt-score-circle{width:90px;height:90px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid currentColor;position:relative;}
+.rpt-score-circle::before{content:'';position:absolute;inset:4px;border-radius:50%;opacity:.1;background:currentColor;}
+.rpt-score-big{font-family:system-ui,sans-serif;font-size:30px;font-weight:800;line-height:1;position:relative;}
+.rpt-score-max{font-family:'JetBrains Mono','Courier New',monospace;font-size:9px;color:var(--text-dim);position:relative;}
+.rpt-score-lbl{font-family:'JetBrains Mono','Courier New',monospace;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;}
+.rpt-ov-stats{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.rpt-ov-item{background:var(--bg-card);border:1px solid var(--border-dim);border-radius:3px;padding:9px 11px;}
+.rpt-ov-lbl{font-family:'JetBrains Mono','Courier New',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:5px;}
+.rpt-ov-val{font-family:system-ui,sans-serif;font-size:12px;font-weight:700;color:var(--text-bright);}
+.rpt-det-wrap{margin-bottom:14px;}
+.rpt-det-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.rpt-det-pct{font-family:system-ui,sans-serif;font-size:22px;font-weight:800;}
+.rpt-det-lbl{font-family:'JetBrains Mono','Courier New',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.rpt-det-bar-bg{height:10px;background:var(--bg-active);border-radius:5px;overflow:hidden;margin-bottom:9px;}
+.rpt-det-bar-fill{height:100%;border-radius:5px;}
+.rpt-det-stats{display:flex;gap:14px;flex-wrap:wrap;}
+.rpt-det-stat{font-family:'JetBrains Mono','Courier New',monospace;font-size:9px;display:flex;align-items:center;gap:5px;color:var(--text-secondary);}
+.rpt-det-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.rpt-threat-banner{padding:11px 14px 11px 16px;background:var(--red-dim);border:1px solid rgba(248,75,106,0.2);border-left:4px solid var(--red);border-radius:0 3px 3px 0;margin-bottom:10px;}
+.rpt-threat-name-text{font-family:system-ui,sans-serif;font-size:18px;font-weight:800;color:var(--red);letter-spacing:1px;text-transform:uppercase;}
+.rpt-threat-sub{font-family:'JetBrains Mono','Courier New',monospace;font-size:9px;color:rgba(248,75,106,0.7);letter-spacing:0.5px;margin-top:4px;}
+.rpt-kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.rpt-kv{background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:3px;padding:10px 13px;}
+.rpt-kv-k{color:var(--text-dim);margin-bottom:4px;font-family:'JetBrains Mono','Courier New',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;}
+.rpt-kv-v{color:var(--text-bright);font-weight:600;font-family:'JetBrains Mono','Courier New',monospace;font-size:11px;word-break:break-all;}
+.rpt-tbl{width:100%;border-collapse:collapse;font-family:'JetBrains Mono','Courier New',monospace;font-size:10px;border:1px solid var(--border-soft);margin-bottom:8px;}
+.rpt-tbl th{background:var(--bg-panel);color:var(--text-dim);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;padding:7px 11px;text-align:left;border-bottom:1px solid var(--border-soft);font-weight:700;white-space:nowrap;}
+.rpt-tbl td{padding:7px 11px;border-bottom:1px solid var(--border-dim);color:var(--text-primary);vertical-align:top;line-height:1.4;}
+.rpt-tbl tr:last-child td{border-bottom:none;}
+.rpt-tbl tr:nth-child(even) td{background:${d?'rgba(255,255,255,0.015)':'rgba(0,0,0,0.015)'};}
+.rpt-ioc-block{background:var(--bg-void);border:1px solid var(--border-soft);border-radius:3px;padding:14px 16px;font-family:'JetBrains Mono','Courier New',monospace;font-size:10px;line-height:1.9;color:var(--green);white-space:pre-wrap;overflow-x:auto;}
+.rpt-ioc-section{margin-bottom:14px;}
+.rpt-ioc-type-hdr{font-family:'JetBrains Mono','Courier New',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px;padding-bottom:4px;border-bottom:1px dashed rgba(6,200,224,0.2);}
+.rpt-ioc-entry{display:flex;align-items:center;gap:10px;padding:4px 6px;border-radius:2px;font-family:'JetBrains Mono','Courier New',monospace;font-size:10px;margin-bottom:2px;}
+.rpt-ioc-bullet{color:var(--blue);flex-shrink:0;}
+.rpt-ioc-val{color:var(--blue);font-weight:600;flex:1;word-break:break-all;}
+.rpt-ioc-tag{font-size:8px;padding:1px 5px;border-radius:2px;flex-shrink:0;}
+.rpt-action-item{display:flex;gap:12px;align-items:flex-start;padding:11px 13px;margin-bottom:7px;background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:3px;}
+.rpt-action-num{font-family:'JetBrains Mono','Courier New',monospace;font-size:12px;font-weight:800;color:var(--blue);flex-shrink:0;min-width:22px;}
+.rpt-action-body{flex:1;}
+.rpt-action-title{font-family:system-ui,sans-serif;font-size:12px;font-weight:700;color:var(--text-bright);margin-bottom:4px;}
+.rpt-action-desc{font-family:'JetBrains Mono','Courier New',monospace;font-size:9px;color:var(--text-secondary);line-height:1.6;}
+.rpt-action-pri{font-family:'JetBrains Mono','Courier New',monospace;font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 7px;border-radius:2px;flex-shrink:0;margin-top:2px;}
+.rpt-footer{margin-top:28px;padding-top:14px;border-top:1px solid var(--border-soft);display:flex;justify-content:space-between;font-family:'JetBrains Mono','Courier New',monospace;font-size:9px;color:var(--text-dim);flex-wrap:wrap;gap:6px;}
+.empty-state{text-align:center;padding:40px 20px;border:1px dashed var(--border-soft);border-radius:4px;color:var(--text-dim);}
+@media print{
+  body{background:#fff!important;color:#111!important;padding:20px 30px;}
+  .rpt-header,.rpt-section,.rpt-overview-wrap,.rpt-kv,.rpt-action-item{break-inside:avoid;}
+  .rpt-class-bar,.rpt-threat-banner{print-color-adjust:exact;-webkit-print-color-adjust:exact;}
+}`;
+}
+
 function downloadReport(){
-  const body=document.getElementById('report-body').innerHTML;
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Incident Report</title>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
-  <style>:root{--bg-void:#060c18;--bg-card:#0e1a2e;--bg-panel:#0b1525;--border-soft:rgba(255,255,255,0.09);--blue:#5b7cff;--red:#f84b6a;--orange:#ff8c42;--yellow:#ffc533;--green:#30d988;--text-bright:#eef2ff;--text-primary:#b0bcd8;--text-secondary:#6e7e9e;--text-dim:#3a4a66;--font-mono:'JetBrains Mono',monospace;--font-sans:'Inter',sans-serif;--font-display:'Inter',sans-serif}@media(prefers-color-scheme:light){:root{--bg-void:#f0f2f5;--bg-card:#fff;--bg-panel:#f5f7fa;--border-soft:rgba(0,0,0,0.1);--blue:#006bcc;--red:#c5001a;--orange:#b84c00;--yellow:#8a6000;--green:#006e38;--text-bright:#0d1117;--text-primary:#2c3748;--text-secondary:#4a5568;--text-dim:#718096}}body{font-family:var(--font-sans);background:var(--bg-void);color:var(--text-primary);padding:40px;max-width:900px;margin:0 auto}.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:2px;font-family:var(--font-mono);font-size:12px;font-weight:600;margin:2px}.b-red{background:rgba(197,0,26,0.1);color:var(--red);border:1px solid rgba(197,0,26,0.25)}.b-yellow{background:rgba(138,96,0,0.08);color:var(--yellow);border:1px solid rgba(138,96,0,0.2)}.b-green{background:rgba(0,110,56,0.06);color:var(--green);border:1px solid rgba(0,110,56,0.15)}.b-blue{background:rgba(0,107,204,0.08);color:var(--blue);border:1px solid rgba(0,107,204,0.25)}.b-orange{background:rgba(184,76,0,0.08);color:var(--orange);border:1px solid rgba(184,76,0,0.2)}.b-dim{background:rgba(128,128,128,0.06);color:var(--text-dim);border:1px solid rgba(128,128,128,0.1)}.rpt-title{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--text-bright);margin-bottom:4px}.rpt-meta{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-bottom:20px;display:flex;flex-wrap:wrap;gap:12px}.rpt-sh{font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border-soft)}.rpt-kv{background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:3px;padding:10px;margin-bottom:5px}.rpt-kv-k{font-family:var(--font-mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:2px}.rpt-kv-v{color:var(--text-bright);font-weight:600}.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rpt-ioc-block{background:var(--bg-void);padding:12px;border-radius:3px;font-family:var(--font-mono);font-size:10px;line-height:1.8;white-space:pre;overflow-x:auto;color:var(--green);border:1px solid var(--border-soft)}.empty-state{text-align:center;padding:20px;border:1px dashed rgba(128,128,128,0.2);border-radius:3px;color:var(--text-dim)}</style>
-  </head><body>${body}</body></html>`;
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
-  a.download=`incident_report_${Date.now()}.html`; a.click();
-  toast('✓ Report downloaded');
+  buildReport();
+  const body = document.getElementById('report-body').innerHTML;
+  const ts   = state.analysisTs || new Date().toISOString();
+  const caseId = 'CASE-' + new Date(ts).getFullYear() + '-' + String(new Date(ts).getTime()).slice(-6);
+  const titleTxt = state.vtData?.data?.attributes?.suggested_threat_label ||
+    state.vtData?.data?.attributes?.meaningful_name || 'Incident Analysis Report';
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>${esc(titleTxt)} — ${esc(caseId)} — JDLThreatIntel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+${getRptCSS(true)}
+@media(prefers-color-scheme:light){${getRptCSS(false)}}
+</style>
+</head>
+<body>${body}</body>
+</html>`;
+
+  const fname = caseId + '_' + (state.vtData?.data?.id||'report').substring(0,8) + '.html';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([html],{type:'text/html'}));
+  a.download = fname; a.click();
+  toast('✓ Report downloaded — ' + fname);
 }
+
 function printReport(){
-  const w=window.open('','_blank');
-  const body=document.getElementById('report-body').innerHTML;
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Incident Report</title>
-  <style>body{font-family:monospace;background:#fff;color:#111;padding:30px;max-width:900px;margin:0 auto}.badge{display:inline-block;padding:2px 6px;border-radius:3px;font-size:10px;border:1px solid #ccc;margin:2px}.rpt-sh{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#555;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid #ddd}.rpt-kv{background:#f9f9f9;border:1px solid #ddd;border-radius:3px;padding:8px;margin-bottom:5px}.rpt-kv-k{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:2px}.rpt-kv-v{color:#111;font-weight:600}.rpt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rpt-ioc-block{background:#f5f5f5;padding:12px;border-radius:3px;font-size:11px;white-space:pre;overflow-x:auto}</style>
-  </head><body>${body}</body></html>`);
-  w.document.close(); setTimeout(()=>w.print(),500);
+  buildReport();
+  const body = document.getElementById('report-body').innerHTML;
+  const ts   = state.analysisTs || new Date().toISOString();
+  const caseId = 'CASE-' + new Date(ts).getFullYear() + '-' + String(new Date(ts).getTime()).slice(-6);
+  const w = window.open('', '_blank');
+  if(!w){toast('⚠ Pop-up blocked — allow pop-ups and try again');return;}
+  w.document.write(`<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"/>
+<title>Print — ${esc(caseId)} — JDLThreatIntel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+${getRptCSS(false)}
+body{background:#fff;color:#111;padding:24px 32px;}
+@media print{@page{margin:1.8cm 2cm;} body{padding:0;}}
+</style>
+</head><body>${body}</body></html>`);
+  w.document.close();
+  setTimeout(()=>{w.focus();w.print();}, 800);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PCAP ANALYSIS — Local binary parser + DynamiteLab launcher
+// ══════════════════════════════════════════════════════════════════
+const pcapState = {
+  file: null,
+  parsed: null,
+  ips: {}       // { "1.2.3.4": { src:N, dst:N, protos:Set, ports:Set } }
+};
+
+// Link-type names (PCAP network field)
+const LINK_TYPES = {
+  0:'NULL/Loopback', 1:'Ethernet', 6:'Token Ring', 9:'PPP HDLC',
+  10:'FDDI', 23:'PPP', 24:'SLIP', 50:'PPP w/ Encapsulation',
+  101:'Raw IP', 105:'IEEE 802.11', 113:'Linux Cooked',
+  127:'IEEE 802.11 Radiotap', 143:'IEEE 802.11 AVS',
+  163:'PPP-OR', 187:'Bluetooth HCI H4', 195:'USB Linux',
+  228:'IPv4', 229:'IPv6'
+};
+
+// Protocol numbers
+const IP_PROTOS = {
+  1:'ICMP', 2:'IGMP', 6:'TCP', 17:'UDP',
+  47:'GRE', 50:'ESP', 51:'AH', 58:'ICMPv6',
+  89:'OSPF', 132:'SCTP'
+};
+
+// Protocol bar colors
+const PROTO_COLORS = {
+  'TCP':'#5b7cff', 'UDP':'#06c8e0', 'ICMP':'#ffc533',
+  'DNS':'#30d988', 'HTTP':'#ff8c42', 'HTTPS':'#f84b6a',
+  'ICMPv6':'#e879f9', 'IGMP':'#94a3b8', 'OTHER':'#3a4a66'
+};
+
+// Drag & drop handlers
+function pcapDragOver(e) {
+  e.preventDefault(); e.stopPropagation();
+  document.getElementById('pcap-drop-zone').classList.add('drag-over');
+}
+function pcapDragLeave(e) {
+  document.getElementById('pcap-drop-zone').classList.remove('drag-over');
+}
+function pcapDrop(e) {
+  e.preventDefault(); e.stopPropagation();
+  document.getElementById('pcap-drop-zone').classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) handlePCAPInput(f);
+}
+
+function handlePCAPInput(file) {
+  if (!file) return;
+  pcapState.file = file;
+  pcapState.ips = {};
+  pcapState.parsed = null;
+
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const buf = ev.target.result;
+      const result = parsePCAP(buf, file);
+      pcapState.parsed = result;
+      if (result.valid) {
+        renderPCAPResults(result, file);
+      } else {
+        showPCAPError(result.error || 'Not a valid PCAP file');
+      }
+    } catch(err) {
+      showPCAPError('Parse error: ' + err.message);
+    }
+  };
+  reader.onerror = () => showPCAPError('Failed to read file');
+  reader.readAsArrayBuffer(file);
+}
+
+function showPCAPError(msg) {
+  document.getElementById('pcap-drop-zone').style.display = 'none';
+  const info = document.getElementById('pcap-file-info');
+  info.style.display = 'flex';
+  document.getElementById('pcap-file-icon').textContent = '!';
+  document.getElementById('pcap-file-icon').style.background = 'var(--red-dim)';
+  document.getElementById('pcap-file-icon').style.borderColor = 'rgba(248,75,106,0.3)';
+  document.getElementById('pcap-file-icon').style.color = 'var(--red)';
+  document.getElementById('pcap-file-name').textContent = pcapState.file ? pcapState.file.name : 'Unknown';
+  document.getElementById('pcap-file-meta').innerHTML = '';
+  const v = document.getElementById('pcap-file-valid');
+  v.textContent = '✘ ' + msg;
+  v.className = 'pcap-file-valid err';
+  document.getElementById('pcap-clear-btn').style.display = '';
+}
+
+function parsePCAP(buf, file) {
+  const view = new DataView(buf);
+  if (buf.byteLength < 24) return { valid: false, error: 'File too small to be a PCAP' };
+
+  const magic = view.getUint32(0, false);
+  let le = false;
+  let isPcapng = false;
+  let isMicros = true; // microseconds vs nanoseconds
+
+  if (magic === 0xd4c3b2a1)      { le = true; }
+  else if (magic === 0xa1b2c3d4) { le = false; }
+  else if (magic === 0x4d3cb2a1) { le = true;  isMicros = false; } // nanosecond
+  else if (magic === 0xa1b23c4d) { le = false; isMicros = false; }
+  else if (magic === 0x0a0d0d0a) { isPcapng = true; }
+  else return { valid: false, error: 'Not a PCAP file (magic: 0x' + magic.toString(16) + ')' };
+
+  if (isPcapng) {
+    return parsePCAPng(buf, view, file);
+  }
+
+  const snaplen   = view.getUint32(16, le);
+  const linkType  = view.getUint32(20, le);
+
+  // Walk packets
+  let offset = 24;
+  let pktCount = 0;
+  let firstTs = null, lastTs = null;
+  const ips = {};
+  const protoCount = {};
+  const MAX_PKTS = 50000;
+
+  while (offset + 16 <= buf.byteLength && pktCount < MAX_PKTS) {
+    const tsSec  = view.getUint32(offset,     le);
+    const tsUsec = view.getUint32(offset + 4, le);
+    const inclLen = view.getUint32(offset + 8, le);
+    // const origLen = view.getUint32(offset + 12, le);
+
+    if (inclLen === 0 || inclLen > 65535 + 40) break;
+    if (offset + 16 + inclLen > buf.byteLength) break;
+
+    const ts = tsSec + (isMicros ? tsUsec / 1e6 : tsUsec / 1e9);
+    if (firstTs === null) firstTs = ts;
+    lastTs = ts;
+
+    // Parse the packet payload based on link type
+    const pktOff = offset + 16;
+    parsePacketIPs(buf, view, pktOff, inclLen, linkType, ips, protoCount);
+
+    pktCount++;
+    offset += 16 + inclLen;
+  }
+
+  const duration = (firstTs !== null && lastTs !== null) ? (lastTs - firstTs) : 0;
+
+  return {
+    valid: true,
+    format: 'PCAP' + (isMicros ? '' : ' (nanosec)'),
+    linkType,
+    linkTypeName: LINK_TYPES[linkType] || 'Unknown (' + linkType + ')',
+    snaplen,
+    pktCount,
+    duration,
+    firstTs,
+    ips,
+    protoCount,
+    truncated: pktCount >= MAX_PKTS,
+    fileSize: file.size
+  };
+}
+
+function parsePCAPng(buf, view, file) {
+  // PCAPng — block-based format. Walk SHB → IDB → EPB/SPB blocks
+  let offset = 0;
+  let pktCount = 0;
+  const ips = {};
+  const protoCount = {};
+  let firstTs = null, lastTs = null;
+  let linkType = 1; // default Ethernet
+  const MAX_PKTS = 50000;
+  const blockCache = {};
+
+  while (offset + 12 <= buf.byteLength && pktCount < MAX_PKTS) {
+    const blockType = view.getUint32(offset, true);
+    const blockLen  = view.getUint32(offset + 4, true);
+    if (blockLen < 12 || offset + blockLen > buf.byteLength) break;
+
+    if (blockType === 0x00000001) {
+      // Interface Description Block — get link type
+      const lt = view.getUint16(offset + 8, true);
+      blockCache[Object.keys(blockCache).length] = lt;
+      linkType = lt;
+    } else if (blockType === 0x00000006 || blockType === 0x00000003) {
+      // Enhanced Packet Block (6) or Obsolete Packet Block (3)
+      const ifaceIdx = (blockType === 0x00000006) ? view.getUint32(offset + 8, true) : 0;
+      const lt = blockCache[ifaceIdx] || linkType;
+      let pktOff, capLen;
+      if (blockType === 0x00000006) {
+        const tsHigh = view.getUint32(offset + 12, true);
+        const tsLow  = view.getUint32(offset + 16, true);
+        capLen = view.getUint32(offset + 20, true);
+        const ts = (tsHigh * 4294967296 + tsLow) / 1e6;
+        if (firstTs === null) firstTs = ts;
+        lastTs = ts;
+        pktOff = offset + 28;
+      } else {
+        pktOff = offset + 20;
+        capLen = view.getUint32(offset + 16, true);
+      }
+      if (pktOff + capLen <= buf.byteLength) {
+        parsePacketIPs(buf, view, pktOff, capLen, lt, ips, protoCount);
+      }
+      pktCount++;
+    }
+    offset += blockLen;
+  }
+
+  const duration = (firstTs !== null && lastTs !== null) ? (lastTs - firstTs) : 0;
+  return {
+    valid: true, format: 'PCAPng',
+    linkType, linkTypeName: LINK_TYPES[linkType] || 'Unknown',
+    snaplen: 65535, pktCount, duration, firstTs, ips, protoCount,
+    truncated: pktCount >= MAX_PKTS, fileSize: file.size
+  };
+}
+
+function parsePacketIPs(buf, view, pktOff, inclLen, linkType, ips, protoCount) {
+  try {
+    let ipOff = -1;
+    let ethertype = -1;
+
+    if (linkType === 1 || linkType === 228) {
+      // Ethernet frame
+      if (inclLen < 14) return;
+      ethertype = view.getUint16(pktOff + 12, false);
+      // Handle 802.1Q VLAN tag
+      if (ethertype === 0x8100) {
+        if (inclLen < 18) return;
+        ethertype = view.getUint16(pktOff + 16, false);
+        ipOff = pktOff + 18;
+      } else {
+        ipOff = pktOff + 14;
+      }
+    } else if (linkType === 113) {
+      // Linux cooked capture — 16 byte header
+      if (inclLen < 16) return;
+      ethertype = view.getUint16(pktOff + 14, false);
+      ipOff = pktOff + 16;
+    } else if (linkType === 101 || linkType === 228) {
+      // Raw IPv4
+      ethertype = 0x0800; ipOff = pktOff;
+    } else if (linkType === 229) {
+      // Raw IPv6
+      ethertype = 0x86DD; ipOff = pktOff;
+    } else if (linkType === 0) {
+      // BSD loopback — 4 byte family
+      if (inclLen < 4) return;
+      const family = view.getUint32(pktOff, true);
+      ethertype = (family === 2) ? 0x0800 : (family === 30) ? 0x86DD : -1;
+      ipOff = pktOff + 4;
+    } else {
+      return; // unsupported link type
+    }
+
+    if (ipOff < 0 || ipOff >= pktOff + inclLen) return;
+
+    if (ethertype === 0x0800) {
+      // IPv4
+      if (ipOff + 20 > pktOff + inclLen) return;
+      const ihl = (view.getUint8(ipOff) & 0x0F) * 4;
+      const proto = view.getUint8(ipOff + 9);
+      const src = readIPv4(view, ipOff + 12);
+      const dst = readIPv4(view, ipOff + 16);
+      const protoName = IP_PROTOS[proto] || 'OTHER';
+
+      // Get port for TCP/UDP
+      let port = 0;
+      if ((proto === 6 || proto === 17) && ipOff + ihl + 4 <= pktOff + inclLen) {
+        const dport = view.getUint16(ipOff + ihl + 2, false);
+        const sport = view.getUint16(ipOff + ihl,     false);
+        port = dport;
+        // Classify well-known ports as protocol names
+        const classified = classifyPort(dport, sport, proto);
+        protoCount[classified] = (protoCount[classified] || 0) + 1;
+      } else {
+        protoCount[protoName] = (protoCount[protoName] || 0) + 1;
+      }
+
+      trackIP(ips, src, 'src', protoName, port);
+      trackIP(ips, dst, 'dst', protoName, port);
+
+    } else if (ethertype === 0x86DD) {
+      // IPv6
+      if (ipOff + 40 > pktOff + inclLen) return;
+      const proto = view.getUint8(ipOff + 6);
+      const src = readIPv6(view, ipOff + 8);
+      const dst = readIPv6(view, ipOff + 24);
+      const protoName = IP_PROTOS[proto] || 'OTHER';
+      protoCount[protoName] = (protoCount[protoName] || 0) + 1;
+      trackIP(ips, src, 'src', protoName, 0);
+      trackIP(ips, dst, 'dst', protoName, 0);
+    }
+  } catch(e) { /* skip malformed packet */ }
+}
+
+function classifyPort(dport, sport, proto) {
+  if (proto === 17) {
+    if (dport === 53 || sport === 53) return 'DNS';
+  }
+  if (proto === 6) {
+    if (dport === 80  || sport === 80)  return 'HTTP';
+    if (dport === 443 || sport === 443) return 'HTTPS';
+    if (dport === 53  || sport === 53)  return 'DNS';
+  }
+  return IP_PROTOS[proto] || 'OTHER';
+}
+
+function trackIP(ips, ip, dir, proto, port) {
+  if (!ip || ip === '0.0.0.0' || ip.startsWith('::')) return;
+  if (!ips[ip]) ips[ip] = { src: 0, dst: 0, protos: new Set(), ports: new Set() };
+  ips[ip][dir]++;
+  ips[ip].protos.add(proto);
+  if (port > 0) ips[ip].ports.add(port);
+}
+
+function readIPv4(view, off) {
+  return view.getUint8(off)+'.'+view.getUint8(off+1)+'.'+view.getUint8(off+2)+'.'+view.getUint8(off+3);
+}
+
+function readIPv6(view, off) {
+  const parts = [];
+  for (let i = 0; i < 8; i++) {
+    parts.push(view.getUint16(off + i*2, false).toString(16));
+  }
+  return parts.join(':');
+}
+
+function isPrivateIP(ip) {
+  return /^(10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|127\.|169\.254\.|::1|fe80:)/.test(ip);
+}
+
+// ── RENDER RESULTS ──────────────────────────────────────────────
+function renderPCAPResults(r, file) {
+  // Show file info bar
+  document.getElementById('pcap-drop-zone').style.display = 'none';
+  const info = document.getElementById('pcap-file-info');
+  info.style.display = 'flex';
+  document.getElementById('pcap-file-icon').textContent = r.format === 'PCAPng' ? 'NG' : 'CAP';
+  document.getElementById('pcap-file-name').textContent = file.name;
+
+  const uniqueIPs = Object.keys(r.ips).length;
+  const dur = r.duration > 0 ? r.duration.toFixed(2) + 's' : '< 1s';
+
+  document.getElementById('pcap-file-meta').innerHTML = `
+    <div class="pcap-fmeta-item">Format: <span>${esc(r.format)}</span></div>
+    <div class="pcap-fmeta-item">Link: <span>${esc(r.linkTypeName)}</span></div>
+    <div class="pcap-fmeta-item">Packets: <span>${r.pktCount.toLocaleString()}${r.truncated?' (truncated)':''}</span></div>
+    <div class="pcap-fmeta-item">Duration: <span>${esc(dur)}</span></div>
+    <div class="pcap-fmeta-item">IPs found: <span>${uniqueIPs}</span></div>
+  `;
+  document.getElementById('pcap-file-valid').textContent = '✔ Valid ' + r.format;
+  document.getElementById('pcap-file-valid').className = 'pcap-file-valid ok';
+  document.getElementById('pcap-clear-btn').style.display = '';
+
+  // Show DynamiteLab card
+  document.getElementById('pcap-dynamite-card').style.display = '';
+
+  // Stats row
+  const protos = Object.keys(r.protoCount).length;
+  document.getElementById('pcap-s-packets').textContent = r.pktCount.toLocaleString();
+  document.getElementById('pcap-s-ips').textContent = uniqueIPs;
+  document.getElementById('pcap-s-duration').textContent = r.duration > 0 ? r.duration.toFixed(1) : '0';
+  document.getElementById('pcap-s-protos').textContent = protos;
+  document.getElementById('pcap-s-size').textContent = formatSize(file.size);
+
+  // Protocol distribution bar
+  renderProtoBar(r.protoCount);
+
+  // Capture metadata
+  renderPCAPMeta(r);
+
+  // IP table
+  renderIPTable(r.ips);
+
+  // DNS queries (if DNS port traffic detected)
+  renderDNSSection(r.ips, r.protoCount);
+
+  // Show results section
+  document.getElementById('pcap-results').style.display = '';
+
+  // Store IPs globally for push to network tab
+  pcapState.ips = r.ips;
+
+  toast('✔ PCAP parsed — ' + r.pktCount.toLocaleString() + ' packets, ' + uniqueIPs + ' IPs found');
+}
+
+function renderProtoBar(protoCount) {
+  const total = Object.values(protoCount).reduce((a,b)=>a+b,0);
+  if (!total) return;
+
+  const sorted = Object.entries(protoCount).sort((a,b)=>b[1]-a[1]);
+  const bar = document.getElementById('pcap-proto-bar');
+  const legend = document.getElementById('pcap-proto-legend');
+  bar.innerHTML = '';
+  legend.innerHTML = '';
+
+  sorted.forEach(([proto, count]) => {
+    const pct = (count / total * 100);
+    const color = PROTO_COLORS[proto] || PROTO_COLORS['OTHER'];
+    const seg = document.createElement('div');
+    seg.className = 'pcap-proto-seg';
+    seg.style.cssText = `flex:${pct};background:${color};`;
+    seg.title = proto + ': ' + count + ' pkts (' + pct.toFixed(1) + '%)';
+    if (pct > 8) seg.textContent = proto;
+    bar.appendChild(seg);
+
+    const legItem = document.createElement('div');
+    legItem.className = 'pcap-proto-leg-item';
+    legItem.innerHTML = `<span class="pcap-proto-dot" style="background:${color}"></span>${esc(proto)} <span style="color:var(--text-dim);margin-left:3px">${count.toLocaleString()}</span>`;
+    legend.appendChild(legItem);
+  });
+}
+
+function renderPCAPMeta(r) {
+  const rows = [];
+  if (r.firstTs) {
+    const d = new Date(r.firstTs * 1000);
+    rows.push(['First Packet', d.toUTCString()]);
+  }
+  if (r.duration > 0) {
+    rows.push(['Capture Duration', r.duration.toFixed(3) + ' seconds']);
+  }
+  rows.push(['Link Type', r.linkTypeName + ' (' + r.linkType + ')']);
+  rows.push(['Snap Length', r.snaplen.toLocaleString() + ' bytes']);
+  rows.push(['Total Packets', r.pktCount.toLocaleString() + (r.truncated ? ' (parsing capped at 50k)' : '')]);
+  rows.push(['File Size', formatSize(r.fileSize)]);
+
+  document.getElementById('pcap-meta-rows').innerHTML = rows.map(([k,v]) =>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border-dim);font-family:var(--font-mono);font-size:10px">
+      <span style="color:var(--text-dim);letter-spacing:0.5px;text-transform:uppercase;font-size:9px">${esc(k)}</span>
+      <span style="color:var(--text-bright);font-weight:600">${esc(v)}</span>
+    </div>`
+  ).join('');
+}
+
+function renderIPTable(ips) {
+  const tbody = document.getElementById('pcap-ip-tbody');
+  const entries = Object.entries(ips).sort((a,b) => (b[1].src+b[1].dst) - (a[1].src+a[1].dst));
+
+  if (!entries.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="pcap-no-results">No IP addresses extracted — link type may not be supported for deep parsing</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = entries.slice(0, 200).map(([ip, d]) => {
+    const total = d.src + d.dst;
+    const dir = d.src > 0 && d.dst > 0 ? '↕ Both' : d.src > 0 ? '→ Source' : '← Dest';
+    const dirCol = d.src > 0 && d.dst > 0 ? 'var(--orange)' : d.src > 0 ? 'var(--cyan)' : 'var(--blue)';
+    const priv = isPrivateIP(ip);
+    const protos = [...d.protos].join(', ');
+    const ports = [...d.ports].slice(0, 5).join(', ') + (d.ports.size > 5 ? '…' : '');
+    return `<tr>
+      <td><button class="pcap-ip-link" onclick="pcapIPtoNetwork('${esc(ip)}')" title="Check in Network tab">${esc(ip)}</button>
+          ${priv ? '<span style="font-family:var(--font-mono);font-size:8px;color:var(--text-dim);margin-left:4px">[priv]</span>' : '<span style="font-family:var(--font-mono);font-size:8px;color:var(--orange);margin-left:4px">[pub]</span>'}
+      </td>
+      <td style="color:${dirCol};font-family:var(--font-mono);font-size:9px;font-weight:700">${dir}</td>
+      <td style="font-family:var(--font-mono);font-size:9px;color:var(--text-secondary)">${esc(protos)}</td>
+      <td style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim)">${esc(ports) || '—'}</td>
+      <td style="font-family:var(--font-mono);font-size:10px;color:var(--text-bright);font-weight:600">${total.toLocaleString()}</td>
+      <td>
+        <button class="copy-btn" style="padding:2px 8px;font-size:8px" onclick="pcapIPtoNetwork('${esc(ip)}')">→ Enrich</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderDNSSection(ips, protoCount) {
+  const dnsCount = protoCount['DNS'] || 0;
+  const card = document.getElementById('pcap-dns-card');
+  if (dnsCount > 0) {
+    card.style.display = '';
+    document.getElementById('pcap-dns-count').textContent = dnsCount + ' DNS packets detected';
+    document.getElementById('pcap-dns-list').innerHTML =
+      `<div style="padding:10px 14px;font-family:var(--font-mono);font-size:10px;color:var(--text-secondary)">
+        ⬡ Deep DNS query extraction requires DynamiteLab or Wireshark.<br>
+        <a href="https://dynamitelab.com/pcaps" target="_blank" style="color:var(--cyan);text-decoration:none;font-weight:600">→ Open in DynamiteLab to see all DNS queries ↗</a>
+      </div>`;
+  } else {
+    card.style.display = 'none';
+  }
+}
+
+// ── ACTIONS ──────────────────────────────────────────────────────
+function pcapIPtoNetwork(ip) {
+  document.getElementById('ip-inp').value = ip;
+  switchMainTab('network');
+  setTimeout(() => doIPLookup(), 150);
+  toast('→ Switched to Network tab for: ' + ip);
+}
+
+function copyPCAPIPs() {
+  const ips = Object.keys(pcapState.ips).filter(ip => !isPrivateIP(ip));
+  if (!ips.length) { toast('No public IPs found'); return; }
+  navigator.clipboard.writeText(ips.join('\n')).then(() => toast('Copied ' + ips.length + ' public IPs'));
+}
+
+function pushPCAPIPs() {
+  const publicIPs = Object.keys(pcapState.ips).filter(ip => !isPrivateIP(ip));
+  if (!publicIPs.length) { toast('No public IPs to push'); return; }
+  // Merge into state.iocs.ips
+  publicIPs.forEach(ip => { if (!state.iocs.ips.includes(ip)) state.iocs.ips.push(ip); });
+  state.sessionStats.ips += publicIPs.length;
+  state.sessionStats.iocs = countIOCs();
+  updateStats();
+  updateIOC();
+  switchMainTab('network');
+  toast('✔ Pushed ' + publicIPs.length + ' IPs to Network & IOC tabs');
+}
+
+function copyPCAPName() {
+  if (pcapState.file) {
+    navigator.clipboard.writeText(pcapState.file.name).then(() => toast('Copied: ' + pcapState.file.name));
+  }
+}
+
+function resetPCAP() {
+  pcapState.file = null;
+  pcapState.parsed = null;
+  pcapState.ips = {};
+  document.getElementById('pcap-drop-zone').style.display = '';
+  document.getElementById('pcap-drop-zone').classList.remove('drag-over');
+  document.getElementById('pcap-file-info').style.display = 'none';
+  document.getElementById('pcap-dynamite-card').style.display = 'none';
+  document.getElementById('pcap-results').style.display = 'none';
+  document.getElementById('pcap-clear-btn').style.display = 'none';
+  document.getElementById('pcap-file-input').value = '';
+  document.getElementById('pcap-file-icon').textContent = 'CAP';
+  document.getElementById('pcap-file-icon').style.background = '';
+  document.getElementById('pcap-file-icon').style.borderColor = '';
+  document.getElementById('pcap-file-icon').style.color = '';
+  toast('PCAP cleared');
 }
 </script>
 </body>
