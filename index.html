@@ -1741,13 +1741,14 @@ body::before {
         </div>
         <div class="panel-body">
           <div>
-            <div class="inp-label">MD5 / SHA1 / SHA256</div>
-            <input class="inp" id="hash-inp" type="text" placeholder="Paste hash to analyze…"/>
+            <div class="inp-label">MD5 / SHA-1 / SHA-256 — type auto-detected</div>
+            <input class="inp" id="hash-inp" type="text" placeholder="Paste MD5, SHA-1 or SHA-256…"/>
           </div>
           <button class="btn btn-primary" id="btn-vt" onclick="doVTScan()">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             Analyze Hash
           </button>
+          <button class="copy-btn" id="vt-live-btn" style="width:100%;text-align:center;margin-top:6px" onclick="toggleVTLive()">● Go Live</button>
           <div id="vt-loading" class="loading-row" style="display:none"><div class="spin"></div>Querying VirusTotal…</div>
           <div id="vt-error" class="err-box" style="display:none"></div>
 
@@ -2473,14 +2474,22 @@ function updateStats(){
 document.getElementById('hash-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doVTScan();});
 
 async function doVTScan(){
-  const h = document.getElementById('hash-inp').value.trim();
-  if(!h){toast('⚠ Paste a hash first');return;}
+  const raw = document.getElementById('hash-inp').value.trim();
+  if(!raw){toast('⚠ Paste a hash first');return;}
+  const h = raw.toLowerCase();
+  const htype = /^[a-f0-9]{32}$/.test(h)?'MD5':/^[a-f0-9]{40}$/.test(h)?'SHA-1':/^[a-f0-9]{64}$/.test(h)?'SHA-256':null;
+  if(!htype){
+    hide('vt-mini'); hide('vt-loading');
+    setErr('vt-error','Invalid hash — paste a 32-character MD5, 40-character SHA-1, or 64-character SHA-256 value (hex only).');
+    return;
+  }
+  document.getElementById('hash-inp').value = h;
   hide('vt-mini'); hide('vt-error'); show('vt-loading','flex');
   document.getElementById('btn-vt').disabled=true;
   try{
     const r = await fetch(WORKER+'/vt/'+encodeURIComponent(h));
     if(!r.ok){
-      if(r.status===404) throw new Error('Hash not found in VirusTotal — it may not have been submitted yet');
+      if(r.status===404) throw new Error('Not returned by the Worker lookup. Check it directly on VirusTotal: https://www.virustotal.com/gui/file/'+h);
       if(r.status===401) throw new Error('Invalid VirusTotal API key — check your Worker VT_KEY secret');
       if(r.status===429) throw new Error('VirusTotal rate limit reached — wait a moment and try again');
       throw new Error('VirusTotal lookup failed (HTTP '+r.status+')');
@@ -2536,10 +2545,21 @@ async function doVTScan(){
   finally { document.getElementById('btn-vt').disabled=false; }
 }
 
+// Live refresh: re-query the current hash every 60s while it is shown
+let vtLiveTimer=null;
+function toggleVTLive(){
+  const btn=document.getElementById('vt-live-btn');
+  if(vtLiveTimer){clearInterval(vtLiveTimer);vtLiveTimer=null;btn.textContent='● Go Live';btn.classList.remove('active');toast('Live refresh off');return;}
+  if(!document.getElementById('hash-inp').value.trim()){toast('⚠ Analyze a hash first');return;}
+  vtLiveTimer=setInterval(()=>{if(!document.getElementById('btn-vt').disabled)doVTScan();},60000);
+  btn.textContent='■ Live (60s)';btn.classList.add('active');toast('Live refresh on');
+}
+}
+
 function renderVTMalBlock(attr, hash){
   const block=document.getElementById('vt-mal-block');
   const hlen=hash.length;
-  const htype=hlen===32?'MD5':hlen===40?'SHA-1':hlen===64?'SHA-256':'HASH';
+  const htype=hlen===32?'MD5':hlen===40?'SHA-1':'SHA-256';
   document.getElementById('vt-hash-type').textContent=htype+' · '+hash.substring(0,16)+'…';
   const label=attr?.suggested_threat_label||attr?.popular_threat_classification?.suggested_threat_label||attr?.meaningful_name||null;
   const families=(attr?.popular_threat_classification?.popular_threat_name||[]).map(f=>f.value).filter(Boolean);
