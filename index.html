@@ -2330,7 +2330,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-border)!importan
         <span id="rpt-case-badge" style="font-family:var(--font-mono);font-size:10px;color:var(--cyan);letter-spacing:1px"></span>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
-        <button class="copy-btn" onclick="copyReport()" title="Copy text to clipboard">📋 Copy</button>
+        <div style="display:flex;align-items:center;gap:6px"><input id="rpt-name" type="text" placeholder="Analyst name" maxlength="60" oninput="saveAnalyst()" aria-label="Analyst name" style="width:150px;font:inherit;font-size:11px;padding:5px 8px;border-radius:6px;border:1px solid var(--border-mid);background:var(--bg-panel);color:var(--text-primary)"><input id="rpt-title" type="text" placeholder="Title (e.g. SOC Analyst)" maxlength="60" oninput="saveAnalyst()" aria-label="Analyst title" style="width:170px;font:inherit;font-size:11px;padding:5px 8px;border-radius:6px;border:1px solid var(--border-mid);background:var(--bg-panel);color:var(--text-primary)"></div><button class="copy-btn" onclick="copyReport()" title="Copy text to clipboard">📋 Copy</button>
         <button class="btn btn-sm" style="background:var(--bg-panel);border:1px solid var(--border-mid);color:var(--text-secondary);font-size:11px" onclick="printReport()" title="Print / Save as PDF">🖨 Print / PDF</button>
         <button class="btn btn-sm btn-cyan" onclick="downloadReport()" title="Download standalone HTML report">⬇ Download HTML</button>
         <button class="modal-close" onclick="closeReport()">✕</button>
@@ -3422,7 +3422,7 @@ function buildReport(){
         <div class="rpt-doc-info">
           <div class="rpt-case-id">${esc(caseId)}</div>
           <div class="rpt-ts">${new Date(ts).toUTCString()}</div>
-          <div class="rpt-analyst">Analyst: John Dominick B. Limpag · Sr. SOC Specialist</div>
+          <div class="rpt-analyst">Analyst: ${esc(analystLine())}</div>
         </div>
       </div>
       <!-- CLASSIFICATION BANNER -->
@@ -3435,7 +3435,7 @@ function buildReport(){
       <div class="rpt-footer">
         <span>⬡ JDLThreatIntel v3.1 · ${esc(caseId)}</span>
         <span>Generated: ${new Date().toUTCString()}</span>
-        <span>John Dominick B. Limpag · Senior SOC Specialist / DFIR Lead</span>
+        <span>${esc(analystLine())}</span>
       </div>`;
 
   setEl('report-body', html);
@@ -4219,6 +4219,35 @@ function resetPCAP() {
     explain();
   });
   window.explainResults = explain;
+})();
+</script>
+
+<script id="analyst-settings">
+(function(){
+  var KEY = 'jdl_analyst';
+  function load(){ try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ return {}; } }
+  function save(v){ try { localStorage.setItem(KEY, JSON.stringify(v)); } catch(e){} }
+  window.analystLine = function(){
+    var a = load();
+    var name = (a.name || '').trim(), title = (a.title || '').trim();
+    if(!name && !title) return 'Analyst not set';
+    return [name, title].filter(Boolean).join(' · ');
+  };
+  window.saveAnalyst = function(){
+    var n = document.getElementById('rpt-name'), t = document.getElementById('rpt-title');
+    save({ name: n ? n.value : '', title: t ? t.value : '' });
+    var body = document.getElementById('report-body');
+    if(body && document.getElementById('report-modal').style.display !== 'none') {
+      // Refresh the report so the new name appears everywhere it is shown
+      try { buildReport(); } catch(e){}
+    }
+  };
+  window.addEventListener('load', function(){
+    var a = load();
+    var n = document.getElementById('rpt-name'), t = document.getElementById('rpt-title');
+    if(n) n.value = a.name || '';
+    if(t) t.value = a.title || '';
+  });
 })();
 </script>
 </body>
