@@ -1623,6 +1623,30 @@ body::before {
 .pcap-http-host { color: var(--text-dim); margin-top: 2px; }
 .pcap-no-results { text-align: center; padding: 20px; font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.5px; }
 </style>
+<style id="pro-polish">
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
+button,a,input,select,textarea{transition:background-color .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease}
+button:active{transform:translateY(1px)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--border-mid);border-radius:10px;border:2px solid transparent;background-clip:padding-box}
+table{font-variant-numeric:tabular-nums}
+table th{font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:.72em;color:var(--text-secondary)}
+table tr:hover td{background:var(--bg-hover)}
+input:focus,select:focus,textarea:focus{border-color:var(--blue-border)!important;box-shadow:0 0 0 3px var(--blue-dim)!important;outline:none}
+/* Explain panel */
+.explain-card{margin:0 0 16px;padding:18px 20px;border:1px solid var(--blue-border);border-radius:10px;background:var(--bg-card);box-shadow:var(--blue-glow)}
+.explain-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.explain-title{font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--text-bright)}
+.explain-verdict{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;padding:3px 9px;border-radius:4px;border:1px solid var(--border-soft);color:var(--text-secondary)}
+.explain-body{font-size:13.5px;line-height:1.7;color:var(--text-primary)}
+.explain-body ol{margin:8px 0 0 18px;padding:0;display:grid;gap:6px}
+.explain-body li b{color:var(--text-bright)}
+.explain-foot{margin-top:12px;font-size:11.5px;color:var(--text-dim)}
+.explain-btn{font-family:var(--font-mono);font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid var(--border-soft);background:var(--bg-panel);color:var(--text-secondary);cursor:pointer}
+.explain-btn:hover{border-color:var(--blue-border);color:var(--blue)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
 </head>
 <body>
 
@@ -1741,14 +1765,13 @@ body::before {
         </div>
         <div class="panel-body">
           <div>
-            <div class="inp-label">MD5 / SHA-1 / SHA-256 — type auto-detected</div>
-            <input class="inp" id="hash-inp" type="text" placeholder="Paste MD5, SHA-1 or SHA-256…"/>
+            <div class="inp-label">MD5 / SHA1 / SHA256</div>
+            <input class="inp" id="hash-inp" type="text" placeholder="Paste hash to analyze…"/>
           </div>
           <button class="btn btn-primary" id="btn-vt" onclick="doVTScan()">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             Analyze Hash
           </button>
-          <button class="copy-btn" id="vt-live-btn" style="width:100%;text-align:center;margin-top:6px" onclick="toggleVTLive()">● Go Live</button>
           <div id="vt-loading" class="loading-row" style="display:none"><div class="spin"></div>Querying VirusTotal…</div>
           <div id="vt-error" class="err-box" style="display:none"></div>
 
@@ -2474,22 +2497,14 @@ function updateStats(){
 document.getElementById('hash-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doVTScan();});
 
 async function doVTScan(){
-  const raw = document.getElementById('hash-inp').value.trim();
-  if(!raw){toast('⚠ Paste a hash first');return;}
-  const h = raw.toLowerCase();
-  const htype = /^[a-f0-9]{32}$/.test(h)?'MD5':/^[a-f0-9]{40}$/.test(h)?'SHA-1':/^[a-f0-9]{64}$/.test(h)?'SHA-256':null;
-  if(!htype){
-    hide('vt-mini'); hide('vt-loading');
-    setErr('vt-error','Invalid hash — paste a 32-character MD5, 40-character SHA-1, or 64-character SHA-256 value (hex only).');
-    return;
-  }
-  document.getElementById('hash-inp').value = h;
+  const h = document.getElementById('hash-inp').value.trim();
+  if(!h){toast('⚠ Paste a hash first');return;}
   hide('vt-mini'); hide('vt-error'); show('vt-loading','flex');
   document.getElementById('btn-vt').disabled=true;
   try{
     const r = await fetch(WORKER+'/vt/'+encodeURIComponent(h));
     if(!r.ok){
-      if(r.status===404) throw new Error('Not returned by the Worker lookup. Check it directly on VirusTotal: https://www.virustotal.com/gui/file/'+h);
+      if(r.status===404) throw new Error('Hash not found in VirusTotal — it may not have been submitted yet');
       if(r.status===401) throw new Error('Invalid VirusTotal API key — check your Worker VT_KEY secret');
       if(r.status===429) throw new Error('VirusTotal rate limit reached — wait a moment and try again');
       throw new Error('VirusTotal lookup failed (HTTP '+r.status+')');
@@ -2545,21 +2560,10 @@ async function doVTScan(){
   finally { document.getElementById('btn-vt').disabled=false; }
 }
 
-// Live refresh: re-query the current hash every 60s while it is shown
-let vtLiveTimer=null;
-function toggleVTLive(){
-  const btn=document.getElementById('vt-live-btn');
-  if(vtLiveTimer){clearInterval(vtLiveTimer);vtLiveTimer=null;btn.textContent='● Go Live';btn.classList.remove('active');toast('Live refresh off');return;}
-  if(!document.getElementById('hash-inp').value.trim()){toast('⚠ Analyze a hash first');return;}
-  vtLiveTimer=setInterval(()=>{if(!document.getElementById('btn-vt').disabled)doVTScan();},60000);
-  btn.textContent='■ Live (60s)';btn.classList.add('active');toast('Live refresh on');
-}
-}
-
 function renderVTMalBlock(attr, hash){
   const block=document.getElementById('vt-mal-block');
   const hlen=hash.length;
-  const htype=hlen===32?'MD5':hlen===40?'SHA-1':'SHA-256';
+  const htype=hlen===32?'MD5':hlen===40?'SHA-1':hlen===64?'SHA-256':'HASH';
   document.getElementById('vt-hash-type').textContent=htype+' · '+hash.substring(0,16)+'…';
   const label=attr?.suggested_threat_label||attr?.popular_threat_classification?.suggested_threat_label||attr?.meaningful_name||null;
   const families=(attr?.popular_threat_classification?.popular_threat_name||[]).map(f=>f.value).filter(Boolean);
@@ -4137,6 +4141,85 @@ function resetPCAP() {
   document.getElementById('pcap-file-icon').style.color = '';
   toast('PCAP cleared');
 }
+</script>
+
+<script id="explain-engine">
+(function(){
+  function fmt(n){return (n==null||isNaN(n))?'0':Number(n).toLocaleString();}
+  function vtStats(){
+    const a = state.vtData && state.vtData.data && state.vtData.data.attributes;
+    return a ? {stats:a.last_analysis_stats||{}, name:a.meaningful_name||a.name||'', type:a.type_description||''} : null;
+  }
+  function verdictFor(score){
+    if(score>=75) return {t:'CRITICAL', c:'var(--red)'};
+    if(score>=50) return {t:'HIGH RISK', c:'var(--orange)'};
+    if(score>=25) return {t:'SUSPICIOUS', c:'var(--yellow)'};
+    if(score>0)   return {t:'LOW RISK', c:'var(--green)'};
+    return {t:'NO FINDINGS YET', c:'var(--text-dim)'};
+  }
+  function explain(){
+    const host = document.getElementById('tp-overview');
+    if(!host) return;
+    let card = document.getElementById('explain-card');
+    if(!card){
+      card = document.createElement('div');
+      card.id = 'explain-card';
+      card.className = 'explain-card';
+      host.insertBefore(card, host.firstChild);
+    }
+    const steps = [];
+    const vt = vtStats();
+    if(vt){
+      const s = vt.stats, mal = s.malicious||0, sus = s.suspicious||0, tot = (s.malicious||0)+(s.suspicious||0)+(s.harmless||0)+(s.undetected||0);
+      const pct = tot ? Math.round(mal/tot*100) : 0;
+      steps.push(`<b>File reputation (VirusTotal):</b> ${fmt(mal)} of ${fmt(tot)} engines flagged this${vt.name?` as <i>${esc(vt.name)}</i>`:''} (${pct}%). ${fmt(sus)} marked it suspicious.`);
+    }
+    const sb = state.sbData;
+    if(sb){
+      if(sb.triage_score!=null) steps.push(`<b>Sandbox behavior:</b> triage score ${fmt(sb.triage_score)}/10${sb.triage_score>=7?' — behavior is strongly malicious':sb.triage_score>=4?' — behavior is suspicious':' — little malicious behavior seen'}.`);
+      const nc = (sb.network_connections||[]).length, fc = (sb.files_created||[]).length, at = (sb.attack_techniques||[]).length;
+      steps.push(`<b>Activity observed:</b> ${fmt(nc)} network connection(s), ${fmt(fc)} file(s) created, ${fmt(at)} MITRE ATT&amp;CK technique(s).`);
+      if(at) steps.push(`<b>What it was trying to do:</b> the sample used techniques mapped to MITRE ATT&amp;CK. Review the MITRE tab to see each technique and how it was used.`);
+    }
+    const ips = Object.entries(state.ipData||{});
+    if(ips.length){
+      const bad = ips.filter(([,d])=>(d.abuseConfidenceScore||0)>50);
+      steps.push(`<b>Remote addresses:</b> ${fmt(ips.length)} checked in AbuseIPDB, ${fmt(bad.length)} with an abuse confidence above 50%${bad.length?` (${bad.slice(0,3).map(([ip])=>esc(ip)).join(', ')})`:''}.`);
+    }
+    const iocN = (state.iocs.ips||[]).length + (state.iocs.domains||[]).length + (state.iocs.files||[]).length + (state.iocs.hashes||[]).length;
+    if(iocN) steps.push(`<b>Indicators to block or hunt:</b> ${fmt(iocN)} IOC(s) collected. Export them from the IOC tab.`);
+
+    let score = 0;
+    if(vt){const t=(vt.stats.malicious||0)+(vt.stats.suspicious||0)+(vt.stats.harmless||0)+(vt.stats.undetected||0); if(t) score += Math.round((vt.stats.malicious||0)/t*100*0.4);}
+    if(sb){ if(sb.triage_score!=null) score+=Math.round(sb.triage_score*8); if((sb.files_created||[]).length) score+=20; if((sb.network_connections||[]).length) score+=25; if((sb.attack_techniques||[]).length) score+=Math.min(sb.attack_techniques.length*5,15); }
+    score = Math.min(score,100);
+    const v = verdictFor(score);
+
+    let body;
+    if(!steps.length){
+      body = `<p>Nothing to explain yet. Run a hash scan, sandbox analysis, or IP lookup and this panel will describe what each result means in plain language.</p>`;
+    } else {
+      const action = score>=50
+        ? 'Treat this as a confirmed threat. Isolate affected hosts, block the indicators, and follow the containment plan.'
+        : score>=25
+        ? 'Investigate further before deciding. Check the network and process details, and compare with other events on the same hosts.'
+        : 'No strong malicious signal so far. Keep monitoring, and re-check if related alerts appear.';
+      body = `<p><b style="color:${v.c}">Verdict: ${v.t}</b> (score ${score}/100).</p><ol>${steps.map(x=>`<li>${x}</li>`).join('')}</ol><p class="explain-foot"><b>Recommended next step:</b> ${action}</p>`;
+    }
+    card.innerHTML = `<div class="explain-head"><span class="explain-title">What happened</span><span class="explain-verdict" style="color:${v.c}">${v.t}</span></div><div class="explain-body">${body}</div><div class="explain-foot" style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><span>Plain-language summary of the results above. Verify before acting.</span><button class="explain-btn" onclick="navigator.clipboard&&navigator.clipboard.writeText(this.closest('.explain-card').innerText).then(()=>toast('✓ Explanation copied'))">Copy explanation</button></div>`;
+  }
+  // Re-run the explanation whenever a result finishes rendering
+  const wrap = (name) => {
+    const orig = window[name];
+    if(typeof orig !== 'function') return;
+    window[name] = function(){ const r = orig.apply(this, arguments); try{ explain(); }catch(e){} return r; };
+  };
+  window.addEventListener('load', () => {
+    ['renderAll','renderAVRows','renderAbuseBlock','doVTScan','doIPLookup','bulkIPCheck'].forEach(wrap);
+    explain();
+  });
+  window.explainResults = explain;
+})();
 </script>
 </body>
 </html>
