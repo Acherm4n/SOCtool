@@ -4250,5 +4250,97 @@ function resetPCAP() {
   });
 })();
 </script>
+
+<script id="remediation-plan">
+(function(){
+  function fmt(n){return (n==null||isNaN(n))?'0':Number(n).toLocaleString();}
+  function techId(t){ return typeof t==='string' ? t : (t && (t.id || t.technique_id || t.name)) || 'Unknown'; }
+  function build(){
+    const vt = state.vtData && state.vtData.data && state.vtData.data.attributes;
+    const st = vt && vt.last_analysis_stats || {};
+    const mal = st.malicious||0, sus = st.suspicious||0;
+    const sb = state.sbData || {};
+    const techs = (sb.attack_techniques||[]).map(techId);
+    const files = sb.files_created||[], net = sb.network_connections||[];
+    const ips = Object.keys(state.ipData||{});
+    const badIps = Object.entries(state.ipData||{}).filter(([,d])=>(d.abuseConfidenceScore||0)>50).map(([ip])=>ip);
+    const hashes = state.iocs.hashes||[], domains = state.iocs.domains||[];
+    const hasData = mal||sus||files.length||net.length||techs.length||ips.length;
+    const malicious = mal>0 || (sb.triage_score||0)>=7 || badIps.length>0;
+    const persistence = techs.some(t=>/T1547|T1053|T1543|T1546/i.test(t));
+    const cred = techs.some(t=>/T1003|T1555|T1110|T1078/i.test(t));
+    const name = (vt && (vt.suggested_threat_label || vt.meaningful_name)) || 'the identified sample';
+
+    if(!hasData){
+      return `<p>No analysis data yet. Run a hash scan, sandbox analysis, or IP lookup to generate the remediation plan.</p>`;
+    }
+    const stage = (label, status, color, steps) => `
+      <div style="border:1px solid var(--border-soft);border-left:3px solid ${color};border-radius:8px;padding:12px 14px;margin:10px 0;background:var(--bg-card)">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
+          <b style="color:var(--text-bright);font-size:13px">${label}</b>
+          <span style="font-family:var(--font-mono);font-size:10px;color:${color};letter-spacing:.06em">${status}</span>
+        </div>
+        <ol style="margin:0 0 0 18px;font-size:12.5px;line-height:1.6;color:var(--text-primary)">${steps.map(x=>`<li style="margin:3px 0">${x}</li>`).join('')}</ol>
+      </div>`;
+
+    const ident = stage('1. Identification', 'COMPLETED', 'var(--green)', [
+      `Detection: ${fmt(mal)} engine(s) flagged ${esc(name)} as malicious and ${fmt(sus)} as suspicious.`,
+      sb.triage_score!=null ? `Sandbox triage score ${fmt(sb.triage_score)}/10 confirms behavior analysis was performed.` : 'Sandbox analysis not run yet. Run it to confirm behavior.',
+      'Record the first-seen time, affected hosts, and the user who ran the file in the case notes.'
+    ]);
+
+    const contain = stage('2. Containment', malicious ? 'REQUIRED NOW' : 'MONITOR', malicious ? 'var(--red)' : 'var(--yellow)', [
+      malicious ? 'Isolate every endpoint where the file ran using your EDR (for example Cortex XDR, CrowdStrike Falcon, or SentinelOne).' : 'No containment required yet. Watch the hosts that opened the file.',
+      hashes.length ? `Block these hashes at the endpoint and email gateway: ${hashes.slice(0,3).map(esc).join(', ')}.` : 'Block the file hash (SHA-256) at the endpoint protection policy.',
+      badIps.length ? `Block the malicious addresses at the firewall or proxy: ${badIps.slice(0,5).map(esc).join(', ')}.` : (ips.length ? 'Block any suspicious IP addresses once they are confirmed.' : 'No remote addresses to block yet.'),
+      domains.length ? `Sinkhole or block these domains in DNS: ${domains.slice(0,5).map(esc).join(', ')}.` : 'Block any command-and-control domains found in network logs.',
+      cred ? 'Reset passwords and revoke sessions for accounts that were used on affected hosts.' : 'Check whether the affected user account was used elsewhere.'
+    ]);
+
+    const erad = stage('3. Eradication', (files.length||persistence) ? 'REQUIRED' : 'VERIFY', (files.length||persistence) ? 'var(--orange)' : 'var(--yellow)', [
+      files.length ? `Delete the ${fmt(files.length)} file(s) the sample created, after saving copies for evidence.` : 'Check the host for any copies of the file in common drop locations.',
+      persistence ? 'Remove persistence: scheduled tasks, Run keys, and services created by the sample (MITRE T1547, T1053, T1543).' : 'Review autostart locations (Run keys, scheduled tasks, services) for unexpected entries.',
+      'Terminate any remaining processes started by the sample and confirm they do not restart.',
+      net.length ? `Confirm the ${fmt(net.length)} observed network connection(s) are closed and that no tunnel or backdoor remains.` : 'Confirm no unexpected outbound connections remain on the host.'
+    ]);
+
+    const recov = stage('4. Recovery', malicious ? 'PLANNED' : 'OPTIONAL', 'var(--blue)', [
+      'Return the host to service only after the EDR reports it clean. Reimage the device if persistence or credential theft is suspected.',
+      'Restore data from a backup taken before the first infection time, if files were encrypted or changed.',
+      'Monitor the restored host and affected accounts for at least 30 days for recurrence.'
+    ]);
+
+    const lessons = stage('5. Lessons learned', 'ACTION ITEMS', 'var(--blue)', [
+      'Create detection rules for the file hash, network indicators, and techniques seen in this case.',
+      'Record how the file reached the user (email, download, USB) and close that gap with a control such as attachment filtering or application allowlisting.',
+      'Update the relevant SOC playbook and share the case summary with the team.',
+      'Schedule a follow-up review after recovery and close the case with the final findings.'
+    ]);
+
+    return `
+      <p style="font-size:12.5px;color:var(--text-secondary);margin-bottom:6px">Structured using the incident handling process taught in SANS/GIAC courses (Preparation, Identification, Containment, Eradication, Recovery, Lessons Learned). Each stage below lists what was found, what to do next, and how to fix the issue.</p>
+      ${ident}${contain}${erad}${recov}${lessons}`;
+  }
+
+  function appendPlan(){
+    const body = document.getElementById('report-body');
+    if(!body) return;
+    const old = document.getElementById('remediation-plan-section');
+    if(old) old.remove();
+    const sec = document.createElement('div');
+    sec.id = 'remediation-plan-section';
+    sec.style.cssText = 'margin-top:22px;padding-top:16px;border-top:1px solid var(--border-soft)';
+    sec.innerHTML = `<div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;color:var(--cyan);margin-bottom:6px">REMEDIATION PLAN</div>
+      <div style="font-size:16px;font-weight:700;color:var(--text-bright);margin-bottom:6px">Findings and how to resolve them</div>${build()}`;
+    body.appendChild(sec);
+  }
+
+  window.addEventListener('load', function(){
+    const orig = window.buildReport;
+    if(typeof orig !== 'function') return;
+    window.buildReport = function(){ const r = orig.apply(this, arguments); try{ appendPlan(); }catch(e){} return r; };
+  });
+})();
+</script>
 </body>
 </html>
